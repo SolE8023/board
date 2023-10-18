@@ -23,6 +23,7 @@ public class CommentTest {
                 .writer(Writer.builder().name("홍길동").build())
                 .postId(1L)
                 .content("댓글1빠")
+                .password("qwer1234")
                 .build();
 
         //when
@@ -203,6 +204,4 @@ public class CommentTest {
                 .isInstanceOf(PasswordErrorException.class);
     }
     
-//    @Test
-//    void 댓글_수정시에_비밀번호가_일치해야_한다
 }
