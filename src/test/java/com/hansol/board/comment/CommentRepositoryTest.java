@@ -1,4 +1,4 @@
-package com.hansol.board;
+package com.hansol.board.comment;
 
 import com.hansol.board.comment.domain.Comment;
 import com.hansol.board.common.domain.Writer;
@@ -13,7 +13,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class CommentTest {
+public class CommentRepositoryTest {
     @Test
     void 댓글을_등록할_수_있다() {
         //given
@@ -110,7 +110,7 @@ public class CommentTest {
                 .content("댓글2빠")
                 .password("321321")
                 .build();
-        Comment updated = testContainer.commentRepository.save(update);
+        Comment updated = testContainer.commentRepository.update(update, "123123");
 
         //then
         Optional<Comment> findComment = testContainer.commentRepository.findByIdAndPassword(updated.getId(), updated.getPassword());

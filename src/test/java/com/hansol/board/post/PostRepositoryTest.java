@@ -1,4 +1,4 @@
-package com.hansol.board;
+package com.hansol.board.post;
 
 import com.hansol.board.exception.NoPostException;
 import com.hansol.board.exception.PasswordErrorException;
@@ -14,7 +14,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class PostTest {
+public class PostRepositoryTest {
     @Test
     void 게시글_하나를_조회할_수_있다() {
         //given

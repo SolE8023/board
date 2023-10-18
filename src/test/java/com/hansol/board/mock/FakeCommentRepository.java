@@ -17,8 +17,18 @@ public class FakeCommentRepository implements CommentRepository {
             comment.setId(++id);
             comments.add(comment);
         } else {
+            throw new IllegalArgumentException("잘못된 commentId 입니다.");
+        }
+        return comment;
+    }
+
+    @Override
+    public Comment update(Comment comment, String password) {
+        if (passwordCheck(comment.getId(), password)) {
             comments.removeIf(c -> c.getId().equals(comment.getId()));
             comments.add(comment);
+        } else {
+            throw new PasswordErrorException();
         }
         return comment;
     }

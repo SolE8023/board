@@ -7,6 +7,7 @@ import java.util.Optional;
 
 public interface CommentRepository {
     Comment save(Comment comment);
+    Comment update(Comment comment, String password);
     List<Comment> findByPostId(Long id);
     Optional<Comment> findByIdAndPassword(Long id, String password);
     Boolean passwordCheck(Long id, String password);
