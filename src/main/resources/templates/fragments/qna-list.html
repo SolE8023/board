@@ -1,0 +1,36 @@
+<th:block th:fragment="qna-list(post, iter, indent)">
+    <div class="board-data">
+        <a th:href="@{/board/{code}/view/{id}(code=${boardCode}, id=${post.id})}">
+            <div th:if="${post.type.name()=='POST'}" th:text="${startPostNumber - iterStat.index}">1</div>
+        </a>
+
+        <a style="justify-self: start" th:href="@{/board/{code}/view/{id}(code=${boardCode}, id=${post.id})}">
+            <div th:if="${iter == null}">
+                <div th:text="${post.title}">
+                    테스트 제목입니다.
+                </div>
+            </div>
+            <div th:if="${iter != null}">
+                <div th:style="'margin-left:' + (${indent} * 10) + 'px'">
+                    <th:block th:if="${post.type.name()=='REPLY'}">
+                        <img height="14" src="/images/reply-icon.png" width="14"/>
+                    </th:block>
+                    <span th:text="${post.title}">테스트 제목입니다.</span>
+                </div>
+            </div>
+        </a>
+
+        <a th:href="@{/board/{code}/view/{id}(code=${boardCode}, id=${post.id})}">
+            <div th:text="${post.writerName}">김한솔</div>
+        </a>
+
+        <a th:href="@{/board/{code}/view/{id}(code=${boardCode}, id=${post.id})}">
+            <div th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd')}">2021.02.20</div>
+        </a>
+    </div>
+    <th:block th:each="reply, replyIter : ${post.childBoards}" th:if="${post.childBoards != null}">
+        <th:block th:with="indent=${indent+1}">
+            <div th:replace="~{fragments/qna-list.html :: qna-list(${reply}, ${replyIter}, ${indent})}"></div>
+        </th:block>
+    </th:block>
+</th:block>

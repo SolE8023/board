@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head th:replace="~{fragments/header.html :: header}"></head>
+
+<body>
+<link href="/css/gallery.css" rel="stylesheet" type="text/css">
+
+<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${boardCode})}"></nav>
+
+<div class="board-wrap">
+    <h1 class="board-info-title" th:text="${boardName}">공지사항</h1>
+
+    <div class="board-info-wrap">
+        <div class="board-title" th:text="${post.title}">4호선(당고개-사당) 급행을 도입하면 안되는 이유 (자료 첨부)</div>
+        <div class="board-info"
+             th:text="${post.writerName + ' | ' + #temporals.format(post.createdDate, 'yyyy.MM.dd')}">
+            용퉤 | 2023.02.22
+        </div>
+    </div>
+    <hr class="hr">
+
+    <div class="board-content">
+        <div th:utext="${post.content}"></div>
+        <div th:if="${post.boardFiles.size() != 0}">
+            <div class="img-wrap" th:each="file : ${post.boardFiles}" th:if="${file.thumbnailFileName != null}">
+                <img th:src="@{/{folder}/{code}/{thumbnail}(folder=${file.thumbnailFolderName}, code=${boardCode}, thumbnail=${file.storedName})}">
+            </div>
+        </div>
+    </div>
+
+    <hr class="hr">
+
+    <div class="download-wrap">
+        <div class="file-download" th:data-file-id="${file.id}" th:each="file : ${post.boardFiles}"
+             th:text="${file.originalName}">다운로드할 파일
+        </div>
+    </div>
+
+    <div class="btn-wrap">
+        <button class="white-btn" onclick="goToListPage(this.getAttribute('data-code'))" th:data-code="${boardCode}"
+                type="button">목록으로
+        </button>
+        <button class="white-btn" onclick="goToEditPage(this.getAttribute('data-code'), this.getAttribute('data-id'))"
+                th:data-code="${boardCode}" th:data-id="${post.id}"
+                type="button">
+            수정
+        </button>
+        <button class="white-btn" onclick="deletePost(this.getAttribute('data-code'), this.getAttribute('data-id'))"
+                th:data-code="${boardCode}" th:data-id="${post.id}"
+                type="button">삭제
+        </button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const fileDownloadList = document.querySelectorAll('.file-download')
+        fileDownloadList.forEach(fileDownload => {
+            fileDownload.addEventListener('click', function () {
+                doFileDownload(fileDownload.dataset.fileId)
+            })
+        })
+    })
+
+    function doFileDownload(fileId) {
+        const url = `/api/v1/boardFile/download/${fileId}`
+        const options = {
+            method: 'GET'
+        }
+
+        fetch(url, options)
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error("파일을 다운로드할 수 없습니다.");
+                }
+
+                // 파일 이름 가져오기
+                const contentDisposition = response.headers.get('content-disposition');
+                const fileNameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                const matches = fileNameRegex.exec(contentDisposition);
+                const fileName = matches != null && matches[1] ? matches[1].replace(/['"]/g, '') : 'downloaded_file';
+
+                // 파일 형태 가져오기
+                const contentType = response.headers.get('content-type');
+
+                return response.blob().then(function (blob) {
+                    let downloadLink = document.createElement("a");
+                    downloadLink.href = URL.createObjectURL(blob);
+
+                    // 파일 이름 설정
+                    downloadLink.download = fileName;
+
+                    // 파일 형태 설정
+                    downloadLink.type = contentType;
+
+                    downloadLink.click();
+                });
+            })
+            .catch(function (error) {
+                // 에러 처리
+                console.error(error);
+            });
+    }
+
+    function goToListPage(code) {
+        location.href = `/board/${code}/list`
+    }
+
+    function goToEditPage(code, id) {
+        location.href = `/board/${code}/edit/${id}`
+    }
+
+    function deletePost(code, postId) {
+        if (!confirm("삭제하시겠습니까? 삭제한 게시글은 복구가 불가능합니다.")) return
+
+        const url = `/api/v1/board/${postId}`
+        const options = {
+            method: 'DELETE'
+        }
+
+        fetch(url, options)
+            .then(response => {
+                if (response.status === 204) {
+                    alert('게시글이 성공적으로 삭제되었습니다.');
+                    location.href = `/board/${code}/list`
+                } else if (response.status === 404) {
+                    alert('삭제할 게시글이 존재하지 않습니다.');
+                } else {
+                    alert('삭제 요청이 실패하였습니다.');
+                }
+            })
+            .catch(err => console.error('An error occurred:', err))
+    }
+</script>
+</body>
+</html>

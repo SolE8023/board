@@ -1,0 +1,43 @@
+.wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 2rem);
+}
+
+.login-wrap {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    align-items: center;
+    height: 50vh;
+    min-width: 320px;
+    margin: 0 auto;
+}
+
+.login-input-wrap {
+    min-width: 320px;
+}
+
+input {
+    height: 1.5rem;
+    width: 75%;
+    padding: 7px;
+}
+
+.material-symbols-outlined {
+    padding: 10px;
+    vertical-align: middle;
+}
+
+.login-btn {
+    align-self: start;
+    justify-self: center;
+    margin-top: 10px;
+}
+
+.loginFrm {
+    display: grid;
+    align-self: end;
+    margin-bottom: 10px;
+}

@@ -1,0 +1,83 @@
+.add-board{
+    max-width: 700px;
+    margin: 0 auto;
+    margin-top: 20px;
+    box-sizing: border-box;
+    padding: 10px;
+    padding-bottom: 15px;
+    margin-bottom: 60px;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.add-board .head {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.add-board .data {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.data input {
+    width: 70%;
+    height: 10px;
+    padding: 10px;
+    font-size: 15px;
+}
+
+.data select {
+    width: 70%;
+    height: 33px;
+}
+
+.add-board-btn-wrap {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.board-list-wrap{
+    display: grid;
+    grid-template-columns: 1fr;
+    max-width: 700px;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+.board-list-wrap hr {
+    width: 100%;
+}
+
+.board-list-title {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+}
+
+.board-list-wrap .head{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    text-align: center;
+}
+
+.board-list > div {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    text-align: center;
+    border: 1px white solid;
+    align-items: center;
+}
+
+.board-list-wrap .delete-btn{
+    background-color: white;
+    padding: 5px 10px;
+}

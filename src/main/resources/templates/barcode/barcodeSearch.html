@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="~{fragments/barcode/top :: fragment-top}"></div>
+<div th:replace="~{fragments/barcode/header :: fragment-header}"></div>
+
+<body class="bodyWrap">
+<form name="frm" action="/barcodeSearch" method="post" onsubmit="return false;">
+    <div class="wrap">
+        <div class="sub_con">
+            <div class="sub_top">
+                <div class="pdinner">
+                    <h2 th:text="${barcodeMap.barcode + ' 유통이력'}">0000000000000 유통이력</h2>
+                    <p>조회된 상품의 이력을 안내해드립니다.</p>
+                    <div class="search_box">
+                        <input type="search" name="barcode" id="all_search" placeholder="바코드를 입력해주세요."
+                               th:value="${barcodeMap.barcode}"/>
+                        <button type="submit" class="btn_search" onclick="chkFrm()">조회</button>
+                        <button type="submit" class="btn_reset" onclick="resetFrm()">초기화</button>
+                    </div>
+                </div>
+            </div>
+            <div class="sub_container">
+                <div class="flow_chart">
+                    <dl class="product_info">
+                        <dt>상품명</dt>
+                        <dd th:text="${barcodeMap.fishName}">바코드를 입력해주세요.</dd>
+                    </dl>
+                    <div class="flow_process">
+                        <th:block th:each="test : ${testAllData}">
+                            <div class="process" th:classappend="${iconClassName.get(test.processCode)}">
+                                <a href="javascript:{}" th:onclick="clickData('[(${test.idx})]')">
+                                    <h3>
+                                        <th:block th:text="${test.processName}"/>
+                                        <span th:text="${test.date}">2022-11-25</span></h3>
+                                    <dl>
+                                        <dt th:text="${test.companyName}">동해 앞 먼바다</dt>
+                                        <dd><b th:text="${test.companyAddress}">대산호 19</b></dd>
+                                    </dl>
+                                </a>
+                            </div>
+                        </th:block>
+                    </div>
+
+                </div>
+
+                <div class="map_chart"><!--카카오맵--></div>
+
+            </div>
+        </div>
+
+        <div class="modal">
+            <div class="modal_wrap">
+                <span class="wrap_close"></span>
+                <div class="modal_content step_produce" id="icon_color">
+                    <h3><span class="cate" id="content_category"><img src="../img/step_produce.png" alt=""
+                                                                      class="step_img"/><span>생산</span></span> <span
+                            class="tit" id="bigCompanyName">대영수산</span></h3>
+                    <ul class="comm_info">
+                        <li><span>처리일</span>
+                            <data id="date">2022-11-25</data>
+                        </li>
+                        <li><span>주소</span>
+                            <data id="address">경남 통영시 용남면 밤개길 51</data>
+                        </li>
+                        <li><span>업체명</span>
+                            <data id="company">대영수산</data>
+                        </li>
+                        <li><span>대표자명</span>
+                            <data id="name">홍길동</data>
+                        </li>
+                        <li><span>홈페이지</span>
+                            <data id="homepage">www.suhyup.co.kr</data>
+                        </li>
+                    </ul>
+                    <h4>처리내용</h4>
+                    <div class="info_txt" id="content">
+                        처리내용에 대한 간단한 설명이 들어갑니다.
+                    </div>
+                    <button type="button" value="close" class="modal_close">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+
+            $(document).ready(function () {
+                $modal = $(".modal");
+                $(".process").click(function () {
+                    $modal.show();
+                    return false;
+                });
+                $(".flow_icon").click(function () {
+                    $modal.show();
+                    return false;
+                });
+                $(".modal_close").click(function () {
+                    $modal.hide();
+                });
+                $(".modal_wrap .wrap_close").click(function () {
+                    $modal.hide();
+                });
+
+            });
+        </script>
+
+        <div th:replace="~{fragments/barcode/footer :: fragment-footer}"></div>
+    </div>
+</form>
+
+<script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=1b81b5a1044f9029a0d142000d3f9df9&libraries=services,clusterer,drawing"></script>
+
+<script th:inline="javascript">
+    var jsonString = `[[${testAllData}]]`
+    var testDataList = JSON.parse(jsonString)
+
+    document.addEventListener("DOMContentLoaded", function() {
+        drawKaKaoMap()
+    })
+
+    function drawKaKaoMap() {
+        let markers = []
+        let markerImgs = []
+        markerImgs.push("/img/step_fishery.png")
+        markerImgs.push("/img/step_produce.png")
+        markerImgs.push("/img/step_delivery.png")
+        markerImgs.push("/img/step_process.png")
+        markerImgs.push("/img/step_sales.png")
+
+        let mapContainer = document.querySelector('.map_chart'), // 지도를 표시할 div
+            mapOption = {
+                center: new kakao.maps.LatLng(36.1732730, 128.0186457), // 지도의 중심좌표
+                level: 12 // 지도의 확대 레벨
+            };
+
+        let map = new kakao.maps.Map(mapContainer, mapOption);
+
+        markers = testDataList.map((m, index) => {
+            let imageSrc = markerImgs[index]
+
+            let divElem = document.createElement("div")
+            let spanElem = document.createElement("span")
+            let imgElem = document.createElement("img")
+
+            divElem.className = "flow_icon"
+            divElem.style.whiteSpace = "normal"
+            spanElem.className = "date"
+            spanElem.innerText = m.date
+            spanElem.setAttribute("onclick", `mapIconClick('${m.idx}')`)
+            imgElem.className = "step_img"
+            imgElem.src = imageSrc
+            imgElem.setAttribute("onclick", `mapIconClick('${m.idx}')`)
+
+            divElem.appendChild(spanElem)
+            divElem.appendChild(imgElem)
+
+            let marker = new kakao.maps.Marker({
+                position: new kakao.maps.LatLng(m.lat, m.lng),
+                map: map, // 마커를 표시할 지도
+            });
+
+            let latlng = new kakao.maps.LatLng(m.lat,m.lng);
+
+            let overlay = new kakao.maps.CustomOverlay({
+                map: map,
+                position: latlng,
+                content: divElem
+            });
+
+            return marker;
+        })
+
+        markers.forEach(m => m.setMap(null))
+    }
+
+    function clickData(idx) {
+        let row = testDataList.find(f => f.idx == idx)
+        document.querySelector("#date").innerText = row.date
+        document.querySelector("#address").innerText = row.companyAddress
+        document.querySelector("#company").innerText = row.companyName
+        document.querySelector("#name").innerText = row.companyCEOName
+        document.querySelector("#homepage").innerText = row.companyHomepage
+        document.querySelector("#content").innerText = row.companyContent
+        document.querySelector("#bigCompanyName").innerText = row.companyName
+
+        document.querySelector("#content_category").innerHTML = ''
+
+        let processName = row.processName
+        let processImg = ''
+        let icon_color_class = ''
+        if (processName == "어획") {
+            processImg = "/img/step_fishery.png"
+            icon_color_class = "step_fishery"
+        } else if (processName == "생산") {
+            processImg = "/img/step_produce.png"
+            icon_color_class = "step_produce"
+        } else if (processName == "유통") {
+            processImg = "/img/step_delivery.png"
+            icon_color_class = "step_delivery"
+        } else if (processName == "가공") {
+            processImg = "/img/step_process.png"
+            icon_color_class = "step_process"
+        } else if (processName == "판매") {
+            processImg = "/img/step_sales.png"
+            icon_color_class = "step_sales"
+        }
+
+        let imgElem = document.createElement("img")
+        imgElem.src = processImg
+
+        let spanElem = document.createElement("span")
+        spanElem.innerText = processName
+
+        document.querySelector("#content_category").appendChild(imgElem)
+        document.querySelector("#content_category").appendChild(spanElem)
+
+        document.querySelector("#icon_color").removeAttribute("class")
+        document.querySelector("#icon_color").classList.add("modal_content")
+        document.querySelector("#icon_color").classList.add(icon_color_class)
+    }
+
+    function mapIconClick(idx){
+        clickData(idx)
+        $modal.show()
+    }
+
+    function chkFrm(){
+        let barcode = document.querySelector('input[name=barcode]').value.trim()
+
+        testBarcodeArr = []
+        testBarcodeArr.push("1604150000A1C0120221125")
+        testBarcodeArr.push("1604150000B1C0220221128")
+        testBarcodeArr.push("1604150000C1C0320221128")
+        testBarcodeArr.push("1604150000D1C0420221129")
+        testBarcodeArr.push("1604150000E1C0520221201")
+
+        if(barcode == '') {
+            alert('바코드를 입력해주세요.');
+            document.querySelector('input[name=barcode]').focus()
+            return false;
+        }
+
+        if(barcode.length < 23) {
+            alert('바코드를 정확히 입력해주세요.');
+            document.querySelector('input[name=barcode]').focus()
+            return false;
+        }
+
+        //바코드가 testBarcodeArr에 포함되어 있지 않은 경우
+        if(!testBarcodeArr.includes(barcode)) {
+            alert('바코드에 대한 정보가 없습니다.');
+            document.querySelector('input[name=barcode]').focus()
+            return false;
+        }
+
+        document.frm.submit();
+    }
+
+    function resetFrm() {
+        document.querySelector('input[name=barcode]').value = ""
+    }
+
+</script>
+
+</body>
+</html>

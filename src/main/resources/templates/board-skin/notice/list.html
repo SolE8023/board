@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+<head th:replace="~{fragments/header.html :: header}"></head>
+
+<body>
+<link href="/css/notice.css" rel="stylesheet" type="text/css">
+
+<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${boardCode})}"></nav>
+
+<div class="board-wrap">
+    <h1 class="board-info-title" th:text="${boardName}">공지사항</h1>
+
+    <div class="board-header">
+        <div>번호</div>
+        <div>제목</div>
+        <div>작성자</div>
+        <div>작성일</div>
+    </div>
+
+    <div class="board-data" th:each="post, iterStat : ${posts}">
+        <a th:href="@{/board/{code}/view/{id}(code=${boardCode}, id=${post.id})}">
+            <div th:text="${startPostNumber - iterStat.index}">1</div>
+        </a>
+        <a th:href="@{/board/{code}/view/{id}(code=${boardCode}, id=${post.id})}">
+            <div th:text="${post.title}">테스트 제목입니다.</div>
+        </a>
+        <a th:href="@{/board/{code}/view/{id}(code=${boardCode}, id=${post.id})}">
+            <div th:text="${post.writerName}">김한솔</div>
+        </a>
+        <a th:href="@{/board/{code}/view/{id}(code=${boardCode}, id=${post.id})}">
+            <div th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd')}">2021.02.20</div>
+        </a>
+    </div>
+
+    <div class="btn-wrap">
+        <button class="white-btn" th:data-code="${boardCode}" onclick="moveToWritePage(this.getAttribute('data-code'))" type="button">글쓰기</button>
+    </div>
+
+    <div class="page-wrap">
+        <a href="./list?page=0"><span><<</span></a>
+        <a th:href="@{/board/{code}/list(code=${boardCode} ,page=${prevPage})}"><span><</span></a>
+        <a th:each="i : ${#numbers.sequence(startPage, endPage)}" th:href="@{/board/{code}/list(code=${boardCode}, page=${i - 1})}">
+            <span th:class="${i == page + 1} ? 'active' : ''" th:text="${i}">1</span>
+        </a>
+        <a th:href="@{/board/{code}/list(code=${boardCode}, page=${nextPage})}"><span>></span></a>
+        <a th:href="@{/board/{code}/list(code=${boardCode}, page=${finalPage})}"><span>>></span></a>
+    </div>
+</div>
+
+<script>
+    function moveToWritePage(code) {
+        location.href = `/board/${code}/write`
+    }
+</script>
+</body>
+</html>

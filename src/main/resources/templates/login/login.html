@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head th:replace="~{fragments/header.html :: header}"></head>
+
+<body>
+<link rel="stylesheet" href="/css/login.css" type="text/css">
+
+<div class="wrap">
+    <div class="login-wrap">
+        <form action="/login" method="post" name="loginFrm" class="loginFrm">
+            <div class="login-input-wrap">
+                <div class="login-input">
+                    <span class="material-symbols-outlined">account_circle</span>
+                    <input autocomplete="off" name="username" placeholder="Enter your Username" type="text">
+                </div>
+                <div class="login-input">
+                    <span class="material-symbols-outlined">lock</span>
+                    <input autocomplete="off" name="password" placeholder="Enter your Password" type="password">
+                </div>
+            </div>
+        </form>
+        <div class="login-btn">
+            <button class="white-btn" onclick="moveToJoinPage()" type="button">회원가입</button>
+            <button class="white-btn" onclick="chkLoginFrm()" type="submit">로그인</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let error = location.search.split("?")[1]
+        if (error === "error") {
+            alert("아이디 또는 비밀번호가 일치하지 않습니다.")
+            location.replace("/login")
+        } else if (error === "logout") {
+            alert("로그아웃 되었습니다")
+            location.replace("/login")
+        }
+    })
+
+    function chkLoginFrm() {
+        let loginFrm = document.forms.loginFrm
+
+        if (loginFrm.username.value.trim() === "") {
+            alert("Enter your Username")
+            loginFrm.username.focus()
+            return
+        }
+
+        if (loginFrm.password.value.trim() === "") {
+            alert("Enter your Password")
+            loginFrm.password.focus()
+            return
+        }
+
+        loginFrm.submit()
+    }
+
+    function moveToJoinPage() {
+        location.href = '/users/register'
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+.form-wrap {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    align-items: start;
+    margin-top: 30px;
+    height: 80vh;
+}
+
+.form {
+    display: grid;
+    grid-template-columns: 1fr;
+    min-width: 600px;
+    justify-content: center;
+    row-gap: 10px;
+}
+
+.form .form-item {
+    display: grid;
+    grid-template-columns: 1fr 7fr;
+    justify-items: center;
+    align-items: center;
+}
+
+.form .form-button {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 20px;
+    margin-top: 10px;
+    justify-content: end;
+}
+
+.regist-btn {
+    background-color: black;
+    color: white;
+    padding: 10px 50px;
+}
+
+.cancel-btn {
+    background-color: white;
+    color: black;
+    padding: 10px 50px;
+}
+
+button {
+    cursor: pointer;
+}
+
+input[type="text"] {
+    justify-self: start;
+    height: 45px;
+    padding: 9px;
+    font-size: 15px;
+}
+
+input {
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.ck-editor__editable_inline {
+    min-height: 400px;
+}
+
+.editor-wrap {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.editor-label {
+    align-self: center;
+}
+
+.grid-container {
+    display: grid;
+    justify-items: center;
+    align-items: center;
+}
+
+.board-info-wrap {
+    margin-top: 20px;
+    justify-self: start;
+}
+
+.board-title {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.board-info {
+    font-size: 14px;
+    color: #aaaaaa;
+}
+
+.hr {
+    width: 100%;
+}
+
+.board-content {
+    justify-self: start;
+}
+
+.board-wrap {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.board-header, .board-data {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr 1fr;
+    width: 100%;
+    justify-items: center;
+    border-bottom: 1px solid black;
+    padding: 7px 0px;
+}
+
+.btn-wrap {
+    margin-top: 20px;
+    max-width: 1300px;
+    text-align: end;
+    margin-left: auto;
+}
+
+.board-data a {
+    text-decoration: none;
+    color: black;
+}
+
+.page-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.page-wrap span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #CCCCCC;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.page-wrap a {
+    text-decoration: none;
+    color: black;
+}
+
+.page-wrap span.active {
+    color: white;
+    background-color: #CCCCCC;
+}

@@ -1,9 +1,13 @@
 package com.hansol.board.mock;
 
+import com.hansol.board.common.PageSetting;
 import com.hansol.board.exception.NoPostException;
 import com.hansol.board.exception.PasswordErrorException;
 import com.hansol.board.post.domain.Post;
 import com.hansol.board.post.repository.PostRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 
@@ -48,9 +52,15 @@ public class FakePostRepository implements PostRepository {
     }
 
     @Override
-    public List<Post> findOrderByNotice() {
+    public Page<Post> findListOrderby(int page, String code) {
         posts.sort(Comparator.comparing(Post::getNotice).reversed());
-        return posts;
+
+        Pageable pageable = PageSetting.getPostPageable(page);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), posts.size());
+        List<Post> subList = posts.subList(start, end);
+
+        return new PageImpl<>(subList, pageable, posts.size());
     }
 
     @Override
@@ -99,7 +109,7 @@ public class FakePostRepository implements PostRepository {
 
     @Override
     public List<Post> findOrderByCreatedAt() {
-        posts.sort(Comparator.comparing(Post::getCreatedAt));
+        posts.sort(Comparator.comparing(Post::getCreatedDate));
         return posts;
     }
 
@@ -114,7 +124,46 @@ public class FakePostRepository implements PostRepository {
     }
 
     @Override
-    public List<Post> findAll() {
-        return posts;
+    public Page<Post> findAll(int page, String code) {
+        posts.sort(Comparator
+                .comparing(Post::getNotice).reversed()
+                .thenComparing(Post::getCreatedDate));
+
+        Pageable pageable = PageSetting.getPostPageable(page);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), posts.size());
+        List<Post> subList = posts.subList(start, end);
+
+        return new PageImpl<>(subList, pageable, posts.size());
+    }
+
+    @Override
+    public Optional<Post> findPrevPost(Long id) {
+        Optional<Post> post = findById(id);
+
+        if (post.isPresent()) {
+            int index = posts.indexOf(post.get());
+            for (int i = index-1; i >= 0; i--) {
+                if(!posts.get(i).getSecret()) return Optional.ofNullable(posts.get(i));
+            }
+        } else {
+            throw new IllegalArgumentException("잘못된 postId 입니다.");
+        }
+        return null;
+    }
+
+    @Override
+    public Optional<Post> findNextPost(Long id) {
+        Optional<Post> post = findById(id);
+
+        if (post.isPresent()) {
+            int index = posts.indexOf(post.get());
+            for (int i = index+1; i < posts.size(); i++) {
+                if(!posts.get(i).getSecret()) return Optional.ofNullable(posts.get(i));
+            }
+        } else {
+            throw new IllegalArgumentException("잘못된 postId 입니다.");
+        }
+        return null;
     }
 }

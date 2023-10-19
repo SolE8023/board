@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/css/nav.css" rel="stylesheet" type="text/css">
+    <link href="/css/board.css" rel="stylesheet" type="text/css">
+    <link href="/css/common.css" rel="stylesheet" type="text/css">
+    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/decoupled-document/ckeditor.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"
+          rel="stylesheet"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+</head>
+
+<body>
+<style>
+    body {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+
+    .wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: calc(100vh - 2rem);
+    }
+
+    input {
+        height: 1.5rem;
+        width: 75%;
+        padding: 7px;
+    }
+
+    .inputTitle {
+        align-self: center;
+    }
+
+    .joinWrap {
+        display: grid;
+        grid-template-columns: minmax(320px, auto);
+        width: 800px;
+    }
+
+    .joinInput {
+        display: grid;
+        grid-template-columns: 1fr 6fr;
+        margin-bottom: 10px;
+    }
+
+    .joinZipcode {
+        display: grid;
+        grid-template-columns: 1fr 1fr 5fr;
+        justify-content: start;
+        margin-bottom: 10px;
+    }
+
+    input[name='zipcode'] {
+        width: 80px;
+    }
+
+    input[name='username'] {
+        width: 150px;
+    }
+
+    input[name='password'] {
+        width: 150px;
+    }
+
+    input[name='passwordConfirm'] {
+        width: 150px;
+    }
+
+    input {
+        border: 0;
+        outline: 0;
+        background: transparent;
+        border-bottom: 1px solid black;
+        font-size: 1rem;
+    }
+
+    .whiteBtn {
+        background-color: white;
+        color: black;
+        padding: 10px 30px;
+    }
+
+    .zipcodeBtn {
+        justify-self: start;
+    }
+
+    button {
+        cursor: pointer;
+    }
+
+    .btnArea {
+        margin-top: 60px;
+        justify-self: end;
+    }
+
+    .titleWrap {
+        justify-self: center;
+        text-align: center;
+        font-size: 50px;
+        line-height: 50px;
+    }
+
+    .smallWrap {
+        justify-self: center;
+        text-align: center;
+        margin-bottom: 80px;
+        margin-top: 3px;
+    }
+
+    .required {
+        color: indianred;
+        font-weight: bold;
+    }
+</style>
+<form action="signUp" method="post" name="frm">
+    <div class="wrap">
+        <div class="joinWrap">
+            <div class="titleWrap">
+                Create new<br>
+                Account
+            </div>
+            <div class="smallWrap">
+                Already Registered? Log in here.
+            </div>
+            <div class="joinInput">
+                <span class="inputTitle">아이디 <span class="required">*</span></span>
+                <span>
+                    <input autocomplete="off" maxlength="16" name="username" oninput="checkDuplicateUsername()"
+                           type="text">
+                    <small class="usernameCheck"></small>
+                </span>
+            </div>
+            <div class="joinInput">
+                <span class="inputTitle">비밀번호 <span class="required">*</span></span>
+                <span>
+                    <input autocomplete="off" maxlength="16" name="password" oninput="isValidPassword()"
+                           type="password">
+                    <small class="passwordCheck"></small>
+                </span>
+            </div>
+            <div class="joinInput">
+                <span class="inputTitle">비밀번호확인 <span class="required">*</span></span>
+                <span>
+                    <input autocomplete="off" maxlength="16" name="passwordConfirm" oninput="isEqualPassword()"
+                           type="password">
+                    <small class="passwordConfirmCheck"></small>
+                </span>
+            </div>
+            <div class="joinInput">
+                <span class="inputTitle">이름 <span class="required">*</span></span>
+                <input autocomplete="off" name="name" type="text">
+            </div>
+            <div class="joinInput">
+                <span class="inputTitle">이메일</span>
+                <input autocomplete="off" name="email" type="text">
+            </div>
+            <div class="joinInput">
+                <span class="inputTitle">집전화</span>
+                <input autocomplete="off" name="homePhone" type="text" class="phone" maxlength="20">
+            </div>
+            <div class="joinInput">
+                <span class="inputTitle">휴대전화</span>
+                <input autocomplete="off" name="mobilePhone" type="text" class="phone" maxlength="20">
+            </div>
+            <div class="joinZipcode">
+                <span class="inputTitle">우편번호</span>
+                <input autocomplete="off" class="searchBtn" name="zipcode" readonly type="text">
+                <button class="whiteBtn zipcodeBtn searchBtn" type="button">우편번호 검색</button>
+            </div>
+            <div class="joinInput">
+                <span class="inputTitle">주소</span>
+                <input autocomplete="off" class="searchBtn" name="address" readonly type="text">
+            </div>
+            <div class="joinInput">
+                <span class="inputTitle">자세한 주소</span>
+                <input autocomplete="off" name="detailedAddress" type="text">
+            </div>
+            <div class="btnArea">
+                <button type="button" class="whiteBtn" onclick="location.href='/'">되돌아가기</button>
+                <button type="button" class="whiteBtn" onclick="validateForm()">가입하기</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    const searchButton = document.querySelectorAll(".searchBtn")
+    const searchInput = document.querySelector("input[name='address']")
+    const zipcodeInput = document.querySelector("input[name='zipcode']")
+
+    searchButton.forEach(elem => {
+        elem.addEventListener("click", () => {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    zipcodeInput.value = data.zonecode
+                    searchInput.value = data.address
+                }
+            }).open();
+        });
+    })
+
+    const phoneElems = document.querySelectorAll(".phone")
+    phoneElems.forEach(elem => {
+        elem.addEventListener("input", () => {
+            elem.value = autoHypenPhone(elem.value)
+        })
+    })
+
+    //전화번호에 하이픈 자동 추가하기
+    function autoHypenPhone(str) {
+        str = str.replace(/[^0-9]/g, '');
+        let tmp = '';
+        if (str.length < 4) {
+            tmp = str
+        } else if (str.length < 7) {
+            tmp += str.substr(0, 3);
+            tmp += '-';
+            tmp += str.substr(3);
+        } else if (str.length < 11) {
+            tmp += str.substr(0, 3);
+            tmp += '-';
+            tmp += str.substr(3, 3);
+            tmp += '-';
+            tmp += str.substr(6);
+        } else {
+            tmp += str.substr(0, 3);
+            tmp += '-';
+            tmp += str.substr(3, 4);
+            tmp += '-';
+            tmp += str.substr(7);
+        }
+        return tmp
+    }
+
+    async function validateForm() {
+        const frm = document.forms.frm
+
+        if (!frm.username.value) {
+            alert("아이디를 입력해주세요.")
+            frm.username.focus()
+            return false
+        }
+
+        const isValidId = await checkDuplicateUsername()
+
+        if (!isValidId) {
+            alert("아이디를 확인해주세요")
+            frm.username.focus()
+            return false
+        }
+
+        if (!isValidPassword() || !isEqualPassword()) {
+            alert("비밀번호를 확인해주세요.")
+            frm.password.focus()
+            return false
+        }
+
+        if (!frm.name.value) {
+            alert("이름을 입력해주세요.")
+            frm.name.focus()
+            return false
+        }
+
+        if (frm.email.value !== "") {
+            //이메일 유효성 검사
+            const emailRegExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/
+            if (!emailRegExp.test(frm.email.value)) {
+                alert("이메일 형식을 확인해주세요.")
+                frm.email.focus()
+                return false
+            }
+        }
+
+        signUp()
+    }
+
+    function signUp() {
+        let username = document.querySelector("input[name=username]").value
+        let password = document.querySelector("input[name=password]").value
+        let name = document.querySelector("input[name=name]").value
+        let email = document.querySelector("input[name=email]").value
+        let homePhone = document.querySelector("input[name=homePhone]").value
+        let mobilePhone = document.querySelector("input[name=mobilePhone]").value
+        let zipcode = document.querySelector("input[name=zipcode]").value
+        let address = document.querySelector("input[name=address]").value
+        let detailedAddress = document.querySelector("input[name=detailedAddress]").value
+
+        const url = "/api/v1/users/sign-up"
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({username, password, name, email, homePhone, mobilePhone, zipcode, address, detailedAddress})
+        }
+
+        fetch(url, options)
+            .then(response => response.json())
+            .then(data => {
+                alert('회원가입이 완료되었습니다.');
+                location.href = '/login'
+            })
+            .catch(error => {
+                console.error(error);
+                alert('회원가입 중 오류가 발생하였습니다.');
+            });
+    }
+
+    async function checkDuplicateUsername() {
+        if (!isValidId()) return false
+
+        const username = document.querySelector(`input[name=username]`).value;
+        const url = `/api/v1/users/check-username?username=${encodeURIComponent(username)}`;
+        const usernameCheck = document.querySelector(`.usernameCheck`)
+
+        return await fetch(url)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('API 요청 중 오류가 발생했습니다.');
+                }
+            })
+            .then(data => {
+                if (data.exists) {
+                    usernameCheck.textContent = '이미 사용 중인 아이디입니다.';
+                    usernameCheck.style.color = 'indianred';
+                    return false
+                } else {
+                    usernameCheck.textContent = '사용 가능한 아이디입니다.';
+                    usernameCheck.style.color = 'green';
+                    return true
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            })
+    }
+
+    function isValidId() {
+        //첫 글자가 영문으로 시작하는지, 4글자에서 16자 사이인지
+        const username = document.querySelector(`input[name=username]`).value
+        const usernameCheck = document.querySelector(`.usernameCheck`)
+        const usernameRegex = /^[a-zA-Z][a-zA-Z0-9-_]{3,15}$/
+
+        if (!usernameRegex.test(username)) {
+            usernameCheck.textContent = '아이디는 영문으로 시작하는 4~16자 영문자, 숫자, 특수문자(_),(-)만 사용 가능합니다.';
+            usernameCheck.style.color = 'indianred';
+            return false
+        }
+
+        return true
+    }
+
+    function isValidPassword() {
+        isEqualPassword()
+
+        const passwordElem = document.querySelector(`input[name=password]`)
+        const passwordCheck = document.querySelector(`.passwordCheck`)
+
+        // password 유효성 검사, 8자리 이상, 영문, 숫자, 특수문자 조합
+        const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/
+        if (!passwordRegex.test(passwordElem.value)) {
+            passwordCheck.textContent = '비밀번호는 8자리 이상, 영문, 숫자, 특수문자 조합으로 입력해주세요.';
+            passwordCheck.style.color = 'indianred';
+            passwordElem.focus()
+            return false
+        } else {
+            passwordCheck.textContent = '사용 가능한 비밀번호입니다.';
+            passwordCheck.style.color = 'green';
+            return true
+        }
+    }
+
+    function isEqualPassword() {
+        const passwordElem = document.querySelector(`input[name=password]`)
+        const passwordConfirmElem = document.querySelector('input[name=passwordConfirm]')
+        const passwordConfirmCheck = document.querySelector(`.passwordConfirmCheck`)
+
+        if(passwordConfirmElem.value === '') return false
+
+        if (passwordElem.value !== passwordConfirmElem.value) {
+            passwordConfirmCheck.textContent = '비밀번호가 일치하지 않습니다.';
+            passwordConfirmCheck.style.color = 'indianred';
+            passwordConfirmElem.focus();
+            return false;
+        } else {
+            passwordConfirmCheck.textContent = '비밀번호가 일치합니다.';
+            passwordConfirmCheck.style.color = 'green';
+            return true
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+.comment-wrap {
+    width: 100%;
+}
+
+.hr-little-gray {
+    background-color: #e9ecef;
+    height: 1px;
+    border: 0;
+}
+
+.comment-wrap .flex-wrap {
+    display: flex;
+}
+
+.comment-wrap .func-wrap {
+    margin-left: auto;
+}
+
+.comment-wrap .writerName {
+    color: #343a40;
+    font-size: 14px;
+    align-self: center;
+    margin-left: 10px;
+}
+
+.comment-wrap .createdDate {
+    color: #adb5bd;
+    margin-left: 10px;
+    font-size: 14px;
+    align-self: center;
+}
+
+.comment-wrap .func-wrap span {
+    text-decoration: underline;
+}
+
+.comment-wrap .content {
+    display: inline-block;
+    font-size: 15px;
+    padding: 5px;
+    margin-left: 5px;
+}
+
+.comment-wrap .comment-form-wrap {
+    margin-top: 50px;
+}
+
+.comment-form-wrap .form-content textarea {
+    width: 100%;
+    font-size: 16px;
+    padding: 9px;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+.comment-wrap .func-wrap span{
+    cursor: pointer;
+}

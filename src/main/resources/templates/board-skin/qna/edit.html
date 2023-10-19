@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head th:replace="~{fragments/header.html :: header}"></head>
+
+<body>
+<link href="/css/gallery.css" rel="stylesheet" type="text/css">
+
+<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${boardCode})}"></nav>
+
+<div class="form-wrap">
+    <div class="form">
+        <input name="postId" th:value="${post.id}" type="hidden">
+        <input name="boardCode" th:value="${boardCode}" type="hidden">
+        <div class="form-item">
+            <span>제목</span>
+            <input class="w-100" name="title" th:value="${post.title}" type="text">
+        </div>
+        <div class="form-item">
+            <span>이름</span>
+            <input class="w-100" name="writerName" th:value="${post.writerName}" type="text">
+        </div>
+        <div class="form-item">
+            <span class="editor-label">내용</span>
+            <div class="editor-wrap">
+                <div id="toolbar-container"></div>
+                <div id="editor" th:utext="${post.content}"></div>
+            </div>
+        </div>
+        <div class="upload-item" th:if="${uploadFileNumber != 0}">
+            <span>첨부파일</span>
+            <span class="upload-group">
+                <span class="upload-wrap" th:each="num : ${#numbers.sequence(1, uploadFileNumber)}"
+                      th:with="index=${num - 1}">
+                    <input class="upload-input" multiple name="files"
+                           onchange="updateFileName(this)"
+                           th:id="'upload-input' + ${num}" type="file"/>
+
+                    <span class="file-name" th:if="${post.boardFiles.size() >= num}"
+                          th:text="${post.boardFiles[index].originalName}">파일을 선택하세요</span>
+                    <label class="upload-button delete-button" th:if="${post.boardFiles.size() >= num}"
+                           th:data-file-id="${post.boardFiles[index].id}" onclick="deleteFile(this.dataset.fileId)">
+                        파일 삭제
+                    </label>
+
+                    <span class="file-name" th:if="${post.boardFiles.size() < num}">파일을 선택하세요</span>
+                    <label class="upload-button" th:for="'upload-input' + ${num}"
+                           th:if="${post.boardFiles.size() < num}">파일 선택</label>
+                    </span>
+                </span>
+            </span>
+        </div>
+        <div class="form-button">
+            <button class="regist-btn" onclick="validateForm()">수정</button>
+            <button class="cancel-btn" onclick="moveToViewPage()">취소</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let theEditor;
+
+    DecoupledEditor
+        .create(document.querySelector('#editor'), {
+            language: 'ko',
+            ckfinder: {
+                uploadUrl: '/api/v1/board/files/upload'
+            },
+        })
+        .then(editor => {
+            theEditor = editor
+            const toolbarContainer = document.querySelector('#toolbar-container');
+            toolbarContainer.appendChild(editor.ui.view.toolbar.element);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+    function validateForm() {
+        const postId = document.querySelector("input[name=postId]")
+        const boardCode = document.querySelector("input[name=boardCode]")
+        const title = document.querySelector("input[name=title]")
+        const writerName = document.querySelector("input[name=writerName]")
+        const content = theEditor.getData()
+
+        if (postId.value === "" || boardCode.value === "") {
+            alert("게시글 고유값이 누락되었습니다. 게시글 선택을 다시 해주세요.")
+            location.href = "/board/list"
+        }
+
+        if (title.value === '') {
+            alert("제목을 입력해주세요.");
+            title.focus();
+            return;
+        }
+
+        if (writerName.value === '') {
+            alert("이름을 입력해주세요.")
+            writerName.focus()
+            return
+        }
+
+        if (content === '') {
+            alert("내용을 입력해주세요")
+            theEditor.focus()
+            return
+        }
+
+        updatePost()
+    }
+
+    function updatePost() {
+        const postId = document.querySelector("input[name=postId]").value
+        const boardCode = document.querySelector("input[name=boardCode]").value
+        const title = document.querySelector("input[name=title]").value
+        const writerName = document.querySelector("input[name=writerName]").value
+        const content = theEditor.getData()
+        const files = document.querySelectorAll(".upload-input")
+
+        let formData = new FormData()
+        formData.append("boardCode", boardCode)
+        formData.append("title", title)
+        formData.append("writerName", writerName)
+        formData.append("content", content)
+
+        let cnt = 0
+        files.forEach(elem => {
+            if (elem.files[0] !== undefined) formData.append(`files[${cnt++}]`, elem.files[0])
+        })
+
+        const url = `/api/v1/board/${postId}`
+        const options = {
+            method: 'PATCH',
+            body: formData
+        }
+
+        fetch(url, options)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`)
+                }
+                return response.json()
+            })
+            .then(data => {
+                alert("글 수정이 완료되었습니다.")
+                location.href = `/board/${boardCode}/view/${postId}`
+            })
+            .catch(err => console.error('An error occurred:', err))
+    }
+
+    function moveToViewPage() {
+        const postId = document.querySelector("input[name=postId]").value
+        const boardCode = document.querySelector("input[name=boardCode]").value
+
+        location.href = `/board/${boardCode}/view/${postId}`
+    }
+
+    function updateFileName(elem) {
+        elem.nextElementSibling.innerText = elem.files[0].name
+    }
+
+    function deleteFile(boardFileId) {
+        if(!confirm("파일을 삭제하시겠습니까? 삭제 후 복구가 불가능합니다.")) return
+
+        const url = `/api/v1/boardFile/${boardFileId}`
+        const options = {
+            method: 'DELETE',
+        }
+
+        fetch(url, options)
+            .then(response => {
+                if (response.status === 204) {
+                    alert('파일 삭제가 완료되었습니다.');
+                    location.reload()
+                } else if (response.status === 404) {
+                    alert('삭제할 파일이 존재하지 않습니다.');
+                } else {
+                    alert('삭제 요청이 실패하였습니다.');
+                }
+            })
+            .catch(err => console.error('An error occurred:', err))
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head th:replace="~{fragments/header.html :: header}"></head>
+
+<body>
+
+<div th:replace="~{fragments/admin-nav.html :: adminNav}"></div>
+
+<form method="post" name="add-board-form">
+    <div class="add-board">
+        <div class="head">
+            <div>게시판 이름</div>
+            <div>게시판 코드</div>
+            <div>게시판 스킨</div>
+        </div>
+        <div class="data">
+            <div><input name="boardName" type="text" autocomplete="off"></div>
+            <div><input name="boardCode" type="text" autocomplete="off"></div>
+            <div>
+                <select name="boardSkin">
+                    <option value="">선택해주세요</option>
+                    <option th:each="skinFolder : ${boardSkinFolders}"
+                            th:if="${not #lists.isEmpty(boardSkinFolders)}"
+                            th:value="${skinFolder}"
+                            th:text="${skinFolder}">
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="add-board-btn-wrap">
+            <button class="white-btn add-btn" type="button">게시판 추가하기</button>
+        </div>
+    </div>
+</form>
+
+<div class="board-list-wrap">
+    <div class="board-list-title">현재 게시판 목록</div>
+    <hr>
+
+    <div class="head">
+        <div>게시판 이름</div>
+        <div>게시판 코드</div>
+        <div>게시판 스킨</div>
+        <div>삭제 버튼</div>
+    </div>
+    <hr>
+
+    <div class="board-list">
+        <div th:unless="${not #lists.isEmpty(boardInfoList)}">
+            <span style="grid-column: 1 / 5; padding: 10px; margin-top: 4px;">데이터가 없습니다</span>
+        </div>
+        <div th:each="boardInfo : ${boardInfoList}" th:if="${not #lists.isEmpty(boardInfoList)}">
+            <a th:href="@{/admin/{id}(id=${boardInfo.id})}"><span th:text="${boardInfo.boardName}">공지사항</span></a>
+            <a th:href="@{/admin/{id}(id=${boardInfo.id})}"><span th:text="${boardInfo.boardCode}">notice</span></a>
+            <a th:href="@{/admin/{id}(id=${boardInfo.id})}"><span th:text="${boardInfo.boardSkin}">notice</span></a>
+            <span><button th:data-id="${boardInfo.id}" th:data-code="${boardInfo.boardCode}" class="delete-btn">삭제</button></span>
+        </div>
+    </div>
+</div>
+<script type="module">
+    import {handleResponse} from "/js/handleResponse.js";
+
+    document.querySelector(".add-btn").addEventListener("click", addBoard)
+
+    document.querySelectorAll(".delete-btn").forEach(deleteBtnElem => {
+        deleteBtnElem.addEventListener("click", deleteBoard)
+    })
+
+    function addBoard() {
+        const boardNameElem = document.querySelector("input[name=boardName]")
+        const boardCodeElem = document.querySelector("input[name=boardCode]")
+        const boardSkinElem = document.querySelector("select[name=boardSkin]")
+
+        if (!boardNameElem.value) {
+            alert("게시판 이름을 입력해주세요")
+            boardNameElem.focus()
+            return
+        }
+
+        if (!boardCodeElem.value) {
+            alert("게시판 코드를 입력해주세요")
+            boardCodeElem.focus()
+            return
+        }
+
+        if (!boardSkinElem.value) {
+            alert("게시판 스킨을 선택해주세요")
+            boardSkinElem.focus()
+            return
+        }
+
+        createBoard()
+    }
+
+    function createBoard() {
+        const boardName = document.querySelector("input[name=boardName]").value
+        const boardCode = document.querySelector("input[name=boardCode]").value
+        const boardSkin = document.querySelector("select[name=boardSkin]").value
+
+        const url = '/api/v1/board-info'
+        const options = {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                boardName, boardCode, boardSkin
+            })
+        }
+
+        fetch(url, options)
+            .then(handleResponse)
+            .then(data => {
+                if (data) {
+                    alert("게시판이 추가되었습니다")
+                    location.reload()
+                }
+            })
+            .catch(error => console.log(error))
+    }
+
+    function deleteBoard(event) {
+        if (!confirm("게시판을 삭제하시겠습니까? 삭제 후 복구가 불가능합니다.")) return
+
+        let boardCode = event.target.dataset.code
+        if (boardCode === "notice") {
+            alert("공지사항 게시판은 삭제를 막아두었습니다.")
+            return
+        }
+
+        let boardId = event.target.dataset.id;
+
+
+        const url = `/api/v1/board-info/${boardId}`
+        const options = {
+            method: 'DELETE'
+        }
+
+        fetch(url, options)
+            .then(response => {
+                if (response.status === 204) {
+                    alert("게시판이 성공적으로 삭제되었습니다.")
+                    location.reload()
+                } else if (response.status === 404) {
+                    alert("삭제할 게시판이 존재하지 않습니다.");
+                } else {
+                    alert("삭제 요청이 실패하였습니다.")
+                }
+            })
+            .catch(err => console.log("에러 발생: ", err))
+    }
+</script>
+
+</body>
+</html>

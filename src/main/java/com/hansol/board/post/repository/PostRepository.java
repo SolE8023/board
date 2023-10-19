@@ -1,6 +1,7 @@
 package com.hansol.board.post.repository;
 
 import com.hansol.board.post.domain.Post;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +15,7 @@ public interface PostRepository {
 
     Optional<Post> findByIdAndAndPassword(Long id, String password);
 
-    List<Post> findOrderByNotice();
+    Page<Post> findListOrderby(int page, String code);
 
     void remove(Long id, String password);
 
@@ -26,5 +27,9 @@ public interface PostRepository {
 
     Boolean isSecretPost(Long id);
 
-    List<Post> findAll();
+    Page<Post> findAll(int age, String code);
+
+    Optional<Post> findPrevPost(Long id);
+
+    Optional<Post> findNextPost(Long id);
 }

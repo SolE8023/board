@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class Writer {
-    private String name;
+    private final String name;
     @Builder
     public Writer(String name) {
         this.name = name;

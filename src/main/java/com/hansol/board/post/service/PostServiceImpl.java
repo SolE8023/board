@@ -1,14 +1,17 @@
 package com.hansol.board.post.service;
 
+import com.hansol.board.exception.NoPostException;
 import com.hansol.board.exception.PasswordErrorException;
 import com.hansol.board.post.domain.Post;
 import com.hansol.board.post.repository.PostRepository;
-import com.hansol.board.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
@@ -20,8 +23,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findAll() {
-        return postRepository.findOrderByNotice();
+    public Page<Post> findAll(int page, String code) {
+        return postRepository.findAll(page, code);
     }
 
     @Override
@@ -44,32 +47,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post prevPost(Long id) {
-        Optional<Post> post = findPostById(id);
-        if (post.isPresent()) {
-            List<Post> posts = postRepository.findAll();
-            int index = posts.indexOf(post.get());
-            for (int i = index-1; i >= 0; i--) {
-                if(!posts.get(i).getSecret()) return posts.get(i);
-            }
-        } else {
-            throw new IllegalArgumentException("잘못된 postId 입니다.");
-        }
-        return null;
+        return postRepository.findPrevPost(id).orElseThrow(NoPostException::new);
     }
 
     @Override
     public Post nextPost(Long id) {
-        Optional<Post> post = findPostById(id);
-        if (post.isPresent()) {
-            List<Post> posts = postRepository.findAll();
-            int index = posts.indexOf(post.get());
-            for (int i = index+1; i < posts.size(); i++) {
-                if(!posts.get(i).getSecret()) return posts.get(i);
-            }
-        } else {
-            throw new IllegalArgumentException("잘못된 postId 입니다.");
-        }
-        return null;
+        return postRepository.findNextPost(id).orElseThrow(NoPostException::new);
     }
 
     @Override

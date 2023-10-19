@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head th:replace="~{fragments/header.html :: header}"></head>
+
+<body>
+<link href="/css/notice.css" rel="stylesheet" type="text/css">
+
+<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${boardCode})}"></nav>
+
+<div class="board-wrap">
+    <h1 class="board-info-title">공지사항</h1>
+
+    <div class="board-info-wrap">
+        <div class="board-title" th:text="${post.title}">4호선(당고개-사당) 급행을 도입하면 안되는 이유 (자료 첨부)</div>
+        <div class="board-info"
+             th:text="${post.writerName + ' | ' + #temporals.format(post.createdDate, 'yyyy.MM.dd')}">
+            용퉤 | 2023.02.22
+        </div>
+    </div>
+    <hr class="hr">
+
+    <div class="board-content" th:utext="${post.content}">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur, exercitationem sequi. A aliquam animi
+        aut
+        autem commodi culpa dolorem ducimus ea earum in ipsam iusto labore laborum libero molestiae nam nihil nobis,
+        nulla officia officiis omnis perspiciatis placeat quasi quibusdam ratione repudiandae vel! Ab consectetur
+        doloremque explicabo labore reprehenderit vero.
+    </div>
+
+    <div class="btn-wrap">
+        <button class="white-btn" onclick="goToListPage(this.getAttribute('data-code'))" th:data-code="${boardCode}"
+                type="button">목록으로
+        </button>
+        <th:block th:switch="${boardInfo.replyUsageStatus}">
+            <button class="white-btn" onclick="goToReplyPage(this.getAttribute('data-code'), this.getAttribute('data-id'))"
+                    th:case="${T(board.demo.entity.UsageStatus).ENABLED}"
+                    th:data-code="${boardCode}" th:data-id="${post.id}"
+                    type="button">답글
+            </button>
+        </th:block>
+        <button class="white-btn" onclick="goToEditPage(this.getAttribute('data-code'), this.getAttribute('data-id'))" th:data-code="${boardCode}" th:data-id="${post.id}"
+                type="button">
+            수정
+        </button>
+        <button class="white-btn" onclick="deletePost(this.getAttribute('data-code'), this.getAttribute('data-id'))" th:data-code="${boardCode}" th:data-id="${post.id}"
+                type="button">삭제
+        </button>
+    </div>
+</div>
+
+<script>
+    function goToListPage(code) {
+        location.href = `/board/${code}/list`
+    }
+
+    function goToReplyPage(code, id) {
+        location.href = `/board/${code}/reply/${id}`
+    }
+
+    function goToEditPage(code, id) {
+        location.href = `/board/${code}/edit/${id}`
+    }
+
+    function deletePost(code, postId) {
+        if (!confirm("삭제하시겠습니까? 삭제한 게시글은 복구가 불가능합니다.")) return
+
+        const url = `/api/v1/board/${postId}`
+        const options = {
+            method: 'DELETE'
+        }
+
+        fetch(url, options)
+            .then(response => {
+                if (response.status === 204) {
+                    alert('게시글이 성공적으로 삭제되었습니다.');
+                    location.href = `/board/${code}/list`
+                } else if (response.status === 404) {
+                    alert('삭제할 게시글이 존재하지 않습니다.');
+                } else {
+                    alert('삭제 요청이 실패하였습니다.');
+                }
+            })
+            .catch(err => console.error('An error occurred:', err))
+    }
+</script>
+</body>
+</html>

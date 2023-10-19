@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko">
+<head th:replace="~{fragments/header.html :: header}"></head>
+
+<body>
+<link href="/css/qna.css" rel="stylesheet" type="text/css">
+
+<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${boardCode})}"></nav>
+
+<div class="board-wrap">
+    <h1 class="board-info-title" th:text="${boardName}">공지사항</h1>
+
+    <div class="board-header">
+        <div>번호</div>
+        <div>제목</div>
+        <div>작성자</div>
+        <div>작성일</div>
+    </div>
+
+    <th:block th:each="post, iterStat : ${posts}">
+        <th:block th:replace="~{fragments/qna-list.html :: qna-list(${post}, null, 0)}"></th:block>
+    </th:block>
+
+    <div class="btn-wrap">
+        <button class="white-btn" onclick="moveToWritePage(this.getAttribute('data-code'))" th:data-code="${boardCode}"
+                type="button">글쓰기
+        </button>
+    </div>
+
+    <div class="page-wrap">
+        <a href="./list?page=0"><span><<</span></a>
+        <a th:href="@{/board/{code}/list(code=${boardCode} ,page=${prevPage})}"><span><</span></a>
+        <a th:each="i : ${#numbers.sequence(startPage, endPage)}"
+           th:href="@{/board/{code}/list(code=${boardCode}, page=${i - 1})}">
+            <span th:class="${i == page + 1} ? 'active' : ''" th:text="${i}">1</span>
+        </a>
+        <a th:href="@{/board/{code}/list(code=${boardCode}, page=${nextPage})}"><span>></span></a>
+        <a th:href="@{/board/{code}/list(code=${boardCode}, page=${finalPage})}"><span>>></span></a>
+    </div>
+</div>
+
+<script>
+    function moveToWritePage(code) {
+        location.href = `/board/${code}/write`
+    }
+</script>
+</body>
+</html>

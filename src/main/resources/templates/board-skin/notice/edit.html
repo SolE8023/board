@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head th:replace="~{fragments/header.html :: header}"></head>
+
+<body>
+<link rel="stylesheet" href="/css/notice.css" type="text/css">
+
+<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${boardCode})}"></nav>
+
+<div class="form-wrap">
+    <div class="form">
+        <input type="hidden" name="postId" th:value="${post.id}">
+        <input type="hidden" name="code" th:value="${boardCode}">
+        <div class="form-item">
+            <span>제목</span>
+            <input name="title" class="w-100" type="text" th:value="${post.title}">
+        </div>
+        <div class="form-item">
+            <span>이름</span>
+            <input name="writerName" class="w-100" type="text" th:value="${post.writerName}">
+        </div>
+        <div class="form-item">
+            <span class="editor-label">내용</span>
+            <div class="editor-wrap">
+                <div id="toolbar-container"></div>
+                <div id="editor" th:utext="${post.content}"></div>
+            </div>
+        </div>
+        <div class="form-button">
+            <button class="regist-btn" onclick="validateForm()">수정</button>
+            <button class="cancel-btn" onclick="moveToViewPage()">취소</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let theEditor;
+
+    DecoupledEditor
+        .create(document.querySelector('#editor'), {
+            language: 'ko',
+            ckfinder: {
+                uploadUrl: '/api/v1/board/files/upload'
+            },
+        })
+        .then(editor => {
+            theEditor = editor
+            const toolbarContainer = document.querySelector('#toolbar-container');
+            toolbarContainer.appendChild(editor.ui.view.toolbar.element);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+    function validateForm() {
+        const postId = document.querySelector("input[name=postId]")
+        const code = document.querySelector("input[name=code]")
+        const title = document.querySelector("input[name=title]")
+        const writerName = document.querySelector("input[name=writerName]")
+        const content = theEditor.getData()
+
+        if (postId.value === "" || code.value === "") {
+            alert("게시글 고유값이 누락되었습니다. 게시글 선택을 다시 해주세요.")
+            location.href = "/board/list"
+        }
+
+        if (title.value === '') {
+            alert("제목을 입력해주세요.");
+            title.focus();
+            return;
+        }
+
+        if (writerName.value === '') {
+            alert("이름을 입력해주세요.")
+            writerName.focus()
+            return
+        }
+
+        if (content === '') {
+            alert("내용을 입력해주세요")
+            theEditor.focus()
+            return
+        }
+
+        updatePost()
+    }
+
+    function updatePost() {
+        const postId = document.querySelector("input[name=postId]").value
+        const code = document.querySelector("input[name=code]").value
+        const title = document.querySelector("input[name=title]").value
+        const writerName = document.querySelector("input[name=writerName]").value
+        const content = theEditor.getData()
+
+        const url = `/api/v1/board/${postId}`
+        const options = {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({title,writerName,content})
+        }
+
+        fetch(url, options)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`)
+                }
+                return response.json()
+            })
+            .then(data => {
+                alert("글 수정이 완료되었습니다.")
+                location.href = `/board/${code}/view/${postId}`
+            })
+            .catch(err => console.error('An error occurred:', err))
+    }
+
+    function moveToViewPage() {
+        const postId = document.querySelector("input[name=postId]").value
+        const code = document.querySelector("input[name=code]").value
+
+        location.href = `/board/${code}/view/${postId}`
+    }
+</script>
+
+</body>
+</html>

@@ -6,8 +6,8 @@ import com.hansol.board.exception.PasswordErrorException;
 import com.hansol.board.mock.TestContainer;
 import com.hansol.board.post.domain.Post;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,7 +26,7 @@ public class PostServiceTest {
                 .writer(Writer.builder().name("홍길동").build())
                 .content("내용1")
                 .password("qwer1234")
-                .createdAt(LocalDateTime.of(2023,10,15,13,12))
+                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
 
         //when
@@ -44,7 +44,7 @@ public class PostServiceTest {
                 .writer(Writer.builder().name("홍길동").build())
                 .content("내용1")
                 .password("qwer1234")
-                .createdAt(LocalDateTime.of(2023,10,15,13,12))
+                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
         Post saved = testContainer.postService.savePost(post);
 
@@ -57,7 +57,7 @@ public class PostServiceTest {
         assertThat(findPost.get().getWriter().getName()).isEqualTo(saved.getWriter().getName());
         assertThat(findPost.get().getContent()).isEqualTo(saved.getContent());
         assertThat(findPost.get().getPassword()).isEqualTo(saved.getPassword());
-        assertThat(findPost.get().getCreatedAt()).isEqualTo(saved.getCreatedAt());
+        assertThat(findPost.get().getCreatedDate()).isEqualTo(saved.getCreatedDate());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class PostServiceTest {
                 .content("내용1")
                 .notice(false)
                 .password("qwer1234")
-                .createdAt(LocalDateTime.of(2023,10,15,13,12))
+                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
         Post post2 = Post.builder()
                 .title("제목2")
@@ -78,18 +78,18 @@ public class PostServiceTest {
                 .content("내용2")
                 .notice(true)
                 .password("777")
-                .createdAt(LocalDateTime.of(2023,10,15,13,13))
+                .createdDate(LocalDateTime.of(2023,10,15,13,13))
                 .build();
         Post saved1 = testContainer.postService.savePost(post1);
         Post saved2 = testContainer.postService.savePost(post2);
 
         //when
-        List<Post> posts = testContainer.postService.findAll();
+        Page<Post> posts = testContainer.postService.findAll(0, "notice");
 
         //then
-        assertThat(posts.size()).isEqualTo(2);
-        assertThat(posts.get(0).getTitle()).isEqualTo("제목2");
-        assertThat(posts.get(1).getTitle()).isEqualTo("제목1");
+        assertThat(posts.getNumberOfElements()).isEqualTo(2);
+        assertThat(posts.getContent().get(0).getTitle()).isEqualTo("제목2");
+        assertThat(posts.getContent().get(1).getTitle()).isEqualTo("제목1");
     }
 
     @Test
@@ -103,7 +103,7 @@ public class PostServiceTest {
                 .notice(false)
                 .secret(true)
                 .password("qwer1234")
-                .createdAt(LocalDateTime.of(2023,10,15,13,12))
+                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
         Post saved = testContainer.postService.savePost(post);
 
@@ -128,7 +128,7 @@ public class PostServiceTest {
                 .notice(false)
                 .secret(false)
                 .password("qwer1234")
-                .createdAt(LocalDateTime.of(2023,10,15,13,12))
+                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
         Post post2 = Post.builder()
                 .title("제목2")
@@ -137,7 +137,7 @@ public class PostServiceTest {
                 .notice(false)
                 .secret(true)
                 .password("qwer1234")
-                .createdAt(LocalDateTime.of(2023,10,15,13,12))
+                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
         Post post3 = Post.builder()
                 .title("제목3")
@@ -146,7 +146,7 @@ public class PostServiceTest {
                 .notice(false)
                 .secret(false)
                 .password("qwer1234")
-                .createdAt(LocalDateTime.of(2023,10,15,13,12))
+                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
         Post saved1 = testContainer.postService.savePost(post1);
         testContainer.postService.savePost(post2);
@@ -172,7 +172,7 @@ public class PostServiceTest {
                 .notice(false)
                 .secret(false)
                 .password("qwer1234")
-                .createdAt(LocalDateTime.of(2023,10,15,13,12))
+                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
         Post post2 = Post.builder()
                 .title("제목2")
@@ -181,7 +181,7 @@ public class PostServiceTest {
                 .notice(false)
                 .secret(true)
                 .password("qwer1234")
-                .createdAt(LocalDateTime.of(2023,10,15,13,12))
+                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
         Post post3 = Post.builder()
                 .title("제목3")
@@ -190,7 +190,7 @@ public class PostServiceTest {
                 .notice(false)
                 .secret(false)
                 .password("qwer1234")
-                .createdAt(LocalDateTime.of(2023,10,15,13,12))
+                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
         Post saved1 = testContainer.postService.savePost(post1);
         testContainer.postService.savePost(post2);
@@ -216,7 +216,7 @@ public class PostServiceTest {
                 .notice(false)
                 .secret(false)
                 .password("qwer1234")
-                .createdAt(LocalDateTime.of(2023,10,15,13,12))
+                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
         Post saved = testContainer.postRepository.save(post);
 

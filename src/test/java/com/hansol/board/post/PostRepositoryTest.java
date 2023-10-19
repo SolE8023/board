@@ -6,6 +6,7 @@ import com.hansol.board.mock.TestContainer;
 import com.hansol.board.post.domain.Post;
 import com.hansol.board.common.domain.Writer;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,8 +23,8 @@ public class PostRepositoryTest {
                 .title("게시글 제목1")
                 .writer(Writer.builder().name("홍길동").build())
                 .content("게시글 내용1")
-                .createdAt(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .updatedAt(null)
+                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
+                .lastModifiedDate(null)
                 .secret(false)
                 .notice(false)
                 .build();
@@ -56,8 +57,8 @@ public class PostRepositoryTest {
                 .title("게시글 제목1")
                 .writer(Writer.builder().name("홍길동").build())
                 .content("게시글 내용1")
-                .createdAt(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .updatedAt(null)
+                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
+                .lastModifiedDate(null)
                 .secret(true)
                 .notice(false)
                 .password("qwer1234")
@@ -81,8 +82,8 @@ public class PostRepositoryTest {
                 .title("게시글 제목1")
                 .writer(Writer.builder().name("홍길동").build())
                 .content("게시글 내용1")
-                .createdAt(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .updatedAt(null)
+                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
+                .lastModifiedDate(null)
                 .secret(true)
                 .notice(false)
                 .password("qwer1234")
@@ -102,8 +103,8 @@ public class PostRepositoryTest {
                 .title("게시글 제목1")
                 .writer(Writer.builder().name("홍길동").build())
                 .content("게시글 내용1")
-                .createdAt(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .updatedAt(null)
+                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
+                .lastModifiedDate(null)
                 .secret(false)
                 .notice(false)
                 .password("qwer1234")
@@ -112,8 +113,8 @@ public class PostRepositoryTest {
                 .title("게시글 제목2")
                 .writer(Writer.builder().name("황진이").build())
                 .content("게시글 내용2")
-                .createdAt(LocalDateTime.of(2023, 10, 17, 15, 31))
-                .updatedAt(null)
+                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 31))
+                .lastModifiedDate(null)
                 .secret(false)
                 .notice(true)
                 .password("qwer1234")
@@ -123,9 +124,9 @@ public class PostRepositoryTest {
         testContainer.postRepository.save(post1);
         testContainer.postRepository.save(post2);
 
-        List<Post> posts = testContainer.postRepository.findOrderByNotice();
-        assertThat(posts.get(0).getId()).isEqualTo(2L);
-        assertThat(posts.get(1).getId()).isEqualTo(1L);
+        Page<Post> posts = testContainer.postRepository.findListOrderby(0,"notice");
+        assertThat(posts.getContent().get(0).getId()).isEqualTo(2L);
+        assertThat(posts.getContent().get(1).getId()).isEqualTo(1L);
     }
 
     @Test
@@ -135,8 +136,8 @@ public class PostRepositoryTest {
                 .title("게시글 제목1")
                 .writer(Writer.builder().name("홍길동").build())
                 .content("게시글 내용1")
-                .createdAt(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .updatedAt(null)
+                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
+                .lastModifiedDate(null)
                 .secret(false)
                 .notice(false)
                 .password("qwer1234")
@@ -145,8 +146,8 @@ public class PostRepositoryTest {
                 .title("게시글 제목2")
                 .writer(Writer.builder().name("황진이").build())
                 .content("게시글 내용2")
-                .createdAt(LocalDateTime.of(2023, 10, 17, 15, 31))
-                .updatedAt(null)
+                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 31))
+                .lastModifiedDate(null)
                 .secret(false)
                 .notice(false)
                 .password("qwer1234")
@@ -170,8 +171,8 @@ public class PostRepositoryTest {
                 .title("게시글 제목1")
                 .writer(Writer.builder().name("홍길동").build())
                 .content("게시글 내용1")
-                .createdAt(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .updatedAt(null)
+                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
+                .lastModifiedDate(null)
                 .secret(false)
                 .notice(false)
                 .password("qwer1234")
@@ -185,8 +186,8 @@ public class PostRepositoryTest {
                 .title("게시글 제목2")
                 .writer(Writer.builder().name("황진이").build())
                 .content("게시글 내용2")
-                .createdAt(LocalDateTime.of(2023, 10, 17, 15, 31))
-                .updatedAt(LocalDateTime.of(2023, 10, 17, 15, 32))
+                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 31))
+                .lastModifiedDate(LocalDateTime.of(2023, 10, 17, 15, 32))
                 .secret(false)
                 .notice(false)
                 .password("123123")
@@ -198,8 +199,8 @@ public class PostRepositoryTest {
         assertThat(updated.getTitle()).isEqualTo("게시글 제목2");
         assertThat(updated.getWriter().getName()).isEqualTo("황진이");
         assertThat(updated.getContent()).isEqualTo("게시글 내용2");
-        assertThat(updated.getCreatedAt()).isEqualTo(LocalDateTime.of(2023, 10, 17, 15, 31));
-        assertThat(updated.getUpdatedAt()).isEqualTo(LocalDateTime.of(2023, 10, 17, 15, 32));
+        assertThat(updated.getCreatedDate()).isEqualTo(LocalDateTime.of(2023, 10, 17, 15, 31));
+        assertThat(updated.getLastModifiedDate()).isEqualTo(LocalDateTime.of(2023, 10, 17, 15, 32));
 
     }
 
@@ -211,8 +212,8 @@ public class PostRepositoryTest {
                 .title("게시글 제목1")
                 .writer(Writer.builder().name("홍길동").build())
                 .content("게시글 내용1")
-                .createdAt(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .updatedAt(null)
+                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
+                .lastModifiedDate(null)
                 .secret(false)
                 .notice(false)
                 .password("qwer1234")
@@ -240,8 +241,8 @@ public class PostRepositoryTest {
                 .title("게시글 제목1")
                 .writer(Writer.builder().name("홍길동").build())
                 .content("게시글 내용1")
-                .createdAt(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .updatedAt(null)
+                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
+                .lastModifiedDate(null)
                 .secret(false)
                 .notice(false)
                 .build();
@@ -251,8 +252,8 @@ public class PostRepositoryTest {
                 .title("게시글 제목2")
                 .writer(Writer.builder().name("황진이").build())
                 .content("게시글 내용2")
-                .createdAt(LocalDateTime.of(2023, 10, 17, 15, 31))
-                .updatedAt(LocalDateTime.of(2023, 10, 17, 15, 31))
+                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 31))
+                .lastModifiedDate(LocalDateTime.of(2023, 10, 17, 15, 31))
                 .secret(false)
                 .notice(false)
                 .build();
