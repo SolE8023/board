@@ -1,6 +1,7 @@
 package com.hansol.board.boardInfo;
 
 import com.hansol.board.boardInfo.domain.BoardInfo;
+import com.hansol.board.common.enums.UseStatus;
 import com.hansol.board.exception.NoBoardInfoException;
 import com.hansol.board.mock.TestContainer;
 import org.assertj.core.api.Assertions;
@@ -18,7 +19,7 @@ public class BoardInfoRepositoryTest {
         BoardInfo boardInfo = BoardInfo.builder()
                 .boardName("공지사항")
                 .boardSkin("notice")
-                .comment(true)
+                .comment(UseStatus.valueOf("enable"))
                 .boardCode("notice")
                 .fileUpload(10)
                 .build();
@@ -38,7 +39,7 @@ public class BoardInfoRepositoryTest {
         BoardInfo boardInfo = BoardInfo.builder()
                 .boardName("공지사항")
                 .boardSkin("notice")
-                .comment(true)
+                .comment(UseStatus.valueOf("enable"))
                 .boardCode("notice")
                 .fileUpload(10)
                 .build();
@@ -59,7 +60,7 @@ public class BoardInfoRepositoryTest {
         BoardInfo boardInfo = BoardInfo.builder()
                 .boardName("공지사항")
                 .boardSkin("notice")
-                .comment(true)
+                .comment(UseStatus.valueOf("enable"))
                 .boardCode("notice")
                 .fileUpload(10)
                 .build();
@@ -69,7 +70,7 @@ public class BoardInfoRepositoryTest {
                 .id(saved.getId())
                 .boardName("자유게시판")
                 .boardSkin("free")
-                .comment(true)
+                .comment(UseStatus.valueOf("enable"))
                 .boardCode("free")
                 .fileUpload(10)
                 .build();
@@ -91,7 +92,7 @@ public class BoardInfoRepositoryTest {
         BoardInfo boardInfo = BoardInfo.builder()
                 .boardName("공지사항")
                 .boardSkin("notice")
-                .comment(true)
+                .comment(UseStatus.valueOf("enable"))
                 .boardCode("notice")
                 .fileUpload(10)
                 .build();
@@ -114,14 +115,14 @@ public class BoardInfoRepositoryTest {
         BoardInfo boardInfo1 = BoardInfo.builder()
                 .boardName("공지사항")
                 .boardSkin("notice")
-                .comment(true)
+                .comment(UseStatus.valueOf("enable"))
                 .boardCode("notice")
                 .fileUpload(10)
                 .build();
         BoardInfo boardInfo2 = BoardInfo.builder()
                 .boardName("자유게시판")
                 .boardSkin("free")
-                .comment(true)
+                .comment(UseStatus.valueOf("enable"))
                 .boardCode("free")
                 .fileUpload(10)
                 .build();
