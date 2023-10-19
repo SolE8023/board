@@ -1,4 +1,4 @@
-package com.hansol.board.mock;
+package com.hansol.board.post.service;
 
 import com.hansol.board.exception.PasswordErrorException;
 import com.hansol.board.post.domain.Post;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class FakePostService implements PostService {
+public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
 
