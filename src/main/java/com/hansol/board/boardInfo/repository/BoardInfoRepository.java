@@ -14,4 +14,6 @@ public interface BoardInfoRepository {
     BoardInfo update(Long id, BoardInfo boardInfo);
 
     List<BoardInfo> findAll();
+
+    BoardInfo findByBoardCode(String code);
 }

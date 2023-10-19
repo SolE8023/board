@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(name = "post")
 public class PostEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
     private Long id;
     @Setter private String title;
     @Setter private String writer;

@@ -19,10 +19,10 @@
             <div>
                 <select name="boardSkin">
                     <option value="">선택해주세요</option>
-                    <option th:each="skinFolder : ${boardSkinFolders}"
-                            th:if="${not #lists.isEmpty(boardSkinFolders)}"
-                            th:value="${skinFolder}"
-                            th:text="${skinFolder}">
+                    <option th:each="skin : ${skins}"
+                            th:if="${not #lists.isEmpty(skins)}"
+                            th:value="${skin}"
+                            th:text="${skin}">
                     </option>
                 </select>
             </div>
@@ -46,20 +46,18 @@
     <hr>
 
     <div class="board-list">
-        <div th:unless="${not #lists.isEmpty(boardInfoList)}">
+        <div th:unless="${not #lists.isEmpty(infos)}">
             <span style="grid-column: 1 / 5; padding: 10px; margin-top: 4px;">데이터가 없습니다</span>
         </div>
-        <div th:each="boardInfo : ${boardInfoList}" th:if="${not #lists.isEmpty(boardInfoList)}">
-            <a th:href="@{/admin/{id}(id=${boardInfo.id})}"><span th:text="${boardInfo.boardName}">공지사항</span></a>
-            <a th:href="@{/admin/{id}(id=${boardInfo.id})}"><span th:text="${boardInfo.boardCode}">notice</span></a>
-            <a th:href="@{/admin/{id}(id=${boardInfo.id})}"><span th:text="${boardInfo.boardSkin}">notice</span></a>
-            <span><button th:data-id="${boardInfo.id}" th:data-code="${boardInfo.boardCode}" class="delete-btn">삭제</button></span>
+        <div th:each="info : ${infos}" th:if="${not #lists.isEmpty(infos)}">
+            <a th:href="@{/admin/view/{id}(id=${info.id})}"><span th:text="${info.boardName}">공지사항</span></a>
+            <a th:href="@{/admin/view/{id}(id=${info.id})}"><span th:text="${info.boardCode}">notice</span></a>
+            <a th:href="@{/admin/view/{id}(id=${info.id})}"><span th:text="${info.boardSkin}">notice</span></a>
+            <span><button th:data-id="${info.id}" th:data-code="${info.boardCode}" class="delete-btn">삭제</button></span>
         </div>
     </div>
 </div>
-<script type="module">
-    import {handleResponse} from "/js/handleResponse.js";
-
+<script>
     document.querySelector(".add-btn").addEventListener("click", addBoard)
 
     document.querySelectorAll(".delete-btn").forEach(deleteBtnElem => {
@@ -109,12 +107,9 @@
         }
 
         fetch(url, options)
-            .then(handleResponse)
-            .then(data => {
-                if (data) {
-                    alert("게시판이 추가되었습니다")
-                    location.reload()
-                }
+            .then(res => {
+                if (res.ok) location.reload()
+                else alert("실패! 값이 누락되었습니다.")
             })
             .catch(error => console.log(error))
     }
@@ -137,12 +132,10 @@
         }
 
         fetch(url, options)
-            .then(response => {
-                if (response.status === 204) {
+            .then(res => {
+                if (res.ok) {
                     alert("게시판이 성공적으로 삭제되었습니다.")
                     location.reload()
-                } else if (response.status === 404) {
-                    alert("삭제할 게시판이 존재하지 않습니다.");
                 } else {
                     alert("삭제 요청이 실패하였습니다.")
                 }

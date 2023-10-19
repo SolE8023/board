@@ -45,4 +45,9 @@ public class FakeBoardInfoRepository implements BoardInfoRepository {
     public List<BoardInfo> findAll() {
         return boardInfos;
     }
+
+    @Override
+    public BoardInfo findByBoardCode(String code) {
+        return null;
+    }
 }

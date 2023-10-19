@@ -8,61 +8,61 @@
 
 <div class="outer-wrap">
     <div class="inner-wrap">
-        <input type="hidden" name="boardInfoId" th:value="${boardInfo.id}">
+        <input type="hidden" name="id" th:value="${info.id}">
         <div class="row-wrap">
             <span>게시판 이름</span>
-            <input class="w-100" name="boardName" type="text" th:value="${boardInfo.boardName}">
+            <input class="w-100" name="boardName" type="text" th:value="${info.boardName}">
         </div>
         <div class="row-wrap">
             <span>게시판 코드</span>
-            <input class="w-100" name="boardCode" type="text" th:value="${boardInfo.boardCode}" readonly>
+            <input class="w-100" name="boardCode" type="text" th:value="${info.boardCode}" readonly>
         </div>
         <div class="row-wrap">
             <span>게시판 스킨</span>
             <select name="boardSkin">
                 <option value="">선택해주세요</option>
-                <option th:each="skinFolder : ${boardSkinFolders}"
-                        th:if="${not #lists.isEmpty(boardSkinFolders)}"
-                        th:text="${skinFolder}"
-                        th:value="${skinFolder}"
-                        th:selected="${boardInfo.boardSkin == skinFolder}">
+                <option th:each="skin : ${skins}"
+                        th:if="${not #lists.isEmpty(skins)}"
+                        th:text="${skin}"
+                        th:value="${skin}"
+                        th:selected="${info.boardSkin == skin}">
                 </option>
             </select>
         </div>
         <div class="row-wrap">
             <span>업로드 파일 갯수</span>
-            <select name="uploadFileNumber">
+            <select name="fileUpload">
                 <option value="0">사용안함</option>
                 <option th:each="num : ${#numbers.sequence(1, 10)}"
                         th:text="${num + '개'}"
                         th:value="${num}"
-                        th:selected="${boardInfo.uploadFileNumber == num}">
+                        th:selected="${info.fileUpload == num}">
                 </option>
             </select>
         </div>
         <div class="row-wrap">
             <span>답글 사용 여부</span>
-            <select name="replyUsageStatus">
-                <option th:each="status : ${usageStatus}"
-                        th:text="${status.koreanLabel}"
+            <select name="reply">
+                <option th:each="status : ${useStatus}"
+                        th:text="${status.label}"
                         th:value="${status}"
-                        th:selected="${boardInfo.replyUsageStatus == status}">
+                        th:selected="${info.reply == status}">
                 </option>
             </select>
         </div>
         <div class="row-wrap">
             <span>댓글 사용 여부</span>
-            <select name="commentUsageStatus">
-                <option th:each="status : ${usageStatus}"
-                        th:text="${status.koreanLabel}"
+            <select name="comment">
+                <option th:each="status : ${useStatus}"
+                        th:text="${status.label}"
                         th:value="${status}"
-                        th:selected="${boardInfo.commentUsageStatus == status}">
+                        th:selected="${info.comment == status}">
                 </option>
             </select>
         </div>
         <div class="form-button">
             <button class="regist-btn" onclick="validateForm()">수정</button>
-            <button class="cancel-btn" onclick="location.href='/admin'">취소</button>
+            <button class="cancel-btn" onclick="location.href='/admin/list'">취소</button>
         </div>
 
     </div>
@@ -75,7 +75,7 @@
         let boardNameElem = document.querySelector("input[name=boardName]")
         let boardCodeElem = document.querySelector("input[name=boardCode]")
         let boardSkinElem = document.querySelector("select[name=boardSkin]")
-        let uploadFileNumberElem = document.querySelector("select[name=uploadFileNumber]")
+        let fileUploadElem = document.querySelector("select[name=fileUpload]")
 
         if (boardNameElem.value === "") {
             alert("게시판 이름을 작성해주세요.")
@@ -95,9 +95,9 @@
             return
         }
 
-        if (uploadFileNumberElem.value === "") {
+        if (fileUploadElem.value === "") {
             alert("업로드 할 파일 갯수를 선택해주세요")
-            uploadFileNumberElem.focus()
+            fileUploadElem.focus()
             return
         }
 
@@ -105,13 +105,13 @@
     }
 
     function updateBoardInfo() {
-        const id = document.querySelector("input[name=boardInfoId]").value
+        const id = document.querySelector("input[name=id]").value
         const boardName = document.querySelector("input[name=boardName]").value
         const boardCode = document.querySelector("input[name=boardCode]").value
         const boardSkin = document.querySelector("select[name=boardSkin]").value
-        const uploadFileNumber = document.querySelector("select[name=uploadFileNumber]").value
-        const replyUsageStatus = document.querySelector("select[name=replyUsageStatus]").value
-        const commentUsageStatus = document.querySelector("select[name=commentUsageStatus]").value
+        const fileUpload = document.querySelector("select[name=fileUpload]").value
+        const reply = document.querySelector("select[name=reply]").value
+        const comment = document.querySelector("select[name=comment]").value
 
         const url = `/api/v1/board-info/${id}`
         const options = {
@@ -119,19 +119,15 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({id,boardName, boardCode, boardSkin, uploadFileNumber, replyUsageStatus, commentUsageStatus})
+            body: JSON.stringify({id,boardName, boardCode, boardSkin, fileUpload, reply, comment})
         }
 
         fetch(url, options)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`)
+            .then(res => {
+                if (res.ok) {
+                    alert("수정이 완료되었습니다.")
+                    location.reload()
                 }
-                return response.json()
-            })
-            .then(data => {
-                alert("수정이 완료되었습니다.")
-                location.reload()
             })
             .catch(err => console.error('An error occurred:', err))
     }
