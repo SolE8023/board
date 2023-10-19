@@ -23,4 +23,8 @@ public interface PostRepository {
     Boolean passwordCheck(Long id, String password);
 
     List<Post> findOrderByCreatedAt();
+
+    Boolean isSecretPost(Long id);
+
+    List<Post> findAll();
 }

@@ -102,4 +102,19 @@ public class FakePostRepository implements PostRepository {
         posts.sort(Comparator.comparing(Post::getCreatedAt));
         return posts;
     }
+
+    @Override
+    public Boolean isSecretPost(Long id) {
+        Optional<Post> findPost = findById(id);
+        if (findPost.isPresent()) {
+            return findPost.get().getSecret();
+        } else {
+            throw new IllegalArgumentException("잘못된 postId 입니다.");
+        }
+    }
+
+    @Override
+    public List<Post> findAll() {
+        return posts;
+    }
 }
