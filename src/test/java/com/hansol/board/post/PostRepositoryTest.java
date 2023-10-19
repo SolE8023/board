@@ -157,7 +157,7 @@ public class PostRepositoryTest {
         testContainer.postRepository.save(post1);
         testContainer.postRepository.save(post2);
 
-        List<Post> posts = testContainer.postRepository.findOrderByCreatedAt();
+        List<Post> posts = testContainer.postRepository.findListOrderby(0, "notice").getContent();
         assertThat(posts.get(0).getId()).isEqualTo(1L);
         assertThat(posts.get(1).getId()).isEqualTo(2L);
     }
@@ -261,28 +261,28 @@ public class PostRepositoryTest {
         testContainer.postRepository.save(post1);
         testContainer.postRepository.save(post2);
 
-        List<Post> findByTitle1 = testContainer.postRepository.findByConditions("title", "게시글 제목");
-        List<Post> findByTitle2 = testContainer.postRepository.findByConditions("title", "1");
-        List<Post> findByTitle3 = testContainer.postRepository.findByConditions("title", "2");
-        List<Post> findByWriter1 = testContainer.postRepository.findByConditions("writer", "홍길동");
-        List<Post> findByWriter2 = testContainer.postRepository.findByConditions("writer", "황진이");
-        List<Post> findByContent1 = testContainer.postRepository.findByConditions("content", "게시글 내용");
-        List<Post> findByContent2 = testContainer.postRepository.findByConditions("content", "1");
-        List<Post> findByContent3 = testContainer.postRepository.findByConditions("content", "2");
-        List<Post> findByAllCondition1 = testContainer.postRepository.findByConditions("all", "2");
-        List<Post> findByAllCondition2 = testContainer.postRepository.findByConditions("all", "게시글");
-        List<Post> findByAllCondition3 = testContainer.postRepository.findByConditions("all", "황진이");
+        Page<Post> findByTitle1 = testContainer.postRepository.findByConditions("title", "게시글 제목");
+        Page<Post> findByTitle2 = testContainer.postRepository.findByConditions("title", "1");
+        Page<Post> findByTitle3 = testContainer.postRepository.findByConditions("title", "2");
+        Page<Post> findByWriter1 = testContainer.postRepository.findByConditions("writer", "홍길동");
+        Page<Post> findByWriter2 = testContainer.postRepository.findByConditions("writer", "황진이");
+        Page<Post> findByContent1 = testContainer.postRepository.findByConditions("content", "게시글 내용");
+        Page<Post> findByContent2 = testContainer.postRepository.findByConditions("content", "1");
+        Page<Post> findByContent3 = testContainer.postRepository.findByConditions("content", "2");
+        Page<Post> findByAllCondition1 = testContainer.postRepository.findByConditions("all", "2");
+        Page<Post> findByAllCondition2 = testContainer.postRepository.findByConditions("all", "게시글");
+        Page<Post> findByAllCondition3 = testContainer.postRepository.findByConditions("all", "황진이");
 
-        assertThat(findByTitle1.size()).isEqualTo(2);
-        assertThat(findByTitle2.size()).isEqualTo(1);
-        assertThat(findByTitle3.size()).isEqualTo(1);
-        assertThat(findByWriter1.size()).isEqualTo(1);
-        assertThat(findByWriter2.size()).isEqualTo(1);
-        assertThat(findByContent1.size()).isEqualTo(2);
-        assertThat(findByContent2.size()).isEqualTo(1);
-        assertThat(findByContent3.size()).isEqualTo(1);
-        assertThat(findByAllCondition1.size()).isEqualTo(1);
-        assertThat(findByAllCondition2.size()).isEqualTo(2);
-        assertThat(findByAllCondition3.size()).isEqualTo(1);
+        assertThat(findByTitle1.getContent().size()).isEqualTo(2);
+        assertThat(findByTitle2.getContent().size()).isEqualTo(1);
+        assertThat(findByTitle3.getContent().size()).isEqualTo(1);
+        assertThat(findByWriter1.getContent().size()).isEqualTo(1);
+        assertThat(findByWriter2.getContent().size()).isEqualTo(1);
+        assertThat(findByContent1.getContent().size()).isEqualTo(2);
+        assertThat(findByContent2.getContent().size()).isEqualTo(1);
+        assertThat(findByContent3.getContent().size()).isEqualTo(1);
+        assertThat(findByAllCondition1.getContent().size()).isEqualTo(1);
+        assertThat(findByAllCondition2.getContent().size()).isEqualTo(2);
+        assertThat(findByAllCondition3.getContent().size()).isEqualTo(1);
     }
 }

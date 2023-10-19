@@ -1,6 +1,7 @@
 package com.hansol.board.post.controller;
 
 import com.hansol.board.boardInfo.repository.BoardInfoRepository;
+import com.hansol.board.common.PageSetting;
 import com.hansol.board.post.domain.Post;
 import com.hansol.board.post.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class PostController {
     public String list(Model model,
                        @PathVariable String code,
                        @RequestParam(required = false, defaultValue = "0") int page) {
-        Page<Post> posts = postService.findAll(page, code);
+        Page<Post> posts = postService.findListOrderby(page, code);
         model.addAttribute("posts", posts);
         model.addAttribute("boards", boardInfoRepository.findAll());
         model.addAttribute("boardName", boardInfoRepository.findByBoardCode(code).getBoardName());

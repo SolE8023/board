@@ -1,12 +1,13 @@
 package com.hansol.board.common;
 
-import com.hansol.board.post.domain.Post;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.ui.Model;
 
+@Slf4j
 public class PageSetting {
     public static final int PAGINATION_SIZE = 10;
     public static final int POSTS_PER_PAGE = 15;
@@ -19,36 +20,38 @@ public class PageSetting {
     }
 
     public static <T> int getPrevPage(Page<T> list) {
-        int currentPage = 1;
-        if(list.getNumber() != 0) currentPage = list.getNumber();
-        int prevPage = (PageSetting.PAGINATION_SIZE/currentPage) * PAGINATION_SIZE - 1;
-        if(prevPage < 0) prevPage = 0;
-        return prevPage;
+        int prevPage = getStartPage(list);
+        if(prevPage != 0) return prevPage-1;
+        else return 0;
     }
 
     public static <T> int getNextPage(Page<T> list) {
-        int currentPage = 1;
-        if(list.getNumber() != 0) currentPage = list.getNumber();
-        int nextPage = (PageSetting.PAGINATION_SIZE/currentPage) * PAGINATION_SIZE + PAGINATION_SIZE;
-        if(nextPage > list.getTotalPages() - 1) nextPage = list.getTotalPages() - 1;
-        return nextPage;
+        int nextPage = getEndPage(list);
+
+        if(list.getTotalPages() == 0) return 0;
+        else if(nextPage > list.getTotalPages() - 1) return list.getTotalPages() - 1;
+        else return nextPage + 1;
     }
 
     public static <T> int getTotalPages(Page<T> list) {
-        return list.getTotalPages() - 1;
+        if(list.getTotalPages() == 0) return 0;
+        else return list.getTotalPages() - 1;
     }
 
     public static <T> int getStartPage(Page<T> list) {
         int currentPage = 1;
         if(list.getNumber() != 0) currentPage = list.getNumber();
-        return (PageSetting.PAGINATION_SIZE/currentPage) * PAGINATION_SIZE;
+        int startPage = (currentPage/PageSetting.PAGINATION_SIZE) * PAGINATION_SIZE;
+        if(startPage == 0) startPage = 1;
+        return startPage;
     }
 
     public static <T> int getEndPage(Page<T> list) {
         int currentPage = 1;
         if(list.getNumber() != 0) currentPage = list.getNumber();
-        int endPage = (PageSetting.PAGINATION_SIZE/currentPage) * PAGINATION_SIZE + PAGINATION_SIZE - 1;
+        int endPage = (currentPage/(PageSetting.PAGINATION_SIZE)) * PAGINATION_SIZE + PAGINATION_SIZE;
         if(endPage > list.getTotalPages() - 1) endPage = list.getTotalPages() - 1;
+        if(list.getTotalPages() == 0) endPage = 1;
         return endPage;
     }
 
@@ -66,5 +69,6 @@ public class PageSetting {
         model.addAttribute("finalPage", finalPage);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
+        model.addAttribute("page", list.getNumber());
     }
 }

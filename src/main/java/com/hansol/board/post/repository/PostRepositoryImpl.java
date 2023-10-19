@@ -2,6 +2,7 @@ package com.hansol.board.post.repository;
 
 import com.hansol.board.common.PageSetting;
 import com.hansol.board.exception.NoPostException;
+import com.hansol.board.exception.PasswordErrorException;
 import com.hansol.board.post.domain.Post;
 import com.hansol.board.post.domain.PostEntity;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +17,10 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepository{
-    private final PostJpaRepository postJpaRepository;
+    private final PostJpaRepository jpaRepository;
     @Override
     public Optional<Post> findById(Long postId) {
-        Optional<PostEntity> findPost = postJpaRepository.findById(postId);
+        Optional<PostEntity> findPost = jpaRepository.findById(postId);
         if (findPost.isPresent()) {
             return Optional.ofNullable(Post.from(findPost.get()));
         } else {
@@ -29,14 +30,14 @@ public class PostRepositoryImpl implements PostRepository{
 
     @Override
     public Post save(Post post) {
-        PostEntity saved = postJpaRepository.save(PostEntity.from(post));
+        PostEntity saved = jpaRepository.save(PostEntity.from(post));
         return Post.from(saved);
     }
 
     @Override
     @Transactional
     public Post update(Post post, String password) {
-        Optional<PostEntity> findPost = postJpaRepository.findByIdAndPassword(post.getId(), password);
+        Optional<PostEntity> findPost = jpaRepository.findByIdAndPassword(post.getId(), password);
         findPost.ifPresent(p -> {
             p.setTitle(post.getTitle());
             p.setWriter(post.getWriter().getName());
@@ -53,7 +54,7 @@ public class PostRepositoryImpl implements PostRepository{
 
     @Override
     public Optional<Post> findByIdAndAndPassword(Long id, String password) {
-        Optional<PostEntity> findPost = postJpaRepository.findByIdAndPassword(id, password);
+        Optional<PostEntity> findPost = jpaRepository.findByIdAndPassword(id, password);
         findPost.orElseThrow(NoPostException::new);
         return Optional.ofNullable(Post.from(findPost.get()));
     }
@@ -61,49 +62,58 @@ public class PostRepositoryImpl implements PostRepository{
     @Override
     public Page<Post> findListOrderby(int page, String code) {
         Pageable pageable = PageSetting.getPostPageable(page);
-        Page<PostEntity> list = postJpaRepository.findListOrderby(code, pageable);
+        Page<PostEntity> list = jpaRepository.findListOrderby(code, pageable);
         return list.map(Post::from);
     }
 
     @Override
     public void remove(Long id, String password) {
-
+        if (passwordCheck(id, password)) {
+            jpaRepository.deleteById(id);
+        } else {
+            throw new PasswordErrorException();
+        }
     }
 
     @Override
-    public List<Post> findByConditions(String condition, String search) {
+    public Page<Post> findByConditions(String condition, String search) {
+        //querydsl로 해결해 보기
         return null;
     }
 
     @Override
     public Boolean passwordCheck(Long id, String password) {
-        return null;
-    }
+        Optional<PostEntity> findPost = jpaRepository.findByIdAndPassword(id, password);
+        return findPost.isPresent();
 
-    @Override
-    public List<Post> findOrderByCreatedAt() {
-        return null;
     }
 
     @Override
     public Boolean isSecretPost(Long id) {
-        return null;
+        Optional<PostEntity> findPost = jpaRepository.findById(id);
+        if (findPost.isPresent()) {
+            return findPost.get().getSecret();
+        } else {
+            throw new NoPostException();
+        }
     }
 
     @Override
-    public Page<Post> findAll(int page, String code) {
-        return null;
+    public List<Post> findAll(int page, String code) {
+        Pageable pageable = PageSetting.getPostPageable(page);
+        Page<PostEntity> posts = jpaRepository.findListOrderby(code, pageable);
+        return posts.stream().map(Post::from).toList();
     }
 
     @Override
     public Optional<Post> findPrevPost(Long id) {
-        Long prevId = postJpaRepository.findPrevId(id);
+        Long prevId = jpaRepository.findPrevId(id);
         return findById(prevId);
     }
 
     @Override
     public Optional<Post> findNextPost(Long id) {
-        Long nextId = postJpaRepository.findNextId(id);
+        Long nextId = jpaRepository.findNextId(id);
         return findById(nextId);
     }
 }

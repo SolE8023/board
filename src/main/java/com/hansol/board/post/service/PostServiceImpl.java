@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,8 +22,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> findAll(int page, String code) {
-        return postRepository.findAll(page, code);
+    public Page<Post> findListOrderby(int page, String code) {
+        return postRepository.findListOrderby(page, code);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.hansol.board.common.PageSetting;
 import com.hansol.board.exception.NoPostException;
 import com.hansol.board.exception.PasswordErrorException;
 import com.hansol.board.post.domain.Post;
+import com.hansol.board.post.domain.PostEntity;
 import com.hansol.board.post.repository.PostRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -53,14 +54,13 @@ public class FakePostRepository implements PostRepository {
 
     @Override
     public Page<Post> findListOrderby(int page, String code) {
-        posts.sort(Comparator.comparing(Post::getNotice).reversed());
+        posts.sort(Comparator
+                .comparing(Post::getNotice).reversed()
+                .thenComparing(Post::getCreatedDate));
 
         Pageable pageable = PageSetting.getPostPageable(page);
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), posts.size());
-        List<Post> subList = posts.subList(start, end);
 
-        return new PageImpl<>(subList, pageable, posts.size());
+        return new PageImpl<>(posts, pageable, posts.size());
     }
 
     @Override
@@ -73,7 +73,7 @@ public class FakePostRepository implements PostRepository {
     }
 
     @Override
-    public List<Post> findByConditions(String condition, String search) {
+    public Page<Post> findByConditions(String condition, String search) {
         List<Post> matchingPosts = new ArrayList<>();
         for(Post post : posts){
             if ("all".equals(condition) || "title".equals(condition)) {
@@ -94,7 +94,9 @@ public class FakePostRepository implements PostRepository {
                 }
             }
         }
-        return matchingPosts;
+
+        Pageable pageable = PageSetting.getPostPageable(0);
+        return new PageImpl<>(matchingPosts, pageable, matchingPosts.size());
     }
 
     @Override
@@ -108,12 +110,6 @@ public class FakePostRepository implements PostRepository {
     }
 
     @Override
-    public List<Post> findOrderByCreatedAt() {
-        posts.sort(Comparator.comparing(Post::getCreatedDate));
-        return posts;
-    }
-
-    @Override
     public Boolean isSecretPost(Long id) {
         Optional<Post> findPost = findById(id);
         if (findPost.isPresent()) {
@@ -124,17 +120,11 @@ public class FakePostRepository implements PostRepository {
     }
 
     @Override
-    public Page<Post> findAll(int page, String code) {
+    public List<Post> findAll(int page, String code) {
         posts.sort(Comparator
                 .comparing(Post::getNotice).reversed()
                 .thenComparing(Post::getCreatedDate));
-
-        Pageable pageable = PageSetting.getPostPageable(page);
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), posts.size());
-        List<Post> subList = posts.subList(start, end);
-
-        return new PageImpl<>(subList, pageable, posts.size());
+        return posts;
     }
 
     @Override

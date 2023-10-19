@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -84,7 +83,7 @@ public class PostServiceTest {
         Post saved2 = testContainer.postService.savePost(post2);
 
         //when
-        Page<Post> posts = testContainer.postService.findAll(0, "notice");
+        Page<Post> posts = testContainer.postService.findListOrderby(0, "notice");
 
         //then
         assertThat(posts.getNumberOfElements()).isEqualTo(2);

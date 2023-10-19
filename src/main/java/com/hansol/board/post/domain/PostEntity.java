@@ -1,7 +1,6 @@
 package com.hansol.board.post.domain;
 
 import com.hansol.board.common.domain.BaseEntity;
-import com.hansol.board.common.domain.Writer;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

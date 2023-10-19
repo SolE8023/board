@@ -19,15 +19,13 @@ public interface PostRepository {
 
     void remove(Long id, String password);
 
-    List<Post> findByConditions(String condition, String search);
+    Page<Post> findByConditions(String condition, String search);
 
     Boolean passwordCheck(Long id, String password);
 
-    List<Post> findOrderByCreatedAt();
-
     Boolean isSecretPost(Long id);
 
-    Page<Post> findAll(int age, String code);
+    List<Post> findAll(int page, String code);
 
     Optional<Post> findPrevPost(Long id);
 
