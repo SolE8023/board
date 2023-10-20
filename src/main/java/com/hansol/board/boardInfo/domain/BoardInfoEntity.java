@@ -20,7 +20,7 @@ public class BoardInfoEntity {
     @Setter private String boardSkin;
     @Setter @Enumerated(EnumType.STRING) private UseStatus comment;
     @Setter private String boardCode;
-    @Setter private Integer fileUpload;
+    @Setter private int fileUpload;
     @Setter @Enumerated(EnumType.STRING) private UseStatus reply;
 
     @Builder

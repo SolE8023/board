@@ -1,59 +1,62 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header.html :: header}"></head>
 
 <body>
 <link href="/css/gallery.css" rel="stylesheet" type="text/css">
 
-<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${boardCode})}"></nav>
+<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${code})}"></nav>
 
 <div class="form-wrap">
     <div class="form">
-        <input name="boardCode" th:value="${boardCode}" type="hidden">
-        <div class="form-item">
-            <span>제목</span>
-            <input class="w-100" name="title" type="text">
-        </div>
-        <div class="form-item">
-            <span>이름</span>
-            <input class="w-100" name="writerName" th:value="${name}" type="text">
-        </div>
-        <div class="form-item">
-            <span class="editor-label">내용</span>
-            <div class="editor-wrap">
-                <div id="toolbar-container"></div>
-                <div id="editor"></div>
+        <form th:action th:object="${form}" method="post">
+            <input th:field="*{code}" type="hidden">
+            <input th:field="*{content}" type="hidden">
+            <div class="form-item">
+                <span>제목</span>
+                <input class="w-100" th:field="*{title}" type="text">
             </div>
-        </div>
-        <div class="upload-item" th:if="${uploadFileNumber != 0}">
-            <span>첨부파일</span>
-            <span class="upload-group">
-                <span class="upload-wrap" th:each="num : ${#numbers.sequence(1, uploadFileNumber)}">
-                    <input class="upload-input" multiple name="files"
+            <div class="form-item">
+                <span>이름</span>
+                <input class="w-100" th:field="*{writer}" type="text">
+            </div>
+            <div class="form-item">
+                <span class="editor-label">내용</span>
+                <div class="editor-wrap">
+                    <div id="toolbar-container"></div>
+                    <div id="editor"></div>
+                </div>
+            </div>
+            <div class="upload-item" th:if="${form.fileUpload != 0}">
+                <span>첨부파일</span>
+                <span class="upload-group">
+                <span class="upload-wrap" th:each="num : ${#numbers.sequence(1, form.fileUpload)}">
+                    <input class="upload-input" multiple th:field="*{files}"
                            onchange="updateFileName(this)"
                            th:id="'upload-input' + ${num}" type="file"/>
                     <span class="file-name">파일을 선택하세요</span>
                     <label class="upload-button" th:for="'upload-input' + ${num}">파일 선택</label>
                 </span>
             </span>
-        </div>
-        <div class="form-button">
-            <button class="regist-btn" onclick="validateForm()">등록</button>
-            <button class="cancel-btn">취소</button>
-        </div>
+            </div>
+            <div class="form-button">
+                <button class="regist-btn" onclick="validateForm()">등록</button>
+                <button class="cancel-btn">취소</button>
+            </div>
+        </form>
     </div>
 </div>
 
 
 <script>
     let theEditor;
-    const boardCode = document.querySelector("input[name=boardCode]").value
+    const code = document.querySelector("input[name=code]").value
 
     DecoupledEditor
         .create(document.querySelector('#editor'), {
             language: 'ko',
             ckfinder: {
-                uploadUrl: `/api/v1/board/files/upload?boardCode=${boardCode}`
+                uploadUrl: `/post/file/upload?code=${code}`
             },
         })
         .then(editor => {
@@ -92,14 +95,14 @@
     }
 
     function createPost() {
-        const boardCode = document.querySelector("input[name=boardCode]").value
+        const code = document.querySelector("input[name=code]").value
         const title = document.querySelector("input[name=title]").value
         const writerName = document.querySelector("input[name=writerName]").value
         const content = theEditor.getData()
         const files = document.querySelectorAll(".upload-input")
 
         let formData = new FormData()
-        formData.append("boardCode", boardCode)
+        formData.append("code", code)
         formData.append("title", title)
         formData.append("writerName", writerName)
         formData.append("content", content)
