@@ -18,16 +18,16 @@
     </div>
 
     <div class="board-data" th:each="post, iterStat : ${posts}">
-        <a th:href="@{/board/{code}/view/{id}(code=${code}, id=${post.id})}">
+        <a th:href="@{/post/{code}/view/{id}(code=${code}, id=${post.id})}">
             <div th:text="${startNumber + iterStat.index}">1</div>
         </a>
-        <a th:href="@{/board/{code}/view/{id}(code=${code}, id=${post.id})}">
+        <a th:href="@{/post/{code}/view/{id}(code=${code}, id=${post.id})}">
             <div th:text="${post.title}">테스트 제목입니다.</div>
         </a>
-        <a th:href="@{/board/{code}/view/{id}(code=${code}, id=${post.id})}">
-            <div th:text="${post.writerName}">김한솔</div>
+        <a th:href="@{/post/{code}/view/{id}(code=${code}, id=${post.id})}">
+            <div th:text="${post.writer}">김한솔</div>
         </a>
-        <a th:href="@{/board/{code}/view/{id}(code=${code}, id=${post.id})}">
+        <a th:href="@{/post/{code}/view/{id}(code=${code}, id=${post.id})}">
             <div th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd')}">2021.02.20</div>
         </a>
     </div>
@@ -38,12 +38,12 @@
 
     <div class="page-wrap">
         <a href="./list?page=0"><span><<</span></a>
-        <a th:href="@{/board/{code}/list(code=${code} ,page=${prevPage})}"><span><</span></a>
-        <a th:each="i : ${#numbers.sequence(startPage, endPage)}" th:href="@{/board/{code}/list(code=${code}, page=${i - 1})}">
+        <a th:href="@{/post/{code}/list(code=${code} ,page=${prevPage})}"><span><</span></a>
+        <a th:each="i : ${#numbers.sequence(startPage, endPage)}" th:href="@{/post/{code}/list(code=${code}, page=${i - 1})}">
             <span th:class="${i == page + 1} ? 'active' : ''" th:text="${i}">1</span>
         </a>
-        <a th:href="@{/board/{code}/list(code=${code}, page=${nextPage})}"><span>></span></a>
-        <a th:href="@{/board/{code}/list(code=${code}, page=${finalPage})}"><span>>></span></a>
+        <a th:href="@{/post/{code}/list(code=${code}, page=${nextPage})}"><span>></span></a>
+        <a th:href="@{/post/{code}/list(code=${code}, page=${finalPage})}"><span>>></span></a>
     </div>
 </div>
 

@@ -12,6 +12,8 @@ public interface PostService {
 
     Post savePost(Post post);
 
+    Post update(Post post, String password);
+
     Optional<Post> findSecretPostById(Long id, String password);
 
     Post prevPost(Long id);

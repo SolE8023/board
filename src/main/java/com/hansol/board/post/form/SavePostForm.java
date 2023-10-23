@@ -24,11 +24,11 @@ public class SavePostForm {
     private String password;
     @NotEmpty
     private String code;
-    private int fileUpload;
+    private Integer fileUpload;
     private List<MultipartFile> files;
 
     @Builder
-    public SavePostForm(String title, String writer, String content, LocalDateTime createdDate, LocalDateTime lastModifiedDate, Boolean secret, Boolean notice, String password, String code, int fileUpload, List<MultipartFile> files) {
+    public SavePostForm(String title, String writer, String content, LocalDateTime createdDate, LocalDateTime lastModifiedDate, Boolean secret, Boolean notice, String password, String code, Integer fileUpload, List<MultipartFile> files) {
         this.title = title;
         this.writer = writer;
         this.content = content;

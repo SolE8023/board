@@ -1,5 +1,9 @@
 package com.hansol.board.post.form;
 
+import com.hansol.board.post.domain.Post;
+import com.hansol.board.post.domain.PostEntity;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,20 +15,27 @@ import java.util.List;
 @Getter
 @Setter
 public class EditPostForm {
+    @NotNull
+    private Long id;
+    @NotEmpty
     private String title;
+    @NotEmpty
     private String writer;
+    @NotEmpty
     private String content;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
     private Boolean secret;
     private Boolean notice;
     private String password;
+    @NotEmpty
     private String code;
-    private int fileUpload;
+    private Integer fileUpload;
     private List<MultipartFile> files;
 
     @Builder
-    public EditPostForm(String title, String writer, String content, LocalDateTime createdDate, LocalDateTime lastModifiedDate, Boolean secret, Boolean notice, String password, String code, int fileUpload, List<MultipartFile> files) {
+    public EditPostForm(Long id, String title, String writer, String content, LocalDateTime createdDate, LocalDateTime lastModifiedDate, Boolean secret, Boolean notice, String password, String code, Integer fileUpload, List<MultipartFile> files) {
+        this.id = id;
         this.title = title;
         this.writer = writer;
         this.content = content;
@@ -36,5 +47,20 @@ public class EditPostForm {
         this.code = code;
         this.fileUpload = fileUpload;
         this.files = files;
+    }
+
+    public static EditPostForm from(Post post) {
+        return EditPostForm.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .writer(post.getWriter())
+                .content(post.getContent())
+                .createdDate(post.getCreatedDate())
+                .lastModifiedDate(post.getLastModifiedDate())
+                .secret(post.getSecret())
+                .notice(post.getNotice())
+                .password(post.getPassword())
+                .code(post.getCode())
+                .build();
     }
 }

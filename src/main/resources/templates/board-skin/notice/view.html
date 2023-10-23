@@ -5,7 +5,7 @@
 <body>
 <link href="/css/notice.css" rel="stylesheet" type="text/css">
 
-<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${boardCode})}"></nav>
+<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${code})}"></nav>
 
 <div class="board-wrap">
     <h1 class="board-info-title">공지사항</h1>
@@ -28,14 +28,14 @@
     </div>
 
     <div class="btn-wrap">
-        <button class="white-btn" onclick="goToListPage(this.getAttribute('data-code'))" th:data-code="${boardCode}"
+        <button class="white-btn" onclick="goToListPage(this.getAttribute('data-code'))" th:data-code="${code}"
                 type="button">목록으로
         </button>
-        <button class="white-btn" onclick="goToEditPage(this.getAttribute('data-code'), this.getAttribute('data-id'))" th:data-code="${boardCode}" th:data-id="${post.id}"
+        <button class="white-btn" onclick="goToEditPage(this.getAttribute('data-code'), this.getAttribute('data-id'))" th:data-code="${code}" th:data-id="${post.id}"
                 type="button">
             수정
         </button>
-        <button class="white-btn" onclick="deletePost(this.getAttribute('data-code'), this.getAttribute('data-id'))" th:data-code="${boardCode}" th:data-id="${post.id}"
+        <button class="white-btn" onclick="deletePost(this.getAttribute('data-code'), this.getAttribute('data-id'))" th:data-code="${code}" th:data-id="${post.id}"
                 type="button">삭제
         </button>
     </div>
@@ -43,33 +43,16 @@
 
 <script>
     function goToListPage(code) {
-        location.href = `/board/${code}/list`
+        location.href = `/post/${code}/list`
     }
 
     function goToEditPage(code, id) {
-        location.href = `/board/${code}/edit/${id}`
+        location.href = `/post/${code}/edit/${id}`
     }
 
-    function deletePost(code, postId) {
+    function deletePost(code, id) {
         if (!confirm("삭제하시겠습니까? 삭제한 게시글은 복구가 불가능합니다.")) return
-
-        const url = `/api/v1/board/${postId}`
-        const options = {
-            method: 'DELETE'
-        }
-
-        fetch(url, options)
-            .then(response => {
-                if (response.status === 204) {
-                    alert('게시글이 성공적으로 삭제되었습니다.');
-                    location.href = `/board/${code}/list`
-                } else if (response.status === 404) {
-                    alert('삭제할 게시글이 존재하지 않습니다.');
-                } else {
-                    alert('삭제 요청이 실패하였습니다.');
-                }
-            })
-            .catch(err => console.error('An error occurred:', err))
+        location.href = `/post/${code}/delete/${id}`
     }
 </script>
 </body>

@@ -1,5 +1,6 @@
 package com.hansol.board.post.domain;
 
+import com.hansol.board.post.form.EditPostForm;
 import com.hansol.board.post.form.SavePostForm;
 import lombok.Builder;
 import lombok.Getter;
@@ -61,6 +62,21 @@ public class Post {
                 .notice(savePostForm.getNotice())
                 .password(savePostForm.getPassword())
                 .code(savePostForm.getCode())
+                .build();
+    }
+
+    public static Post formEditForm(EditPostForm editPostForm) {
+        return Post.builder()
+                .id(editPostForm.getId())
+                .title(editPostForm.getTitle())
+                .writer(editPostForm.getWriter())
+                .content(editPostForm.getContent())
+                .createdDate(editPostForm.getCreatedDate())
+                .lastModifiedDate(editPostForm.getLastModifiedDate())
+                .secret(editPostForm.getSecret())
+                .notice(editPostForm.getNotice())
+                .password(editPostForm.getPassword())
+                .code(editPostForm.getCode())
                 .build();
     }
 }

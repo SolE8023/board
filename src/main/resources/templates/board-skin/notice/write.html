@@ -9,16 +9,16 @@
 
 <div class="form-wrap">
     <div class="form">
-        <form name="savePostForm" th:action th:object="${form}" method="post">
+        <form name="savePostForm" th:action th:object="${form}" method="post" enctype="multipart/form-data">
             <input th:field="*{code}" type="hidden">
             <input th:field="*{content}" type="hidden">
             <div class="form-item">
                 <span>제목</span>
-                <input class="w-100" th:field="*{title}" type="text">
+                <input type="text" class="w-100" th:field="*{title}">
             </div>
             <div class="form-item">
                 <span>이름</span>
-                <input class="w-100" th:field="*{writer}" type="text">
+                <input type="text" class="w-100" th:field="*{writer}">
             </div>
             <div class="form-item">
                 <span class="editor-label">내용</span>
@@ -41,7 +41,7 @@
             </div>
             <div class="form-button">
                 <button class="regist-btn" type="button" onclick="validateForm()">등록</button>
-                <button class="cancel-btn" type="button">취소</button>
+                <button class="cancel-btn" type="button" onclick="goToList()">취소</button>
             </div>
         </form>
     </div>
@@ -98,6 +98,11 @@
 
     function updateFileName(elem) {
         elem.nextElementSibling.innerText = elem.files[0].name
+    }
+
+    function goToList() {
+        const code = document.querySelector("input[name=code]").value
+        location.href=`/post/${code}/list`
     }
 </script>
 

@@ -1,47 +1,51 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header.html :: header}"></head>
 
 <body>
 <link rel="stylesheet" href="/css/notice.css" type="text/css">
 
-<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${boardCode})}"></nav>
+<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${form.code})}"></nav>
 
 <div class="form-wrap">
-    <div class="form">
-        <input type="hidden" name="postId" th:value="${post.id}">
-        <input type="hidden" name="code" th:value="${boardCode}">
-        <div class="form-item">
-            <span>제목</span>
-            <input name="title" class="w-100" type="text" th:value="${post.title}">
-        </div>
-        <div class="form-item">
-            <span>이름</span>
-            <input name="writerName" class="w-100" type="text" th:value="${post.writerName}">
-        </div>
-        <div class="form-item">
-            <span class="editor-label">내용</span>
-            <div class="editor-wrap">
-                <div id="toolbar-container"></div>
-                <div id="editor" th:utext="${post.content}"></div>
+    <form name="editPostForm" th:action th:object="${form}" method="post" enctype="multipart/form-data">
+        <div class="form">
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{code}">
+            <input type="hidden" th:field="*{content}">
+            <div class="form-item">
+                <span>제목</span>
+                <input class="w-100" type="text" th:field="*{title}">
+            </div>
+            <div class="form-item">
+                <span>이름</span>
+                <input class="w-100" type="text" th:field="*{writer}">
+            </div>
+            <div class="form-item">
+                <span class="editor-label">내용</span>
+                <div class="editor-wrap">
+                    <div id="toolbar-container"></div>
+                    <div id="editor" th:utext="${form.content}"></div>
+                </div>
+            </div>
+            <div class="form-button">
+                <button class="regist-btn" type="button" onclick="validateForm()">수정</button>
+                <button class="cancel-btn" type="button" onclick="moveToViewPage()">취소</button>
             </div>
         </div>
-        <div class="form-button">
-            <button class="regist-btn" onclick="validateForm()">수정</button>
-            <button class="cancel-btn" onclick="moveToViewPage()">취소</button>
-        </div>
-    </div>
+    </form>
 </div>
 
 
 <script>
     let theEditor;
+    const code = document.querySelector("input[name=code]").value
 
     DecoupledEditor
         .create(document.querySelector('#editor'), {
             language: 'ko',
             ckfinder: {
-                uploadUrl: '/api/v1/board/files/upload'
+                uploadUrl: `/post/file/upload?code=${code}`
             },
         })
         .then(editor => {
@@ -54,15 +58,15 @@
         });
 
     function validateForm() {
-        const postId = document.querySelector("input[name=postId]")
+        const id = document.querySelector("input[name=id]")
         const code = document.querySelector("input[name=code]")
         const title = document.querySelector("input[name=title]")
-        const writerName = document.querySelector("input[name=writerName]")
+        const writer = document.querySelector("input[name=writer]")
         const content = theEditor.getData()
 
-        if (postId.value === "" || code.value === "") {
+        if (id.value === "" || code.value === "") {
             alert("게시글 고유값이 누락되었습니다. 게시글 선택을 다시 해주세요.")
-            location.href = "/board/list"
+            location.reload()
         }
 
         if (title.value === '') {
@@ -71,9 +75,9 @@
             return;
         }
 
-        if (writerName.value === '') {
+        if (writer.value === '') {
             alert("이름을 입력해주세요.")
-            writerName.focus()
+            writer.focus()
             return
         }
 
@@ -83,44 +87,16 @@
             return
         }
 
-        updatePost()
-    }
+        document.querySelector("input[name=content]").value = content
 
-    function updatePost() {
-        const postId = document.querySelector("input[name=postId]").value
-        const code = document.querySelector("input[name=code]").value
-        const title = document.querySelector("input[name=title]").value
-        const writerName = document.querySelector("input[name=writerName]").value
-        const content = theEditor.getData()
-
-        const url = `/api/v1/board/${postId}`
-        const options = {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({title,writerName,content})
-        }
-
-        fetch(url, options)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`)
-                }
-                return response.json()
-            })
-            .then(data => {
-                alert("글 수정이 완료되었습니다.")
-                location.href = `/board/${code}/view/${postId}`
-            })
-            .catch(err => console.error('An error occurred:', err))
+        document.forms.editPostForm.submit()
     }
 
     function moveToViewPage() {
-        const postId = document.querySelector("input[name=postId]").value
+        const id = document.querySelector("input[name=id]").value
         const code = document.querySelector("input[name=code]").value
 
-        location.href = `/board/${code}/view/${postId}`
+        location.href = `/post/${code}/view/${id}`
     }
 </script>
 

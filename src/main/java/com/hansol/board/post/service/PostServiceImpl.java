@@ -32,6 +32,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Post update(Post post, String password) {
+        return postRepository.update(post, password);
+    }
+
+    @Override
     public Optional<Post> findSecretPostById(Long id, String password) {
         if (postRepository.isSecretPost(id)) {
             if (postRepository.passwordCheck(id, password)) {

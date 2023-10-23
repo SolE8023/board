@@ -4,6 +4,8 @@ import com.hansol.board.boardInfo.domain.BoardInfo;
 import com.hansol.board.boardInfo.repository.BoardInfoRepository;
 import com.hansol.board.exception.NoPostException;
 import com.hansol.board.post.domain.Post;
+import com.hansol.board.post.domain.PostEntity;
+import com.hansol.board.post.form.EditPostForm;
 import com.hansol.board.post.form.SavePostForm;
 import com.hansol.board.post.response.EditorResponse;
 import com.hansol.board.post.service.PostService;
@@ -90,6 +92,37 @@ public class PostController {
         model.addAttribute("post", findPost);
         model.addAttribute("boards", boardInfoRepository.findAll());
         return "/board-skin/" + code + "/view";
+    }
+
+    @GetMapping("{code}/edit/{id}")
+    public String editForm(@PathVariable String code,
+                           @PathVariable Long id,
+                           Model model) {
+        Optional<Post> findPost = postService.findPostById(id);
+        Post post = findPost.orElseThrow(NoPostException::new);
+        EditPostForm form = EditPostForm.from(post);
+
+        model.addAttribute("form", form);
+        model.addAttribute("boards", boardInfoRepository.findAll());
+        return "/board-skin/" + code + "/edit";
+    }
+
+    @PostMapping("{code}/edit/{id}")
+    public String modifyPost(@Validated @ModelAttribute("form") EditPostForm editPostForm,
+                             BindingResult bindingResult,
+                             @PathVariable String code,
+                             @PathVariable Long id,
+                             Model model,
+                             RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("boards", boardInfoRepository.findAll());
+            return "/board-skin/" + code + "/edit";
+        }
+
+        postService.update(Post.formEditForm(editPostForm), editPostForm.getPassword());
+        redirectAttributes.addAttribute("code", code);
+        redirectAttributes.addAttribute("id", id);
+        return "redirect:/post/{code}/view/{id}";
     }
 
     @ResponseBody
