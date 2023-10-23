@@ -125,6 +125,19 @@ public class PostController {
         return "redirect:/post/{code}/view/{id}";
     }
 
+    @PostMapping("{code}/delete/{id}")
+    public String deletePost(@PathVariable String code,
+                             @PathVariable Long id,
+                             RedirectAttributes redirectAttributes) {
+        Optional<Post> findPost = postService.findPostById(id);
+        findPost.orElseThrow(NoPostException::new);
+        Post post = findPost.get();
+        postService.remove(id, post.getPassword());
+
+        redirectAttributes.addAttribute("code", code);
+        return "redirect:/post/{code}/list";
+    }
+
     @ResponseBody
     @PostMapping("/file/upload")
     public EditorResponse uploadFile(@RequestParam(name = "upload") MultipartFile file,
