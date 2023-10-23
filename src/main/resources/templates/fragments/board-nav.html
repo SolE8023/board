@@ -1,5 +1,5 @@
 <nav class="nav-wrap" th:fragment="boardNav(boards, boardCode)">
-    <a th:each="board : ${boards}" th:href="@{/board/{code}/list(code=${board.boardCode})}">
+    <a th:each="board : ${boards}" th:href="@{/post/{code}/list(code=${board.boardCode})}">
         <div th:text="${board.boardName}"></div>
     </a>
 </nav>
