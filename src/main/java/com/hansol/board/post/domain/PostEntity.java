@@ -19,7 +19,10 @@ public class PostEntity extends BaseEntity {
     private Long id;
     @Setter private String title;
     @Setter private String writer;
+
+    @Column(columnDefinition = "text")
     @Setter private String content;
+
     @Setter private Boolean secret;
     @Setter private Boolean notice;
     @Setter private String password;

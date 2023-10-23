@@ -39,8 +39,8 @@
     <div class="page-wrap">
         <a href="./list?page=0"><span><<</span></a>
         <a th:href="@{/post/{code}/list(code=${code} ,page=${prevPage})}"><span><</span></a>
-        <a th:each="i : ${#numbers.sequence(startPage, endPage)}" th:href="@{/post/{code}/list(code=${code}, page=${i - 1})}">
-            <span th:class="${i == page + 1} ? 'active' : ''" th:text="${i}">1</span>
+        <a th:each="i : ${#numbers.sequence(startPage, endPage)}" th:href="@{/post/{code}/list(code=${code}, page=${i})}">
+            <span th:class="${i == page} ? 'active' : ''" th:text="${i+1}">1</span>
         </a>
         <a th:href="@{/post/{code}/list(code=${code}, page=${nextPage})}"><span>></span></a>
         <a th:href="@{/post/{code}/list(code=${code}, page=${finalPage})}"><span>>></span></a>

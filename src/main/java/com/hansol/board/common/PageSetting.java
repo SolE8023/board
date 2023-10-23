@@ -21,15 +21,17 @@ public class PageSetting {
 
     public static <T> int getPrevPage(Page<T> list) {
         int prevPage = getStartPage(list);
-        if(prevPage != 0) return prevPage-1;
-        else return 0;
+        if (prevPage != 0) {
+            return (prevPage - 1) / PageSetting.PAGINATION_SIZE * PAGINATION_SIZE;
+        } else {
+            return 0;
+        }
     }
 
     public static <T> int getNextPage(Page<T> list) {
         int nextPage = getEndPage(list);
-
         if(list.getTotalPages() == 0) return 0;
-        else if(nextPage > list.getTotalPages() - 1) return list.getTotalPages() - 1;
+        else if(nextPage >= list.getTotalPages() - 1) return list.getTotalPages() - 1;
         else return nextPage + 1;
     }
 
@@ -39,19 +41,13 @@ public class PageSetting {
     }
 
     public static <T> int getStartPage(Page<T> list) {
-        int currentPage = 1;
-        if(list.getNumber() != 0) currentPage = list.getNumber();
-        int startPage = (currentPage/PageSetting.PAGINATION_SIZE) * PAGINATION_SIZE;
-        if(startPage == 0) startPage = 1;
-        return startPage;
+        return (list.getNumber()/PageSetting.PAGINATION_SIZE) * PAGINATION_SIZE;
     }
 
     public static <T> int getEndPage(Page<T> list) {
-        int currentPage = 1;
-        if(list.getNumber() != 0) currentPage = list.getNumber();
-        int endPage = (currentPage/(PageSetting.PAGINATION_SIZE)) * PAGINATION_SIZE + PAGINATION_SIZE;
-        if(endPage > list.getTotalPages() - 1) endPage = list.getTotalPages() - 1;
-        if(list.getTotalPages() == 0) endPage = 1;
+        int endPage = (list.getNumber()/(PageSetting.PAGINATION_SIZE)) * PAGINATION_SIZE + PAGINATION_SIZE - 1;
+        if(list.getTotalPages() == 0) endPage = 0;
+        else if(endPage > list.getTotalPages() - 1) endPage = list.getTotalPages() - 1;
         return endPage;
     }
 
