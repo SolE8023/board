@@ -2,9 +2,9 @@ package com.hansol.board.post.controller;
 
 import com.hansol.board.boardInfo.domain.BoardInfo;
 import com.hansol.board.boardInfo.repository.BoardInfoRepository;
+import com.hansol.board.exception.NoPostException;
 import com.hansol.board.post.domain.Post;
-import com.hansol.board.post.form.PostForm;
-import com.hansol.board.post.request.EditorRequest;
+import com.hansol.board.post.form.SavePostForm;
 import com.hansol.board.post.response.EditorResponse;
 import com.hansol.board.post.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -12,16 +12,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.hansol.board.common.Constant.FILE_PATH;
+import static com.hansol.board.common.Constant.UPLOAD_FOLDER;
 import static com.hansol.board.common.PageSetting.*;
 import static com.hansol.board.common.Thumbnail.getExtension;
 
@@ -48,14 +53,43 @@ public class PostController {
     }
 
     @GetMapping("{code}/write")
-    public String write(@PathVariable String code, Model model) {
+    public String writeForm(@PathVariable String code, Model model) {
         BoardInfo findInfo = boardInfoRepository.findByBoardCode(code);
-        PostForm form = new PostForm();
+        SavePostForm form = new SavePostForm();
         form.setFileUpload(findInfo.getFileUpload());
         form.setCode(code);
         model.addAttribute("form", form);
         model.addAttribute("boards", boardInfoRepository.findAll());
         return "/board-skin/" + code + "/write";
+    }
+
+    @PostMapping("{code}/write")
+    public String addPost(@Validated @ModelAttribute("form") SavePostForm savePostForm,
+                          BindingResult bindingResult,
+                          @PathVariable String code,
+                          RedirectAttributes redirectAttributes,
+                          Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("boards", boardInfoRepository.findAll());
+            return "/board-skin/" + code + "/write";
+        }
+        Post post = Post.formSaveForm(savePostForm);
+        post = postService.savePost(post);
+
+        redirectAttributes.addAttribute("code", code);
+        redirectAttributes.addAttribute("id", post.getId());
+        return "redirect:/post/{code}/view/{id}";
+    }
+
+    @GetMapping("{code}/view/{id}")
+    public String view(@PathVariable String code,
+                       @PathVariable Long id,
+                       Model model) {
+        Optional<Post> post = postService.findPostById(id);
+        Post findPost = post.orElseThrow(NoPostException::new);
+        model.addAttribute("post", findPost);
+        model.addAttribute("boards", boardInfoRepository.findAll());
+        return "/board-skin/" + code + "/view";
     }
 
     @ResponseBody
@@ -78,7 +112,7 @@ public class PostController {
             file.transferTo(new File(filePath));
 
             String currentDomain = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-            String fileUrl = currentDomain + "/upload/" + code + "/" + filename;
+            String fileUrl = currentDomain + "/" + UPLOAD_FOLDER + "/" + code + "/" + filename;
 
             return EditorResponse.builder()
                     .filename(filename)

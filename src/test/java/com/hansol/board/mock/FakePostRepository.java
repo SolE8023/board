@@ -89,7 +89,7 @@ public class FakePostRepository implements PostRepository {
                 }
             }
             if ("all".equals(condition) || "writer".equals(condition)) {
-                if (post.getWriter() != null && post.getWriter().getName().contains(search)) {
+                if (post.getWriter() != null && post.getWriter().contains(search)) {
                     matchingPosts.add(post);
                 }
             }

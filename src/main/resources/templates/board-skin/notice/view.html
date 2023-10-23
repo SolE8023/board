@@ -13,7 +13,7 @@
     <div class="board-info-wrap">
         <div class="board-title" th:text="${post.title}">4호선(당고개-사당) 급행을 도입하면 안되는 이유 (자료 첨부)</div>
         <div class="board-info"
-             th:text="${post.writerName + ' | ' + #temporals.format(post.createdDate, 'yyyy.MM.dd')}">
+             th:text="${post.writer + ' | ' + #temporals.format(post.createdDate, 'yyyy.MM.dd')}">
             용퉤 | 2023.02.22
         </div>
     </div>

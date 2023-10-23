@@ -40,7 +40,7 @@ public class PostEntity extends BaseEntity {
     public static PostEntity from(Post post) {
         return PostEntity.builder()
                 .title(post.getTitle())
-                .writer(post.getWriter().getName())
+                .writer(post.getWriter())
                 .content(post.getContent())
                 .secret(post.getSecret())
                 .notice(post.getNotice())

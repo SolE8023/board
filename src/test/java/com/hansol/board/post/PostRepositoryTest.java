@@ -21,7 +21,7 @@ public class PostRepositoryTest {
         //given
         Post post = Post.builder()
                 .title("게시글 제목1")
-                .writer(Writer.builder().name("홍길동").build())
+                .writer("홍길동")
                 .content("게시글 내용1")
                 .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
                 .lastModifiedDate(null)
@@ -55,7 +55,7 @@ public class PostRepositoryTest {
         //given
         Post post = Post.builder()
                 .title("게시글 제목1")
-                .writer(Writer.builder().name("홍길동").build())
+                .writer("홍길동")
                 .content("게시글 내용1")
                 .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
                 .lastModifiedDate(null)
@@ -80,7 +80,7 @@ public class PostRepositoryTest {
         //given
         Post post = Post.builder()
                 .title("게시글 제목1")
-                .writer(Writer.builder().name("홍길동").build())
+                .writer("홍길동")
                 .content("게시글 내용1")
                 .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
                 .lastModifiedDate(null)
@@ -101,7 +101,7 @@ public class PostRepositoryTest {
         //given
         Post post1 = Post.builder()
                 .title("게시글 제목1")
-                .writer(Writer.builder().name("홍길동").build())
+                .writer("홍길동")
                 .content("게시글 내용1")
                 .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
                 .lastModifiedDate(null)
@@ -111,7 +111,7 @@ public class PostRepositoryTest {
                 .build();
         Post post2 = Post.builder()
                 .title("게시글 제목2")
-                .writer(Writer.builder().name("황진이").build())
+                .writer("황진이")
                 .content("게시글 내용2")
                 .createdDate(LocalDateTime.of(2023, 10, 17, 15, 31))
                 .lastModifiedDate(null)
@@ -134,7 +134,7 @@ public class PostRepositoryTest {
         //given
         Post post1 = Post.builder()
                 .title("게시글 제목1")
-                .writer(Writer.builder().name("홍길동").build())
+                .writer("홍길동")
                 .content("게시글 내용1")
                 .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
                 .lastModifiedDate(null)
@@ -144,7 +144,7 @@ public class PostRepositoryTest {
                 .build();
         Post post2 = Post.builder()
                 .title("게시글 제목2")
-                .writer(Writer.builder().name("황진이").build())
+                .writer("황진이")
                 .content("게시글 내용2")
                 .createdDate(LocalDateTime.of(2023, 10, 17, 15, 31))
                 .lastModifiedDate(null)
@@ -169,7 +169,7 @@ public class PostRepositoryTest {
 
         Post savePost = Post.builder()
                 .title("게시글 제목1")
-                .writer(Writer.builder().name("홍길동").build())
+                .writer("홍길동")
                 .content("게시글 내용1")
                 .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
                 .lastModifiedDate(null)
@@ -184,7 +184,7 @@ public class PostRepositoryTest {
         Post updatePost = Post.builder()
                 .id(saved.getId())
                 .title("게시글 제목2")
-                .writer(Writer.builder().name("황진이").build())
+                .writer("황진이")
                 .content("게시글 내용2")
                 .createdDate(LocalDateTime.of(2023, 10, 17, 15, 31))
                 .lastModifiedDate(LocalDateTime.of(2023, 10, 17, 15, 32))
@@ -197,7 +197,7 @@ public class PostRepositoryTest {
         //then
         assertThat(updated.getId()).isEqualTo(1L);
         assertThat(updated.getTitle()).isEqualTo("게시글 제목2");
-        assertThat(updated.getWriter().getName()).isEqualTo("황진이");
+        assertThat(updated.getWriter()).isEqualTo("황진이");
         assertThat(updated.getContent()).isEqualTo("게시글 내용2");
         assertThat(updated.getCreatedDate()).isEqualTo(LocalDateTime.of(2023, 10, 17, 15, 31));
         assertThat(updated.getLastModifiedDate()).isEqualTo(LocalDateTime.of(2023, 10, 17, 15, 32));
@@ -210,7 +210,7 @@ public class PostRepositoryTest {
         TestContainer testContainer = TestContainer.builder().build();
         Post post = Post.builder()
                 .title("게시글 제목1")
-                .writer(Writer.builder().name("홍길동").build())
+                .writer("홍길동")
                 .content("게시글 내용1")
                 .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
                 .lastModifiedDate(null)
@@ -239,7 +239,7 @@ public class PostRepositoryTest {
 
         Post post1 = Post.builder()
                 .title("게시글 제목1")
-                .writer(Writer.builder().name("홍길동").build())
+                .writer("홍길동")
                 .content("게시글 내용1")
                 .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
                 .lastModifiedDate(null)
@@ -250,7 +250,7 @@ public class PostRepositoryTest {
         //when
         Post post2 = Post.builder()
                 .title("게시글 제목2")
-                .writer(Writer.builder().name("황진이").build())
+                .writer("황진이")
                 .content("게시글 내용2")
                 .createdDate(LocalDateTime.of(2023, 10, 17, 15, 31))
                 .lastModifiedDate(LocalDateTime.of(2023, 10, 17, 15, 31))

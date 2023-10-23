@@ -22,7 +22,7 @@ public class PostRepositoryImpl implements PostRepository{
     public Optional<Post> findById(Long postId) {
         Optional<PostEntity> findPost = jpaRepository.findById(postId);
         if (findPost.isPresent()) {
-            return Optional.ofNullable(Post.from(findPost.get()));
+            return Optional.ofNullable(Post.fromEntity(findPost.get()));
         } else {
             throw new NoPostException();
         }
@@ -31,7 +31,7 @@ public class PostRepositoryImpl implements PostRepository{
     @Override
     public Post save(Post post) {
         PostEntity saved = jpaRepository.save(PostEntity.from(post));
-        return Post.from(saved);
+        return Post.fromEntity(saved);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class PostRepositoryImpl implements PostRepository{
         Optional<PostEntity> findPost = jpaRepository.findByIdAndPassword(post.getId(), password);
         findPost.ifPresent(p -> {
             p.setTitle(post.getTitle());
-            p.setWriter(post.getWriter().getName());
+            p.setWriter(post.getWriter());
             p.setContent(post.getContent());
             p.setSecret(post.getSecret());
             p.setNotice(post.getNotice());
@@ -49,21 +49,21 @@ public class PostRepositoryImpl implements PostRepository{
 
         findPost.orElseThrow(NoPostException::new);
 
-        return Post.from(findPost.get());
+        return Post.fromEntity(findPost.get());
     }
 
     @Override
     public Optional<Post> findByIdAndAndPassword(Long id, String password) {
         Optional<PostEntity> findPost = jpaRepository.findByIdAndPassword(id, password);
         findPost.orElseThrow(NoPostException::new);
-        return Optional.ofNullable(Post.from(findPost.get()));
+        return Optional.ofNullable(Post.fromEntity(findPost.get()));
     }
 
     @Override
     public Page<Post> findListOrderby(int page, String code) {
         Pageable pageable = PageSetting.getPostPageable(page);
         Page<PostEntity> list = jpaRepository.findListOrderby(code, pageable);
-        return list.map(Post::from);
+        return list.map(Post::fromEntity);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class PostRepositoryImpl implements PostRepository{
     public List<Post> findAll(int page, String code) {
         Pageable pageable = PageSetting.getPostPageable(page);
         Page<PostEntity> posts = jpaRepository.findListOrderby(code, pageable);
-        return posts.stream().map(Post::from).toList();
+        return posts.stream().map(Post::fromEntity).toList();
     }
 
     @Override

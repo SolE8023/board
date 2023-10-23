@@ -1,6 +1,6 @@
 package com.hansol.board.post.domain;
 
-import com.hansol.board.common.domain.Writer;
+import com.hansol.board.post.form.SavePostForm;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class Post {
     private Long id;
     private String title;
-    private Writer writer;
+    private String writer;
     private String content;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
@@ -22,7 +22,7 @@ public class Post {
     private String code;
 
     @Builder
-    public Post(Long id, String title, Writer writer, String content, LocalDateTime createdDate, LocalDateTime lastModifiedDate, Boolean secret, Boolean notice, String password, String code) {
+    public Post(Long id, String title, String writer, String content, LocalDateTime createdDate, LocalDateTime lastModifiedDate, Boolean secret, Boolean notice, String password, String code) {
         this.id = id;
         this.title = title;
         this.writer = writer;
@@ -35,10 +35,11 @@ public class Post {
         this.code = code;
     }
 
-    public static Post from(PostEntity postEntity) {
+    public static Post fromEntity(PostEntity postEntity) {
         return Post.builder()
                 .id(postEntity.getId())
-                .writer(Writer.builder().name(postEntity.getWriter()).build())
+                .title(postEntity.getTitle())
+                .writer(postEntity.getWriter())
                 .content(postEntity.getContent())
                 .createdDate(postEntity.getCreatedDate())
                 .lastModifiedDate(postEntity.getLastModifiedDate())
@@ -46,6 +47,20 @@ public class Post {
                 .notice(postEntity.getNotice())
                 .password(postEntity.getPassword())
                 .code(postEntity.getCode())
+                .build();
+    }
+
+    public static Post formSaveForm(SavePostForm savePostForm) {
+        return Post.builder()
+                .title(savePostForm.getTitle())
+                .writer(savePostForm.getWriter())
+                .content(savePostForm.getContent())
+                .createdDate(savePostForm.getCreatedDate())
+                .lastModifiedDate(savePostForm.getLastModifiedDate())
+                .secret(savePostForm.getSecret())
+                .notice(savePostForm.getNotice())
+                .password(savePostForm.getPassword())
+                .code(savePostForm.getCode())
                 .build();
     }
 }

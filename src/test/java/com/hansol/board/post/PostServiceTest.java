@@ -22,7 +22,7 @@ public class PostServiceTest {
         TestContainer testContainer = TestContainer.builder().build();
         Post post = Post.builder()
                 .title("제목1")
-                .writer(Writer.builder().name("홍길동").build())
+                .writer("홍길동")
                 .content("내용1")
                 .password("qwer1234")
                 .createdDate(LocalDateTime.of(2023,10,15,13,12))
@@ -40,7 +40,7 @@ public class PostServiceTest {
         TestContainer testContainer = TestContainer.builder().build();
         Post post = Post.builder()
                 .title("제목1")
-                .writer(Writer.builder().name("홍길동").build())
+                .writer("홍길동")
                 .content("내용1")
                 .password("qwer1234")
                 .createdDate(LocalDateTime.of(2023,10,15,13,12))
@@ -53,7 +53,7 @@ public class PostServiceTest {
         //then
         assertThat(findPost.isPresent()).isTrue();
         assertThat(findPost.get().getTitle()).isEqualTo(saved.getTitle());
-        assertThat(findPost.get().getWriter().getName()).isEqualTo(saved.getWriter().getName());
+        assertThat(findPost.get().getWriter()).isEqualTo(saved.getWriter());
         assertThat(findPost.get().getContent()).isEqualTo(saved.getContent());
         assertThat(findPost.get().getPassword()).isEqualTo(saved.getPassword());
         assertThat(findPost.get().getCreatedDate()).isEqualTo(saved.getCreatedDate());
@@ -65,7 +65,7 @@ public class PostServiceTest {
         TestContainer testContainer = TestContainer.builder().build();
         Post post1 = Post.builder()
                 .title("제목1")
-                .writer(Writer.builder().name("홍길동").build())
+                .writer("홍길동")
                 .content("내용1")
                 .notice(false)
                 .password("qwer1234")
@@ -73,7 +73,7 @@ public class PostServiceTest {
                 .build();
         Post post2 = Post.builder()
                 .title("제목2")
-                .writer(Writer.builder().name("황진이").build())
+                .writer("황진이")
                 .content("내용2")
                 .notice(true)
                 .password("777")
@@ -97,7 +97,7 @@ public class PostServiceTest {
         TestContainer testContainer = TestContainer.builder().build();
         Post post = Post.builder()
                 .title("제목1")
-                .writer(Writer.builder().name("홍길동").build())
+                .writer("홍길동")
                 .content("내용1")
                 .notice(false)
                 .secret(true)
@@ -122,7 +122,7 @@ public class PostServiceTest {
         TestContainer testContainer = TestContainer.builder().build();
         Post post1 = Post.builder()
                 .title("제목1")
-                .writer(Writer.builder().name("홍길동").build())
+                .writer("홍길동")
                 .content("내용1")
                 .notice(false)
                 .secret(false)
@@ -131,7 +131,7 @@ public class PostServiceTest {
                 .build();
         Post post2 = Post.builder()
                 .title("제목2")
-                .writer(Writer.builder().name("황진이").build())
+                .writer("황진이")
                 .content("내용2")
                 .notice(false)
                 .secret(true)
@@ -140,7 +140,7 @@ public class PostServiceTest {
                 .build();
         Post post3 = Post.builder()
                 .title("제목3")
-                .writer(Writer.builder().name("척준경").build())
+                .writer("척준경")
                 .content("내용3")
                 .notice(false)
                 .secret(false)
@@ -166,7 +166,7 @@ public class PostServiceTest {
         TestContainer testContainer = TestContainer.builder().build();
         Post post1 = Post.builder()
                 .title("제목1")
-                .writer(Writer.builder().name("홍길동").build())
+                .writer("홍길동")
                 .content("내용1")
                 .notice(false)
                 .secret(false)
@@ -175,7 +175,7 @@ public class PostServiceTest {
                 .build();
         Post post2 = Post.builder()
                 .title("제목2")
-                .writer(Writer.builder().name("황진이").build())
+                .writer("황진이")
                 .content("내용2")
                 .notice(false)
                 .secret(true)
@@ -184,7 +184,7 @@ public class PostServiceTest {
                 .build();
         Post post3 = Post.builder()
                 .title("제목3")
-                .writer(Writer.builder().name("척준경").build())
+                .writer("척준경")
                 .content("내용3")
                 .notice(false)
                 .secret(false)
@@ -210,7 +210,7 @@ public class PostServiceTest {
         TestContainer testContainer = TestContainer.builder().build();
         Post post = Post.builder()
                 .title("제목1")
-                .writer(Writer.builder().name("홍길동").build())
+                .writer("홍길동")
                 .content("내용1")
                 .notice(false)
                 .secret(false)
