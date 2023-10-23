@@ -16,7 +16,7 @@ public class PageSetting {
         Sort.Order orderBySecret = Sort.Order.desc("secret");
 
         Sort sort = Sort.by(orderByCreatedDate, orderBySecret);
-        return PageRequest.of(page, PAGINATION_SIZE, sort);
+        return PageRequest.of(page, POSTS_PER_PAGE, sort);
     }
 
     public static <T> int getPrevPage(Page<T> list) {
@@ -51,6 +51,12 @@ public class PageSetting {
         return endPage;
     }
 
+    public static <T> long getPostStartNumber(Page<T> list) {
+        long currentPage = list.getNumber();
+        long total = list.getTotalElements();
+        return total - currentPage * POSTS_PER_PAGE;
+    }
+
     public static <T> void setPageVariable(Model model, Page<T> list) {
         int prevPage = getPrevPage(list);
         int nextPage = getNextPage(list);
@@ -58,6 +64,7 @@ public class PageSetting {
         int startPage = getStartPage(list);
         int endPage = getEndPage(list);
         int startNumber = list.getNumber() * list.getSize() + 1;
+        long postStartNumber = getPostStartNumber(list);
 
         model.addAttribute("startNumber", startNumber);
         model.addAttribute("prevPage", prevPage);
@@ -66,5 +73,6 @@ public class PageSetting {
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
         model.addAttribute("page", list.getNumber());
+        model.addAttribute("postStartNumber", postStartNumber);
     }
 }

@@ -19,7 +19,7 @@
 
     <div class="board-data" th:each="post, iterStat : ${posts}">
         <a th:href="@{/post/{code}/view/{id}(code=${code}, id=${post.id})}">
-            <div th:text="${startNumber + iterStat.index}">1</div>
+            <div th:text="${postStartNumber - iterStat.index}">1</div>
         </a>
         <a th:href="@{/post/{code}/view/{id}(code=${code}, id=${post.id})}">
             <div th:text="${post.title}">테스트 제목입니다.</div>
