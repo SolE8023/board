@@ -4,6 +4,7 @@ import com.hansol.board.exception.NoPostException;
 import com.hansol.board.exception.PasswordErrorException;
 import com.hansol.board.post.domain.Post;
 import com.hansol.board.post.repository.PostRepository;
+import com.hansol.board.post.request.CheckPassword;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -32,8 +33,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post update(Post post, String password) {
-        return postRepository.update(post, password);
+    public Post update(Post post) {
+        return postRepository.update(post);
     }
 
     @Override
@@ -64,5 +65,9 @@ public class PostServiceImpl implements PostService {
         postRepository.remove(id, password);
     }
 
-
+    @Override
+    public Boolean checkPassword(CheckPassword request) {
+        Optional<Post> findPost = postRepository.checkPassword(request.getId(), request.getPassword());
+        return findPost.isPresent();
+    }
 }

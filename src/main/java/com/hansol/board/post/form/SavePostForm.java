@@ -1,6 +1,8 @@
 package com.hansol.board.post.form;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +23,8 @@ public class SavePostForm {
     private LocalDateTime lastModifiedDate;
     private Boolean secret;
     private Boolean notice;
+    @NotEmpty
+    @Size(min = 4, max = 8)
     private String password;
     @NotEmpty
     private String code;

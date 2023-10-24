@@ -1,6 +1,7 @@
 package com.hansol.board.post.service;
 
 import com.hansol.board.post.domain.Post;
+import com.hansol.board.post.request.CheckPassword;
 import org.springframework.data.domain.Page;
 
 import java.util.Optional;
@@ -12,7 +13,7 @@ public interface PostService {
 
     Post savePost(Post post);
 
-    Post update(Post post, String password);
+    Post update(Post post);
 
     Optional<Post> findSecretPostById(Long id, String password);
 
@@ -21,4 +22,6 @@ public interface PostService {
     Post nextPost(Long id);
 
     void remove(Long id, String password);
+
+    Boolean checkPassword(CheckPassword request);
 }

@@ -3,7 +3,7 @@
 <head th:replace="~{fragments/header.html :: header}"></head>
 
 <body>
-<link href="/css/gallery.css" rel="stylesheet" type="text/css">
+<link href="/css/notice.css" rel="stylesheet" type="text/css">
 
 <nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${code})}"></nav>
 
@@ -19,6 +19,10 @@
             <div class="form-item">
                 <span>이름</span>
                 <input type="text" class="w-100" th:field="*{writer}">
+            </div>
+            <div class="form-item">
+                <span>비밀번호</span>
+                <input type="password" class="w-100" th:field="*{password}" maxlength="8">
             </div>
             <div class="form-item">
                 <span class="editor-label">내용</span>
@@ -71,6 +75,7 @@
     function validateForm() {
         const title = document.querySelector("input[name=title]")
         const writer = document.querySelector("input[name=writer]")
+        const password = document.querySelector("input[name=password]")
         const content = theEditor.getData()
 
         if (title.value === '') {
@@ -85,10 +90,22 @@
             return
         }
 
-        if (content === '') {
-            alert("내용을 입력해주세요")
-            theEditor.focus()
+        if (password.value === '') {
+            alert("비밀번호를 입력해주세요.")
+            password.focus()
             return
+        }
+
+        if (password.value.length < 4 || password.value.length > 8) {
+            alert("비밀번호는 4자리 이상 8자리 이하로 입력해주세요.")
+            password.focus()
+            return
+        }
+
+        if (content === '') {
+            alert("내용을 입력해주세요");
+            theEditor.focus();
+            return;
         }
 
         document.querySelector("input[name=content]").value = content

@@ -4,6 +4,7 @@ import com.hansol.board.post.domain.Post;
 import com.hansol.board.post.domain.PostEntity;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,8 @@ public class EditPostForm {
     private LocalDateTime lastModifiedDate;
     private Boolean secret;
     private Boolean notice;
+    @NotEmpty
+    @Size(min = 4, max = 8)
     private String password;
     @NotEmpty
     private String code;

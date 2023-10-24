@@ -11,7 +11,7 @@ public interface PostRepository {
 
     Post save(Post post);
 
-    Post update(Post post, String password);
+    Post update(Post post);
 
     Optional<Post> findByIdAndAndPassword(Long id, String password);
 
@@ -30,4 +30,6 @@ public interface PostRepository {
     Optional<Post> findPrevPost(Long id);
 
     Optional<Post> findNextPost(Long id);
+
+    Optional<Post> checkPassword(Long id, String password);
 }

@@ -36,8 +36,8 @@ public class PostRepositoryImpl implements PostRepository{
 
     @Override
     @Transactional
-    public Post update(Post post, String password) {
-        Optional<PostEntity> findPost = jpaRepository.findByIdAndPassword(post.getId(), password);
+    public Post update(Post post) {
+        Optional<PostEntity> findPost = jpaRepository.findById(post.getId());
         findPost.ifPresent(p -> {
             p.setTitle(post.getTitle());
             p.setWriter(post.getWriter());
@@ -115,5 +115,11 @@ public class PostRepositoryImpl implements PostRepository{
     public Optional<Post> findNextPost(Long id) {
         Long nextId = jpaRepository.findNextId(id);
         return findById(nextId);
+    }
+
+    @Override
+    public Optional<Post> checkPassword(Long id, String password) {
+        Optional<PostEntity> findPost = jpaRepository.findByIdAndPassword(id, password);
+        return findPost.map(Post::fromEntity).or(Optional::empty);
     }
 }
