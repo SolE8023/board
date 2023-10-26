@@ -46,6 +46,11 @@ button {
     cursor: pointer;
 }
 
+.secret-checkbox {
+    height: 45px;
+    margin-right: auto;
+}
+
 input[type="text"], input[type="password"] {
     justify-self: start;
     height: 45px;

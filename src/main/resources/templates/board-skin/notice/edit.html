@@ -26,6 +26,10 @@
                 <input type="password" class="w-100" th:field="*{password}" maxlength="8">
             </div>
             <div class="form-item">
+                <span>비밀글 여부</span>
+                <input class="secret-checkbox" type="checkbox" th:field="*{secret}">
+            </div>
+            <div class="form-item">
                 <span class="editor-label">내용</span>
                 <div class="editor-wrap">
                     <div id="toolbar-container"></div>

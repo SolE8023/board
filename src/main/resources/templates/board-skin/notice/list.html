@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header.html :: header}"></head>
 
 <body>
@@ -17,35 +17,42 @@
         <div>작성일</div>
     </div>
 
-    <div class="board-data" th:each="post, iterStat : ${posts}">
-        <a th:href="@{/post/{code}/view/{id}(code=${code}, id=${post.id})}">
+    <div class="board-data" th:each="post, iterStat : ${posts}"
+         th:with="link=${post.secret eq false} ? '/post/' + ${code} + '/view/' + ${post.id} : 'javascript:viewPost(' + ${post.id} + ')'">
+        <a th:href="${link}">
             <div th:text="${postStartNumber - iterStat.index}">1</div>
         </a>
-        <a th:href="@{/post/{code}/view/{id}(code=${code}, id=${post.id})}">
-            <div th:text="${post.title}">테스트 제목입니다.</div>
+        <a th:href="${link}">
+            <img class="secret-post" th:if="${post.secret}" th:src="@{/images/lock-icon.png}" alt="비밀글 입니다."/>
+            <span th:text="${post.title}">테스트 제목입니다.</span>
         </a>
-        <a th:href="@{/post/{code}/view/{id}(code=${code}, id=${post.id})}">
+        <a th:href="${link}">
             <div th:text="${post.writer}">김한솔</div>
         </a>
-        <a th:href="@{/post/{code}/view/{id}(code=${code}, id=${post.id})}">
+        <a th:href="${link}">
             <div th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd')}">2021.02.20</div>
         </a>
     </div>
 
     <div class="btn-wrap">
-        <button class="white-btn" th:data-code="${code}" onclick="moveToWritePage(this.getAttribute('data-code'))" type="button">글쓰기</button>
+        <button class="white-btn" th:data-code="${code}" onclick="moveToWritePage(this.getAttribute('data-code'))"
+                type="button">글쓰기
+        </button>
     </div>
 
     <div class="page-wrap">
         <a href="./list?page=0"><span><<</span></a>
         <a th:href="@{/post/{code}/list(code=${code} ,page=${prevPage})}"><span><</span></a>
-        <a th:each="i : ${#numbers.sequence(startPage, endPage)}" th:href="@{/post/{code}/list(code=${code}, page=${i})}">
+        <a th:each="i : ${#numbers.sequence(startPage, endPage)}"
+           th:href="@{/post/{code}/list(code=${code}, page=${i})}">
             <span th:class="${i == page} ? 'active' : ''" th:text="${i+1}">1</span>
         </a>
         <a th:href="@{/post/{code}/list(code=${code}, page=${nextPage})}"><span>></span></a>
         <a th:href="@{/post/{code}/list(code=${code}, page=${finalPage})}"><span>>></span></a>
     </div>
 </div>
+
+<div th:replace="~{fragments/password-check.html :: password-check(null, ${code})}"></div>
 
 <script>
     function moveToWritePage(code) {

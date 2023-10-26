@@ -90,12 +90,28 @@ public class PostController {
     @GetMapping("{code}/view/{id}")
     public String view(@PathVariable String code,
                        @PathVariable Long id,
-                       Model model) {
+                       Model model,
+                       HttpSession session,
+                       RedirectAttributes redirectAttributes) {
         Optional<Post> post = postService.findPostById(id);
         Post findPost = post.orElseThrow(NoPostException::new);
+
         model.addAttribute("post", findPost);
         model.addAttribute("boards", boardInfoRepository.findAll());
-        return "/board-skin/" + code + "/view";
+
+        if (findPost.getSecret()) {
+            Boolean auth = (Boolean) session.getAttribute("auth");
+            Long sessionPostId = (Long) session.getAttribute("id");
+            String sessionType = (String) session.getAttribute("type");
+            if (auth != null && auth && sessionPostId.equals(id) && sessionType.equals("view")) {
+                return "/board-skin/" + code + "/view";
+            } else {
+                redirectAttributes.addAttribute("code", code);
+                return "redirect:/post/{code}/list";
+            }
+        } else {
+            return "/board-skin/" + code + "/view";
+        }
     }
 
     @GetMapping("{code}/edit/{id}")

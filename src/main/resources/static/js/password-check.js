@@ -1,5 +1,5 @@
 const popupCode = document.querySelector("input[name=popupCode]").value
-const popupId = document.querySelector("input[name=popupId]").value
+let popupId = document.querySelector("input[name=popupId]").value
 
 function openPopup() {
     document.getElementById('popup').classList.add('show');
@@ -15,6 +15,21 @@ function deletePost() {
     clearPopupForm()
     setType("delete")
     openPopup()
+}
+
+function viewPost(postId) {
+    clearPopupForm()
+    setType("view")
+    setId(`${postId}`)
+    openPopup()
+}
+
+function setId(postId) {
+    document.querySelector("input[name=popupId]").value = postId
+}
+
+function getId() {
+    return document.querySelector("input[name=popupId]").value
 }
 
 function setType(type) {
@@ -43,9 +58,11 @@ function request() {
         editRequest(pwdElem.value, type)
     } else if (type === "delete") {
         deleteRequest(pwdElem.value, type)
+    } else if (type === "view") {
+        viewRequest(pwdElem.value, type)
     }
 
-    closePopup()
+    closePopup();
 }
 
 async function editRequest(password, type) {
@@ -72,6 +89,11 @@ async function deleteRequest(password, type) {
     form.appendChild(hiddenIdElem)
     document.body.appendChild(form)
     form.submit()
+}
+
+async function viewRequest(password, type) {
+    popupId = getId()
+    if (await checkPassword(password, type)) location.href = `/post/${popupCode}/view/${popupId}`
 }
 
 async function checkPassword(password, type) {
