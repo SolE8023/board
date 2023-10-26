@@ -24,6 +24,7 @@
         </a>
         <a th:href="${link}">
             <img class="secret-post" th:if="${post.secret}" th:src="@{/images/lock-icon.png}" alt="비밀글 입니다."/>
+            <span th:if="${post.notice}">[공지] </span>
             <span th:text="${post.title}">테스트 제목입니다.</span>
         </a>
         <a th:href="${link}">
