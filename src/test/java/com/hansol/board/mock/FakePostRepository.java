@@ -34,13 +34,9 @@ public class FakePostRepository implements PostRepository {
     }
 
     @Override
-    public Post update(Post post, String password) {
-        if (passwordCheck(post.getId(), password)) {
-            posts.removeIf(p -> p.getId().equals(post.getId()));
-            posts.add(post);
-        } else {
-            throw new PasswordErrorException();
-        }
+    public Post update(Post post) {
+        posts.removeIf(p -> p.getId().equals(post.getId()));
+        posts.add(post);
         return post;
     }
 
@@ -155,5 +151,10 @@ public class FakePostRepository implements PostRepository {
             throw new IllegalArgumentException("잘못된 postId 입니다.");
         }
         return null;
+    }
+
+    @Override
+    public Optional<Post> checkPassword(Long id, String password) {
+        return Optional.empty();
     }
 }

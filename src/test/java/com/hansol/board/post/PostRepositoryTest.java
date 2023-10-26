@@ -192,7 +192,7 @@ public class PostRepositoryTest {
                 .notice(false)
                 .password("123123")
                 .build();
-        Post updated = testContainer.postRepository.update(updatePost, "qwer1234");
+        Post updated = testContainer.postRepository.update(updatePost);
 
         //then
         assertThat(updated.getId()).isEqualTo(1L);
