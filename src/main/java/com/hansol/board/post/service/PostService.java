@@ -1,25 +1,26 @@
 package com.hansol.board.post.service;
 
 import com.hansol.board.post.domain.Post;
+import com.hansol.board.post.domain.PostEntity;
 import com.hansol.board.post.request.CheckPassword;
 import org.springframework.data.domain.Page;
 
 import java.util.Optional;
 
 public interface PostService {
-    Optional<Post> findPostById(Long id);
+    PostEntity findPostById(Long id);
 
-    Page<Post> findListOrderby(int page, String code);
+    Page<PostEntity> findListOrderby(int page, String code);
 
-    Post savePost(Post post);
+    PostEntity savePost(PostEntity entity);
 
-    Post update(Post post);
+    PostEntity update(PostEntity post);
 
-    Optional<Post> findSecretPostById(Long id, String password);
+    PostEntity findSecretPostById(Long id, String password);
 
-    Post prevPost(Long id);
+    PostEntity prevPost(Long id);
 
-    Post nextPost(Long id);
+    PostEntity nextPost(Long id);
 
     void remove(Long id, String password);
 

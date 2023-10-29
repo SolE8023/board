@@ -1,35 +1,36 @@
 package com.hansol.board.post.repository;
 
 import com.hansol.board.post.domain.Post;
+import com.hansol.board.post.domain.PostEntity;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository {
-    Optional<Post> findById(Long postId);
+    PostEntity findById(Long postId);
 
-    Post save(Post post);
+    PostEntity save(PostEntity entity);
 
-    Post update(Post post);
+    PostEntity update(PostEntity post);
 
-    Optional<Post> findByIdAndAndPassword(Long id, String password);
+    PostEntity findByIdAndAndPassword(Long id, String password);
 
-    Page<Post> findListOrderby(int page, String code);
+    Page<PostEntity> findListOrderby(int page, String code);
 
     void remove(Long id, String password);
 
-    Page<Post> findByConditions(String condition, String search);
+    Page<PostEntity> findByConditions(String condition, String search);
 
     Boolean passwordCheck(Long id, String password);
 
     Boolean isSecretPost(Long id);
 
-    List<Post> findAll(int page, String code);
+    List<PostEntity> findAll(int page, String code);
 
-    Optional<Post> findPrevPost(Long id);
+    PostEntity findPrevPost(Long id);
 
-    Optional<Post> findNextPost(Long id);
+    PostEntity findNextPost(Long id);
 
     Optional<Post> checkPassword(Long id, String password);
 }

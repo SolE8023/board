@@ -38,6 +38,13 @@
         <input type="hidden" name="postId" th:value="${post.id}">
 
         <button class="white-btn" onclick="goToListPage()" type="button">목록으로</button>
+        <th:block th:if="${boardInfo.reply == T(com.hansol.board.common.enums.UseStatus).enable}">
+            <button class="white-btn" onclick="goToReplyPage(this.getAttribute('data-code'), this.getAttribute('data-id'))"
+                    th:data-id="${post.id}"
+                    th:data-code="${code}"
+                    type="button">답글
+            </button>
+        </th:block>
         <button class="white-btn" onclick="editPost()" type="button">수정</button>
         <button class="white-btn" onclick="deletePost()" type="button">삭제</button>
     </div>
@@ -51,6 +58,10 @@
 
     function goToListPage() {
         location.href = `/post/${code}/list`
+    }
+
+    function goToReplyPage(code, id) {
+        location.href = `/post/${code}/reply/${id}`
     }
 </script>
 </body>

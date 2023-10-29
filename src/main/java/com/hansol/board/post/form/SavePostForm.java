@@ -1,5 +1,6 @@
 package com.hansol.board.post.form;
 
+import com.hansol.board.post.domain.Post;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -30,6 +31,7 @@ public class SavePostForm {
     private String code;
     private Integer fileUpload;
     private List<MultipartFile> files;
+    private Long parentId;
 
     @Builder
     public SavePostForm(String title, String writer, String content, LocalDateTime createdDate, LocalDateTime lastModifiedDate, Boolean secret, Boolean notice, String password, String code, Integer fileUpload, List<MultipartFile> files) {

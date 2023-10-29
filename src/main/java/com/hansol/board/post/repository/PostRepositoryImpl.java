@@ -19,24 +19,19 @@ import java.util.Optional;
 public class PostRepositoryImpl implements PostRepository{
     private final PostJpaRepository jpaRepository;
     @Override
-    public Optional<Post> findById(Long postId) {
+    public PostEntity findById(Long postId) {
         Optional<PostEntity> findPost = jpaRepository.findById(postId);
-        if (findPost.isPresent()) {
-            return Optional.ofNullable(Post.fromEntity(findPost.get()));
-        } else {
-            throw new NoPostException();
-        }
+        return findPost.orElseThrow(NoPostException::new);
     }
 
     @Override
-    public Post save(Post post) {
-        PostEntity saved = jpaRepository.save(PostEntity.from(post));
-        return Post.fromEntity(saved);
+    public PostEntity save(PostEntity entity) {
+        return jpaRepository.save(entity);
     }
 
     @Override
     @Transactional
-    public Post update(Post post) {
+    public PostEntity update(PostEntity post) {
         Optional<PostEntity> findPost = jpaRepository.findById(post.getId());
         findPost.ifPresent(p -> {
             p.setTitle(post.getTitle());
@@ -47,23 +42,19 @@ public class PostRepositoryImpl implements PostRepository{
             p.setPassword(post.getPassword());
         });
 
-        findPost.orElseThrow(NoPostException::new);
-
-        return Post.fromEntity(findPost.get());
+        return findPost.orElseThrow(NoPostException::new);
     }
 
     @Override
-    public Optional<Post> findByIdAndAndPassword(Long id, String password) {
+    public PostEntity findByIdAndAndPassword(Long id, String password) {
         Optional<PostEntity> findPost = jpaRepository.findByIdAndPassword(id, password);
-        findPost.orElseThrow(NoPostException::new);
-        return Optional.ofNullable(Post.fromEntity(findPost.get()));
+        return findPost.orElseThrow(NoPostException::new);
     }
 
     @Override
-    public Page<Post> findListOrderby(int page, String code) {
+    public Page<PostEntity> findListOrderby(int page, String code) {
         Pageable pageable = PageSetting.getPostPageable(page);
-        Page<PostEntity> list = jpaRepository.findListOrderby(code, pageable);
-        return list.map(Post::fromEntity);
+        return jpaRepository.findByCodeAndParentPostIsNull(code, pageable);
     }
 
     @Override
@@ -76,7 +67,7 @@ public class PostRepositoryImpl implements PostRepository{
     }
 
     @Override
-    public Page<Post> findByConditions(String condition, String search) {
+    public Page<PostEntity> findByConditions(String condition, String search) {
         //querydsl로 해결해 보기
         return null;
     }
@@ -99,20 +90,20 @@ public class PostRepositoryImpl implements PostRepository{
     }
 
     @Override
-    public List<Post> findAll(int page, String code) {
+    public List<PostEntity> findAll(int page, String code) {
         Pageable pageable = PageSetting.getPostPageable(page);
-        Page<PostEntity> posts = jpaRepository.findListOrderby(code, pageable);
-        return posts.stream().map(Post::fromEntity).toList();
+        Page<PostEntity> posts = jpaRepository.findByCodeAndParentPostIsNull(code, pageable);
+        return posts.stream().toList();
     }
 
     @Override
-    public Optional<Post> findPrevPost(Long id) {
+    public PostEntity findPrevPost(Long id) {
         Long prevId = jpaRepository.findPrevId(id);
         return findById(prevId);
     }
 
     @Override
-    public Optional<Post> findNextPost(Long id) {
+    public PostEntity findNextPost(Long id) {
         Long nextId = jpaRepository.findNextId(id);
         return findById(nextId);
     }

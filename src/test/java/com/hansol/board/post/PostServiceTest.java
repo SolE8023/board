@@ -5,6 +5,7 @@ import com.hansol.board.exception.NoPostException;
 import com.hansol.board.exception.PasswordErrorException;
 import com.hansol.board.mock.TestContainer;
 import com.hansol.board.post.domain.Post;
+import com.hansol.board.post.domain.PostEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
@@ -20,16 +21,15 @@ public class PostServiceTest {
     void 게시글_저장이_가능해야_한다() {
         //given
         TestContainer testContainer = TestContainer.builder().build();
-        Post post = Post.builder()
+        PostEntity post = PostEntity.builder()
                 .title("제목1")
                 .writer("홍길동")
                 .content("내용1")
                 .password("qwer1234")
-                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
 
         //when
-        Post saved = testContainer.postService.savePost(post);
+        PostEntity saved = testContainer.postService.savePost(post);
 
         //then
         assertThat(saved.getTitle()).isEqualTo("제목1");
@@ -38,52 +38,49 @@ public class PostServiceTest {
     void 게시글_한_건을_조회할_수_있다() {
         //given
         TestContainer testContainer = TestContainer.builder().build();
-        Post post = Post.builder()
+        PostEntity post = PostEntity.builder()
                 .title("제목1")
                 .writer("홍길동")
                 .content("내용1")
                 .password("qwer1234")
-                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
-        Post saved = testContainer.postService.savePost(post);
+        PostEntity saved = testContainer.postService.savePost(post);
 
         //when
-        Optional<Post> findPost = testContainer.postService.findPostById(saved.getId());
+        PostEntity findPost = testContainer.postService.findPostById(saved.getId());
 
         //then
-        assertThat(findPost.isPresent()).isTrue();
-        assertThat(findPost.get().getTitle()).isEqualTo(saved.getTitle());
-        assertThat(findPost.get().getWriter()).isEqualTo(saved.getWriter());
-        assertThat(findPost.get().getContent()).isEqualTo(saved.getContent());
-        assertThat(findPost.get().getPassword()).isEqualTo(saved.getPassword());
-        assertThat(findPost.get().getCreatedDate()).isEqualTo(saved.getCreatedDate());
+        assertThat(findPost).isNotNull();
+        assertThat(findPost.getTitle()).isEqualTo(saved.getTitle());
+        assertThat(findPost.getWriter()).isEqualTo(saved.getWriter());
+        assertThat(findPost.getContent()).isEqualTo(saved.getContent());
+        assertThat(findPost.getPassword()).isEqualTo(saved.getPassword());
+        assertThat(findPost.getCreatedDate()).isEqualTo(saved.getCreatedDate());
     }
 
     @Test
     void 게시글_리스트를_조회할_수_있다_체크된_공지사항_순서() {
         //given
         TestContainer testContainer = TestContainer.builder().build();
-        Post post1 = Post.builder()
+        PostEntity post1 = PostEntity.builder()
                 .title("제목1")
                 .writer("홍길동")
                 .content("내용1")
                 .notice(false)
                 .password("qwer1234")
-                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
-        Post post2 = Post.builder()
+        PostEntity post2 = PostEntity.builder()
                 .title("제목2")
                 .writer("황진이")
                 .content("내용2")
                 .notice(true)
                 .password("777")
-                .createdDate(LocalDateTime.of(2023,10,15,13,13))
                 .build();
-        Post saved1 = testContainer.postService.savePost(post1);
-        Post saved2 = testContainer.postService.savePost(post2);
+        PostEntity saved1 = testContainer.postService.savePost(post1);
+        PostEntity saved2 = testContainer.postService.savePost(post2);
 
         //when
-        Page<Post> posts = testContainer.postService.findListOrderby(0, "notice");
+        Page<PostEntity> posts = testContainer.postService.findListOrderby(0, "notice");
 
         //then
         assertThat(posts.getNumberOfElements()).isEqualTo(2);
@@ -95,23 +92,22 @@ public class PostServiceTest {
     void 게시글_한_건_조회시_항상_비밀글_여부를_체크하고_비밀번호를_입력받아야_한다() {
         //given
         TestContainer testContainer = TestContainer.builder().build();
-        Post post = Post.builder()
+        PostEntity post = PostEntity.builder()
                 .title("제목1")
                 .writer("홍길동")
                 .content("내용1")
                 .notice(false)
                 .secret(true)
                 .password("qwer1234")
-                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
-        Post saved = testContainer.postService.savePost(post);
+        PostEntity saved = testContainer.postService.savePost(post);
 
         //when
-        Optional<Post> findPost = testContainer.postService.findSecretPostById(saved.getId(), "qwer1234");
+        PostEntity findPost = testContainer.postService.findSecretPostById(saved.getId(), "qwer1234");
 
         //then
-        assertThat(findPost.isPresent()).isTrue();
-        assertThat(saved.getTitle()).isEqualTo(findPost.get().getTitle());
+        assertThat(findPost).isNotNull();
+        assertThat(saved.getTitle()).isEqualTo(findPost.getTitle());
         assertThatThrownBy(() -> testContainer.postService.findSecretPostById(saved.getId(), "wrong Password"))
                 .isInstanceOf(PasswordErrorException.class);
     }
@@ -120,39 +116,36 @@ public class PostServiceTest {
     void 이전글_조회가_가능해야_한다() {
         //given
         TestContainer testContainer = TestContainer.builder().build();
-        Post post1 = Post.builder()
+        PostEntity post1 = PostEntity.builder()
                 .title("제목1")
                 .writer("홍길동")
                 .content("내용1")
                 .notice(false)
                 .secret(false)
                 .password("qwer1234")
-                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
-        Post post2 = Post.builder()
+        PostEntity post2 = PostEntity.builder()
                 .title("제목2")
                 .writer("황진이")
                 .content("내용2")
                 .notice(false)
                 .secret(true)
                 .password("qwer1234")
-                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
-        Post post3 = Post.builder()
+        PostEntity post3 = PostEntity.builder()
                 .title("제목3")
                 .writer("척준경")
                 .content("내용3")
                 .notice(false)
                 .secret(false)
                 .password("qwer1234")
-                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
-        Post saved1 = testContainer.postService.savePost(post1);
+        PostEntity saved1 = testContainer.postService.savePost(post1);
         testContainer.postService.savePost(post2);
-        Post saved3 = testContainer.postService.savePost(post3);
+        PostEntity saved3 = testContainer.postService.savePost(post3);
 
         //when
-        Post prev = testContainer.postService.prevPost(saved3.getId());
+        PostEntity prev = testContainer.postService.prevPost(saved3.getId());
 
         //then
         assertThat(prev.getTitle()).isEqualTo(saved1.getTitle());
@@ -164,39 +157,36 @@ public class PostServiceTest {
     void 다음글_조회가_가능해야_한다() {
         //given
         TestContainer testContainer = TestContainer.builder().build();
-        Post post1 = Post.builder()
+        PostEntity post1 = PostEntity.builder()
                 .title("제목1")
                 .writer("홍길동")
                 .content("내용1")
                 .notice(false)
                 .secret(false)
                 .password("qwer1234")
-                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
-        Post post2 = Post.builder()
+        PostEntity post2 = PostEntity.builder()
                 .title("제목2")
                 .writer("황진이")
                 .content("내용2")
                 .notice(false)
                 .secret(true)
                 .password("qwer1234")
-                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
-        Post post3 = Post.builder()
+        PostEntity post3 = PostEntity.builder()
                 .title("제목3")
                 .writer("척준경")
                 .content("내용3")
                 .notice(false)
                 .secret(false)
                 .password("qwer1234")
-                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
-        Post saved1 = testContainer.postService.savePost(post1);
+        PostEntity saved1 = testContainer.postService.savePost(post1);
         testContainer.postService.savePost(post2);
-        Post saved3 = testContainer.postService.savePost(post3);
+        PostEntity saved3 = testContainer.postService.savePost(post3);
 
         //when
-        Post next = testContainer.postService.nextPost(saved1.getId());
+        PostEntity next = testContainer.postService.nextPost(saved1.getId());
 
         //then
         assertThat(next.getTitle()).isEqualTo(saved3.getTitle());
@@ -208,16 +198,15 @@ public class PostServiceTest {
     void 게시글_삭제가_가능해야_한다() {
         //given
         TestContainer testContainer = TestContainer.builder().build();
-        Post post = Post.builder()
+        PostEntity post = PostEntity.builder()
                 .title("제목1")
                 .writer("홍길동")
                 .content("내용1")
                 .notice(false)
                 .secret(false)
                 .password("qwer1234")
-                .createdDate(LocalDateTime.of(2023,10,15,13,12))
                 .build();
-        Post saved = testContainer.postRepository.save(post);
+        PostEntity saved = testContainer.postRepository.save(post);
 
         //when
         testContainer.postService.remove(saved.getId(), "qwer1234");

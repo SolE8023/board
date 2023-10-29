@@ -12,6 +12,7 @@
         <form name="savePostForm" th:action th:object="${form}" method="post" enctype="multipart/form-data">
             <input th:field="*{code}" type="hidden">
             <input th:field="*{content}" type="hidden">
+            <input th:field="*{parentId}" type="hidden">
             <div class="form-item">
                 <span>제목</span>
                 <input type="text" class="w-100" th:field="*{title}">
@@ -52,7 +53,7 @@
             </span>
             </div>
             <div class="form-button">
-                <button class="regist-btn" type="button" onclick="validateForm()">등록</button>
+                <button class="regist-btn" type="button" onclick="validateForm()" th:text="${form.parentId} ? '답글':'등록'">등록</button>
                 <button class="cancel-btn" type="button" onclick="goToList()">취소</button>
             </div>
         </form>
@@ -60,7 +61,7 @@
 </div>
 
 
-<script>
+<script th:inline="javascript">
     let theEditor;
     const code = document.querySelector("input[name=code]").value
 
@@ -118,7 +119,13 @@
 
         document.querySelector("input[name=content]").value = content
 
-        document.forms.savePostForm.submit()
+        const parentId = document.querySelector("input[name=parentId]").value
+        if (parentId !== "") {
+            const code = document.querySelector("input[name=code]").value
+            document.forms.savePostForm.action = `/post/${code}/write`
+        }
+
+        document.forms.savePostForm.submit();
     }
 
     function updateFileName(elem) {

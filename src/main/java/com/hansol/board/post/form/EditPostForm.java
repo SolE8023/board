@@ -66,4 +66,19 @@ public class EditPostForm {
                 .code(post.getCode())
                 .build();
     }
+
+    public static EditPostForm fromEntity(PostEntity entity) {
+        return EditPostForm.builder()
+                .id(entity.getId())
+                .title(entity.getTitle())
+                .writer(entity.getWriter())
+                .content(entity.getContent())
+                .createdDate(entity.getCreatedDate())
+                .lastModifiedDate(entity.getLastModifiedDate())
+                .secret(entity.getSecret())
+                .notice(entity.getNotice())
+                .password(entity.getPassword())
+                .code(entity.getCode())
+                .build();
+    }
 }

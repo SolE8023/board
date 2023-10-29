@@ -52,7 +52,7 @@ class PostTest {
                 .build();
 
         //when
-        Post post = Post.formSaveForm(form);
+        Post post = Post.fromSaveForm(form);
 
         //then
         assertThat(post.getTitle()).isEqualTo(form.getTitle());

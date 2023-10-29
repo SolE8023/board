@@ -15,7 +15,7 @@ public class PageSetting {
         Sort.Order orderByNotice = Sort.Order.desc("notice");
         Sort.Order orderByCreatedDate = Sort.Order.desc("createdDate");
 
-        Sort sort = Sort.by(orderByCreatedDate, orderByNotice);
+        Sort sort = Sort.by(orderByNotice, orderByCreatedDate);
         return PageRequest.of(page, POSTS_PER_PAGE, sort);
     }
 

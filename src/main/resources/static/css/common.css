@@ -53,3 +53,7 @@
 button {
     cursor: pointer;
 }
+
+#editor {
+    max-width: 1300px;
+}

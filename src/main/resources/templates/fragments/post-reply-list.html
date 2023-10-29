@@ -1,0 +1,41 @@
+<th:block th:fragment="post-reply-list(post, iter, indent)">
+    <div class="board-data"
+         th:with="link=${post.secret eq false} ? '/post/' + ${code} + '/view/' + ${post.id} : 'javascript:viewPost(' + ${post.id} + ')'">
+        <a th:href="${link}">
+            <div th:if="${post.parentPost == null}" th:text="${postStartNumber - iterStat.index}">1</div>
+        </a>
+
+        <a style="justify-self: start" th:href="${link}">
+            <div th:if="${iter == null}">
+                <img class="secret-post" th:if="${post.secret}" th:src="@{/images/lock-icon.png}" alt="비밀글 입니다."/>
+                <span th:if="${post.notice}">[공지] </span>
+                <span th:text="${post.title}">
+                    테스트 제목입니다.
+                </span>
+            </div>
+            <div th:if="${iter != null}">
+                <div th:style="'margin-left:' + (${indent} * 10) + 'px'">
+                    <th:block th:if="${post.parentPost != null}">
+                        <img height="14" src="/images/reply-icon.png" width="14"/>
+                    </th:block>
+                    <img class="secret-post" th:if="${post.secret}" th:src="@{/images/lock-icon.png}" alt="비밀글 입니다."/>
+                    <span th:if="${post.notice}">[공지] </span>
+                    <span th:text="${post.title}">테스트 제목입니다.</span>
+                </div>
+            </div>
+        </a>
+
+        <a th:href="${link}">
+            <div th:text="${post.writer}">김한솔</div>
+        </a>
+
+        <a th:href="${link}">
+            <div th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd')}">2021.02.20</div>
+        </a>
+    </div>
+    <th:block th:each="reply, replyIter : ${post.childPosts}" th:if="${post.childPosts != null}">
+        <th:block th:with="indent=${indent+1}">
+            <div th:replace="~{fragments/post-reply-list.html :: post-reply-list(${reply}, ${replyIter}, ${indent})}"></div>
+        </th:block>
+    </th:block>
+</th:block>

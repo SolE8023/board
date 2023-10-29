@@ -1,0 +1,19 @@
+<th:block th:fragment="post-list(posts)">
+    <div class="board-data" th:each="post, iterStat : ${posts}"
+         th:with="link=${post.secret eq false} ? '/post/' + ${code} + '/view/' + ${post.id} : 'javascript:viewPost(' + ${post.id} + ')'">
+        <a th:href="${link}">
+            <div th:text="${postStartNumber - iterStat.index}">1</div>
+        </a>
+        <a th:href="${link}">
+            <img class="secret-post" th:if="${post.secret}" th:src="@{/images/lock-icon.png}" alt="비밀글 입니다."/>
+            <span th:if="${post.notice}">[공지] </span>
+            <span th:text="${post.title}">테스트 제목입니다.</span>
+        </a>
+        <a th:href="${link}">
+            <div th:text="${post.writer}">김한솔</div>
+        </a>
+        <a th:href="${link}">
+            <div th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd')}">2021.02.20</div>
+        </a>
+    </div>
+</th:block>

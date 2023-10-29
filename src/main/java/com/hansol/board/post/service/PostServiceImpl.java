@@ -1,8 +1,8 @@
 package com.hansol.board.post.service;
 
-import com.hansol.board.exception.NoPostException;
 import com.hansol.board.exception.PasswordErrorException;
 import com.hansol.board.post.domain.Post;
+import com.hansol.board.post.domain.PostEntity;
 import com.hansol.board.post.repository.PostRepository;
 import com.hansol.board.post.request.CheckPassword;
 import lombok.RequiredArgsConstructor;
@@ -18,27 +18,27 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     @Override
-    public Optional<Post> findPostById(Long id) {
+    public PostEntity findPostById(Long id) {
         return postRepository.findById(id);
     }
 
     @Override
-    public Page<Post> findListOrderby(int page, String code) {
+    public Page<PostEntity> findListOrderby(int page, String code) {
         return postRepository.findListOrderby(page, code);
     }
 
     @Override
-    public Post savePost(Post post) {
-        return postRepository.save(post);
+    public PostEntity savePost(PostEntity entity) {
+        return postRepository.save(entity);
     }
 
     @Override
-    public Post update(Post post) {
+    public PostEntity update(PostEntity post) {
         return postRepository.update(post);
     }
 
     @Override
-    public Optional<Post> findSecretPostById(Long id, String password) {
+    public PostEntity findSecretPostById(Long id, String password) {
         if (postRepository.isSecretPost(id)) {
             if (postRepository.passwordCheck(id, password)) {
                 return postRepository.findById(id);
@@ -51,13 +51,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post prevPost(Long id) {
-        return postRepository.findPrevPost(id).orElseThrow(NoPostException::new);
+    public PostEntity prevPost(Long id) {
+        return postRepository.findPrevPost(id);
     }
 
     @Override
-    public Post nextPost(Long id) {
-        return postRepository.findNextPost(id).orElseThrow(NoPostException::new);
+    public PostEntity nextPost(Long id) {
+        return postRepository.findNextPost(id);
     }
 
     @Override

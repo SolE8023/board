@@ -36,9 +36,8 @@ public class CommentApiV1 {
         if (bindingResult.hasErrors()) {
             return bindingResult.getAllErrors();
         }
-        Optional<Post> findPost = postRepository.findById(form.getPostId());
-        Post post = findPost.orElseThrow(NoPostException::new);
-        CommentEntity saved = commentRepository.save(CommentEntity.fromSaveForm(form, PostEntity.from(post)));
+        PostEntity entity = postRepository.findById(form.getPostId());
+        CommentEntity saved = commentRepository.save(CommentEntity.fromSaveForm(form, entity));
         if (saved.getId() != null) {
             return ResponseEntity.ok("success");
         } else {

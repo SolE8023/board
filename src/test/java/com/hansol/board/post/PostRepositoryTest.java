@@ -5,6 +5,8 @@ import com.hansol.board.exception.PasswordErrorException;
 import com.hansol.board.mock.TestContainer;
 import com.hansol.board.post.domain.Post;
 import com.hansol.board.common.domain.Writer;
+import com.hansol.board.post.domain.PostEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 
@@ -15,28 +17,27 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@Slf4j
 public class PostRepositoryTest {
     @Test
     void 게시글_하나를_조회할_수_있다() {
         //given
-        Post post = Post.builder()
+        PostEntity post = PostEntity.builder()
                 .title("게시글 제목1")
                 .writer("홍길동")
                 .content("게시글 내용1")
-                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .lastModifiedDate(null)
                 .secret(false)
                 .notice(false)
                 .build();
 
         TestContainer testContainer = TestContainer.builder().build();
-        Post saved = testContainer.postRepository.save(post);
+        PostEntity saved = testContainer.postRepository.save(post);
 
         //when
-        Optional<Post> findPost = testContainer.postRepository.findById(saved.getId());
+        PostEntity findPost = testContainer.postRepository.findById(saved.getId());
 
         //then
-        assertThat(findPost.isPresent()).isTrue();
+        assertThat(findPost).isNotNull();
     }
 
     @Test
@@ -53,12 +54,10 @@ public class PostRepositoryTest {
     @Test
     void 비밀글일_경우_올바른_비밀번호를_입력해야_한다() {
         //given
-        Post post = Post.builder()
+        PostEntity post = PostEntity.builder()
                 .title("게시글 제목1")
                 .writer("홍길동")
                 .content("게시글 내용1")
-                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .lastModifiedDate(null)
                 .secret(true)
                 .notice(false)
                 .password("qwer1234")
@@ -67,10 +66,10 @@ public class PostRepositoryTest {
         testContainer.postRepository.save(post);
 
         //when
-        Optional<Post> findPost = testContainer.postRepository.findByIdAndAndPassword(1L, "qwer1234");
+        PostEntity findPost = testContainer.postRepository.findByIdAndAndPassword(1L, "qwer1234");
 
         //then
-        assertThat(findPost.isPresent()).isTrue();
+        assertThat(findPost).isNotNull();
         assertThatThrownBy(() -> testContainer.postRepository.findByIdAndAndPassword(1L, "wrong password"))
                 .isInstanceOf(PasswordErrorException.class);
     }
@@ -78,12 +77,10 @@ public class PostRepositoryTest {
     @Test
     void 비밀글일_경우_잘못된_비밀번호를_입력하면_안된다() {
         //given
-        Post post = Post.builder()
+        PostEntity post = PostEntity.builder()
                 .title("게시글 제목1")
                 .writer("홍길동")
                 .content("게시글 내용1")
-                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .lastModifiedDate(null)
                 .secret(true)
                 .notice(false)
                 .password("qwer1234")
@@ -99,22 +96,18 @@ public class PostRepositoryTest {
     @Test
     void 공지사항일_경우_제일_먼저_노출되어야_한다() {
         //given
-        Post post1 = Post.builder()
+        PostEntity post1 = PostEntity.builder()
                 .title("게시글 제목1")
                 .writer("홍길동")
                 .content("게시글 내용1")
-                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .lastModifiedDate(null)
                 .secret(false)
                 .notice(false)
                 .password("qwer1234")
                 .build();
-        Post post2 = Post.builder()
+        PostEntity post2 = PostEntity.builder()
                 .title("게시글 제목2")
                 .writer("황진이")
                 .content("게시글 내용2")
-                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 31))
-                .lastModifiedDate(null)
                 .secret(false)
                 .notice(true)
                 .password("qwer1234")
@@ -124,42 +117,9 @@ public class PostRepositoryTest {
         testContainer.postRepository.save(post1);
         testContainer.postRepository.save(post2);
 
-        Page<Post> posts = testContainer.postRepository.findListOrderby(0,"notice");
+        Page<PostEntity> posts = testContainer.postRepository.findListOrderby(0,"notice");
         assertThat(posts.getContent().get(0).getId()).isEqualTo(2L);
         assertThat(posts.getContent().get(1).getId()).isEqualTo(1L);
-    }
-
-    @Test
-    void 공지사항이_아닐_경우_생성일_기준으로_정렬되어야_한다() {
-        //given
-        Post post1 = Post.builder()
-                .title("게시글 제목1")
-                .writer("홍길동")
-                .content("게시글 내용1")
-                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .lastModifiedDate(null)
-                .secret(false)
-                .notice(false)
-                .password("qwer1234")
-                .build();
-        Post post2 = Post.builder()
-                .title("게시글 제목2")
-                .writer("황진이")
-                .content("게시글 내용2")
-                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 31))
-                .lastModifiedDate(null)
-                .secret(false)
-                .notice(false)
-                .password("qwer1234")
-                .build();
-
-        TestContainer testContainer = TestContainer.builder().build();
-        testContainer.postRepository.save(post1);
-        testContainer.postRepository.save(post2);
-
-        List<Post> posts = testContainer.postRepository.findListOrderby(0, "notice").getContent();
-        assertThat(posts.get(0).getId()).isEqualTo(1L);
-        assertThat(posts.get(1).getId()).isEqualTo(2L);
     }
 
     @Test
@@ -167,12 +127,10 @@ public class PostRepositoryTest {
         //given
         TestContainer testContainer = TestContainer.builder().build();
 
-        Post savePost = Post.builder()
+        PostEntity savePost = PostEntity.builder()
                 .title("게시글 제목1")
                 .writer("홍길동")
                 .content("게시글 내용1")
-                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .lastModifiedDate(null)
                 .secret(false)
                 .notice(false)
                 .password("qwer1234")
@@ -180,27 +138,23 @@ public class PostRepositoryTest {
 
 
         //when
-        Post saved = testContainer.postRepository.save(savePost);
-        Post updatePost = Post.builder()
+        PostEntity saved = testContainer.postRepository.save(savePost);
+        PostEntity updatePost = PostEntity.builder()
                 .id(saved.getId())
                 .title("게시글 제목2")
                 .writer("황진이")
                 .content("게시글 내용2")
-                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 31))
-                .lastModifiedDate(LocalDateTime.of(2023, 10, 17, 15, 32))
                 .secret(false)
                 .notice(false)
                 .password("123123")
                 .build();
-        Post updated = testContainer.postRepository.update(updatePost);
+        PostEntity updated = testContainer.postRepository.update(updatePost);
 
         //then
         assertThat(updated.getId()).isEqualTo(1L);
         assertThat(updated.getTitle()).isEqualTo("게시글 제목2");
         assertThat(updated.getWriter()).isEqualTo("황진이");
         assertThat(updated.getContent()).isEqualTo("게시글 내용2");
-        assertThat(updated.getCreatedDate()).isEqualTo(LocalDateTime.of(2023, 10, 17, 15, 31));
-        assertThat(updated.getLastModifiedDate()).isEqualTo(LocalDateTime.of(2023, 10, 17, 15, 32));
 
     }
 
@@ -208,21 +162,19 @@ public class PostRepositoryTest {
     void 비밀번호가_일치할_경우_게시글을_삭제할_수_있다() {
         //given
         TestContainer testContainer = TestContainer.builder().build();
-        Post post = Post.builder()
+        PostEntity post = PostEntity.builder()
                 .title("게시글 제목1")
                 .writer("홍길동")
                 .content("게시글 내용1")
-                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .lastModifiedDate(null)
                 .secret(false)
                 .notice(false)
                 .password("qwer1234")
                 .build();
-        Post saved = testContainer.postRepository.save(post);
+        PostEntity saved = testContainer.postRepository.save(post);
         Long savedId = saved.getId();
 
-        Optional<Post> findPost = testContainer.postRepository.findById(savedId);
-        assertThat(findPost.isPresent()).isTrue();
+        PostEntity findPost = testContainer.postRepository.findById(savedId);
+        assertThat(findPost).isNotNull();
 
         //when
         testContainer.postRepository.remove(saved.getId(), saved.getPassword());
@@ -237,23 +189,19 @@ public class PostRepositoryTest {
         //given
         TestContainer testContainer = TestContainer.builder().build();
 
-        Post post1 = Post.builder()
+        PostEntity post1 = PostEntity.builder()
                 .title("게시글 제목1")
                 .writer("홍길동")
                 .content("게시글 내용1")
-                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 30))
-                .lastModifiedDate(null)
                 .secret(false)
                 .notice(false)
                 .build();
 
         //when
-        Post post2 = Post.builder()
+        PostEntity post2 = PostEntity.builder()
                 .title("게시글 제목2")
                 .writer("황진이")
                 .content("게시글 내용2")
-                .createdDate(LocalDateTime.of(2023, 10, 17, 15, 31))
-                .lastModifiedDate(LocalDateTime.of(2023, 10, 17, 15, 31))
                 .secret(false)
                 .notice(false)
                 .build();
@@ -261,17 +209,17 @@ public class PostRepositoryTest {
         testContainer.postRepository.save(post1);
         testContainer.postRepository.save(post2);
 
-        Page<Post> findByTitle1 = testContainer.postRepository.findByConditions("title", "게시글 제목");
-        Page<Post> findByTitle2 = testContainer.postRepository.findByConditions("title", "1");
-        Page<Post> findByTitle3 = testContainer.postRepository.findByConditions("title", "2");
-        Page<Post> findByWriter1 = testContainer.postRepository.findByConditions("writer", "홍길동");
-        Page<Post> findByWriter2 = testContainer.postRepository.findByConditions("writer", "황진이");
-        Page<Post> findByContent1 = testContainer.postRepository.findByConditions("content", "게시글 내용");
-        Page<Post> findByContent2 = testContainer.postRepository.findByConditions("content", "1");
-        Page<Post> findByContent3 = testContainer.postRepository.findByConditions("content", "2");
-        Page<Post> findByAllCondition1 = testContainer.postRepository.findByConditions("all", "2");
-        Page<Post> findByAllCondition2 = testContainer.postRepository.findByConditions("all", "게시글");
-        Page<Post> findByAllCondition3 = testContainer.postRepository.findByConditions("all", "황진이");
+        Page<PostEntity> findByTitle1 = testContainer.postRepository.findByConditions("title", "게시글 제목");
+        Page<PostEntity> findByTitle2 = testContainer.postRepository.findByConditions("title", "1");
+        Page<PostEntity> findByTitle3 = testContainer.postRepository.findByConditions("title", "2");
+        Page<PostEntity> findByWriter1 = testContainer.postRepository.findByConditions("writer", "홍길동");
+        Page<PostEntity> findByWriter2 = testContainer.postRepository.findByConditions("writer", "황진이");
+        Page<PostEntity> findByContent1 = testContainer.postRepository.findByConditions("content", "게시글 내용");
+        Page<PostEntity> findByContent2 = testContainer.postRepository.findByConditions("content", "1");
+        Page<PostEntity> findByContent3 = testContainer.postRepository.findByConditions("content", "2");
+        Page<PostEntity> findByAllCondition1 = testContainer.postRepository.findByConditions("all", "2");
+        Page<PostEntity> findByAllCondition2 = testContainer.postRepository.findByConditions("all", "게시글");
+        Page<PostEntity> findByAllCondition3 = testContainer.postRepository.findByConditions("all", "황진이");
 
         assertThat(findByTitle1.getContent().size()).isEqualTo(2);
         assertThat(findByTitle2.getContent().size()).isEqualTo(1);

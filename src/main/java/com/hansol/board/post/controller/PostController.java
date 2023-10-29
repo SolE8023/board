@@ -2,7 +2,6 @@ package com.hansol.board.post.controller;
 
 import com.hansol.board.boardInfo.domain.BoardInfo;
 import com.hansol.board.boardInfo.repository.BoardInfoRepository;
-import com.hansol.board.common.enums.UseStatus;
 import com.hansol.board.exception.NoPostException;
 import com.hansol.board.post.domain.Post;
 import com.hansol.board.post.domain.PostEntity;
@@ -49,10 +48,11 @@ public class PostController {
     public String list(Model model,
                        @PathVariable String code,
                        @RequestParam(required = false, defaultValue = "0") int page) {
-        Page<Post> posts = postService.findListOrderby(page, code);
+        Page<PostEntity> posts = postService.findListOrderby(page, code);
         model.addAttribute("posts", posts);
         model.addAttribute("boards", boardInfoRepository.findAll());
         model.addAttribute("boardName", boardInfoRepository.findByBoardCode(code).getBoardName());
+        model.addAttribute("boardInfo", boardInfoRepository.findByBoardCode(code));
 
         setPageVariable(model, posts);
 
@@ -70,6 +70,22 @@ public class PostController {
         return "/board-skin/" + code + "/write";
     }
 
+    @GetMapping("{code}/reply/{id}")
+    public String replyForm(@PathVariable String code,
+                            @PathVariable Long id,
+                            Model model) {
+        SavePostForm form = new SavePostForm();
+        form.setParentId(id);
+        form.setCode(code);
+
+        BoardInfo findInfo = boardInfoRepository.findByBoardCode(code);
+        form.setFileUpload(findInfo.getFileUpload());
+
+        model.addAttribute("form", form);
+        model.addAttribute("boards", boardInfoRepository.findAll());
+        return "/board-skin/" + code + "/write";
+    }
+
     @PostMapping("{code}/write")
     public String addPost(@Validated @ModelAttribute("form") SavePostForm savePostForm,
                           BindingResult bindingResult,
@@ -80,11 +96,15 @@ public class PostController {
             model.addAttribute("boards", boardInfoRepository.findAll());
             return "/board-skin/" + code + "/write";
         }
-        Post post = Post.formSaveForm(savePostForm);
-        post = postService.savePost(post);
+        PostEntity entity = PostEntity.fromSaveForm(savePostForm);
+        if (savePostForm.getParentId() != null && savePostForm.getParentId() != 0L) {
+            PostEntity parentPost = postService.findPostById(savePostForm.getParentId());
+            entity.setParentPost(parentPost);
+        }
+        PostEntity saved = postService.savePost(entity);
 
         redirectAttributes.addAttribute("code", code);
-        redirectAttributes.addAttribute("id", post.getId());
+        redirectAttributes.addAttribute("id", saved.getId());
         return "redirect:/post/{code}/view/{id}";
     }
 
@@ -94,14 +114,14 @@ public class PostController {
                        Model model,
                        HttpSession session,
                        RedirectAttributes redirectAttributes) {
-        Optional<Post> post = postService.findPostById(id);
-        Post findPost = post.orElseThrow(NoPostException::new);
+        PostEntity entity = postService.findPostById(id);
+        Post post = Post.fromEntity(entity);
 
-        model.addAttribute("post", findPost);
+        model.addAttribute("post", post);
         model.addAttribute("boards", boardInfoRepository.findAll());
         model.addAttribute("boardInfo", boardInfoRepository.findByBoardCode(code));
 
-        if (findPost.getSecret()) {
+        if (post.getSecret()) {
             Boolean auth = (Boolean) session.getAttribute("auth");
             Long sessionPostId = (Long) session.getAttribute("id");
             String sessionType = (String) session.getAttribute("type");
@@ -122,9 +142,8 @@ public class PostController {
                            Model model,
                            HttpSession session,
                            RedirectAttributes redirectAttributes) {
-        Optional<Post> findPost = postService.findPostById(id);
-        Post post = findPost.orElseThrow(NoPostException::new);
-        EditPostForm form = EditPostForm.from(post);
+        PostEntity entity = postService.findPostById(id);
+        EditPostForm form = EditPostForm.fromEntity(entity);
 
         model.addAttribute("form", form);
         model.addAttribute("boards", boardInfoRepository.findAll());
@@ -160,7 +179,7 @@ public class PostController {
         String sessionType = (String) session.getAttribute("type");
 
         if (auth != null && auth && sessionPostId.equals(id) && sessionType.equals("edit")) {
-            postService.update(Post.formEditForm(editPostForm));
+            postService.update(PostEntity.formEditForm(editPostForm));
         }
 
         redirectAttributes.addAttribute("code", code);
@@ -179,10 +198,8 @@ public class PostController {
         String sessionType = (String) session.getAttribute("type");
 
         if (auth != null && auth && sessionPostId.equals(id) && sessionType.equals("delete")) {
-            Optional<Post> findPost = postService.findPostById(id);
-            findPost.orElseThrow(NoPostException::new);
-            Post post = findPost.get();
-            postService.remove(id, post.getPassword());
+            PostEntity entity = postService.findPostById(id);
+            postService.remove(id, entity.getPassword());
 
             redirectAttributes.addAttribute("code", code);
             return "redirect:/post/{code}/list";

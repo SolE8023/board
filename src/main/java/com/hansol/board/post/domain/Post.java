@@ -24,9 +24,10 @@ public class Post {
     private String password;
     private String code;
     private List<CommentEntity> comments;
+    private Long parentId;
 
     @Builder
-    public Post(Long id, String title, String writer, String content, LocalDateTime createdDate, LocalDateTime lastModifiedDate, Boolean secret, Boolean notice, String password, String code, List<CommentEntity> comments) {
+    public Post(Long id, String title, String writer, String content, LocalDateTime createdDate, LocalDateTime lastModifiedDate, Boolean secret, Boolean notice, String password, String code, List<CommentEntity> comments, Long parentId) {
         this.id = id;
         this.title = title;
         this.writer = writer;
@@ -38,6 +39,7 @@ public class Post {
         this.password = password;
         this.code = code;
         this.comments = comments;
+        this.parentId = parentId;
     }
 
     public static Post fromEntity(PostEntity postEntity) {
@@ -56,7 +58,7 @@ public class Post {
                 .build();
     }
 
-    public static Post formSaveForm(SavePostForm savePostForm) {
+    public static Post fromSaveForm(SavePostForm savePostForm) {
         return Post.builder()
                 .title(savePostForm.getTitle())
                 .writer(savePostForm.getWriter())
@@ -67,6 +69,7 @@ public class Post {
                 .notice(savePostForm.getNotice())
                 .password(savePostForm.getPassword())
                 .code(savePostForm.getCode())
+                .parentId(savePostForm.getParentId())
                 .build();
     }
 
