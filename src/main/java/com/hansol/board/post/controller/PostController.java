@@ -2,6 +2,7 @@ package com.hansol.board.post.controller;
 
 import com.hansol.board.boardInfo.domain.BoardInfo;
 import com.hansol.board.boardInfo.repository.BoardInfoRepository;
+import com.hansol.board.common.enums.UseStatus;
 import com.hansol.board.exception.NoPostException;
 import com.hansol.board.post.domain.Post;
 import com.hansol.board.post.domain.PostEntity;
@@ -98,6 +99,7 @@ public class PostController {
 
         model.addAttribute("post", findPost);
         model.addAttribute("boards", boardInfoRepository.findAll());
+        model.addAttribute("boardInfo", boardInfoRepository.findByBoardCode(code));
 
         if (findPost.getSecret()) {
             Boolean auth = (Boolean) session.getAttribute("auth");

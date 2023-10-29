@@ -1,15 +1,18 @@
 package com.hansol.board.comment.repository;
 
-import com.hansol.board.comment.domain.Comment;
+import com.hansol.board.comment.domain.CommentEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface CommentRepository {
-    Comment save(Comment comment);
-    Comment update(Comment comment, String password);
-    List<Comment> findByPostId(Long id);
-    Optional<Comment> findByIdAndPassword(Long id, String password);
+    CommentEntity save(CommentEntity comment);
+    CommentEntity update(CommentEntity comment);
+    Page<CommentEntity> findByPostId(Long postId, Pageable pageable);
+    Optional<CommentEntity> findByIdAndPassword(Long id, String password);
+
+    Optional<CommentEntity> findById(Long id);
     Boolean passwordCheck(Long id, String password);
-    void remove(Long id, String password);
+    void delete(Long id);
 }

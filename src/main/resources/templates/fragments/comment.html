@@ -1,12 +1,14 @@
-<div class="comment-wrap" th:fragment="comment(comments)">
+<div class="comment-wrap" th:fragment="comment(comments, postId)">
+    <link rel="stylesheet" href="/css/comment.css" type="text/css">
+
     <th:block th:each="comment : ${comments}">
         <hr class="hr"/>
         <span class="flex-wrap">
-            <span class="writerName" th:text="${comment.writerName}">관리자</span>
-            <span class="createdDate" th:text="${comment.lastModifiedDate}">2022-11-16 14:09</span>
+            <span class="writerName" th:text="${comment.writer}">관리자</span>
+            <span class="createdDate" th:text="${#temporals.format(comment.lastModifiedDate, 'yyyy.MM.dd')}">2022-11-16 14:09</span>
             <span class="func-wrap">
-                <span class="modify" onclick="openPopup('edit', this.dataset.commentId)" th:data-comment-id="${comment.id}">수정</span>
-                <span class="delete" onclick="openPopup('delete', this.dataset.commentId)" th:data-comment-id="${comment.id}">삭제</span>
+                <span class="modify" onclick="modifyComment(this.dataset.id)" th:data-id="${comment.id}">수정</span>
+                <span class="delete" onclick="deleteComment(this.dataset.id)" th:data-id="${comment.id}">삭제</span>
             </span>
         </span>
         <hr class="hr hr-little-gray"/>
@@ -17,7 +19,9 @@
 
     <div class="comment-form-wrap">
         <div class="input-form">
+            <input type="hidden" name="commentPostId" th:value="${postId}">
             <input type="hidden" name="commentId" value="">
+            <input type="hidden" name="commentType">
             <input name="commentWriter" placeholder="작성자" type="text">
             <input name="commentPassword" placeholder="비밀번호" type="password">
         </div>
@@ -30,6 +34,6 @@
     </div>
 
     <div class="btn-wrap">
-        <button id="comment-btn" class="white-btn" onclick="clickCommentBtn(this)" type="button" data-mode="create">댓글 등록하기</button>
+        <button id="comment-btn" class="white-btn" onclick="addComment()" type="button">댓글 등록하기</button>
     </div>
 </div>

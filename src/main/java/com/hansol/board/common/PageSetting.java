@@ -12,10 +12,18 @@ public class PageSetting {
     public static final int PAGINATION_SIZE = 10;
     public static final int POSTS_PER_PAGE = 15;
     public static Pageable getPostPageable(Integer page) {
+        Sort.Order orderByNotice = Sort.Order.desc("notice");
         Sort.Order orderByCreatedDate = Sort.Order.desc("createdDate");
-        Sort.Order orderBySecret = Sort.Order.desc("secret");
 
-        Sort sort = Sort.by(orderByCreatedDate, orderBySecret);
+        Sort sort = Sort.by(orderByCreatedDate, orderByNotice);
+        return PageRequest.of(page, POSTS_PER_PAGE, sort);
+    }
+
+    public static Pageable getCommentPageable(Integer page) {
+        Sort.Order orderByCreatedDate = Sort.Order.desc("createdDate");
+        Sort.Order orderById = Sort.Order.desc("id");
+
+        Sort sort = Sort.by(orderByCreatedDate, orderById);
         return PageRequest.of(page, POSTS_PER_PAGE, sort);
     }
 

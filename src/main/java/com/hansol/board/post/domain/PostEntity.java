@@ -1,5 +1,6 @@
 package com.hansol.board.post.domain;
 
+import com.hansol.board.comment.domain.CommentEntity;
 import com.hansol.board.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -8,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -16,7 +19,8 @@ import java.time.LocalDateTime;
 public class PostEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "post_id")
+    @Setter private Long id;
     @Setter private String title;
     @Setter private String writer;
 
@@ -27,6 +31,9 @@ public class PostEntity extends BaseEntity {
     @Setter private Boolean notice;
     @Setter private String password;
     @Setter private String code;
+
+    @OneToMany(mappedBy = "post")
+    private List<CommentEntity> comments = new ArrayList<>();
 
     @Builder
     public PostEntity(Long id, String title, String writer, String content, Boolean secret, Boolean notice, String password, String code) {
@@ -42,6 +49,7 @@ public class PostEntity extends BaseEntity {
 
     public static PostEntity from(Post post) {
         return PostEntity.builder()
+                .id(post.getId())
                 .title(post.getTitle())
                 .writer(post.getWriter())
                 .content(post.getContent())
