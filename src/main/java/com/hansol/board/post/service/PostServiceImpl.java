@@ -48,6 +48,19 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostEntity savePost(PostEntity entity, List<MultipartFile> files) {
         PostEntity post = postRepository.save(entity);
+        fileUpload(post, files);
+        return post;
+    }
+
+    @Override
+    @Transactional
+    public PostEntity update(PostEntity post, List<MultipartFile> files) {
+        PostEntity updated = postRepository.update(post);
+        fileUpload(updated, files);
+        return updated;
+    }
+
+    private void fileUpload(PostEntity post, List<MultipartFile> files) {
         String code = post.getCode();
         for (MultipartFile file : files) {
             if (!file.isEmpty()) {
@@ -73,16 +86,10 @@ public class PostServiceImpl implements PostService {
                             .build();
                     attachmentRepository.save(attachment);
                 } catch (IOException e) {
-                    throw new RuntimeException("파일 업로드 실패");
+                    log.error("파일 업로드 실패");
                 }
             }
         }
-        return post;
-    }
-
-    @Override
-    public PostEntity update(PostEntity post) {
-        return postRepository.update(post);
     }
 
     @Override

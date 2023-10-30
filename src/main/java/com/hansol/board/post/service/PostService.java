@@ -16,7 +16,7 @@ public interface PostService {
 
     PostEntity savePost(PostEntity entity, List<MultipartFile> files);
 
-    PostEntity update(PostEntity post);
+    PostEntity update(PostEntity post, List<MultipartFile> files);
 
     PostEntity findSecretPostById(Long id, String password);
 

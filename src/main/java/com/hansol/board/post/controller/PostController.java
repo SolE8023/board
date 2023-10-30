@@ -187,7 +187,7 @@ public class PostController {
         String sessionType = (String) session.getAttribute("type");
 
         if (auth != null && auth && sessionPostId.equals(id) && sessionType.equals("edit")) {
-            postService.update(PostEntity.formEditForm(editPostForm));
+            postService.update(PostEntity.formEditForm(editPostForm), editPostForm.getFiles());
         }
 
         redirectAttributes.addAttribute("code", code);
