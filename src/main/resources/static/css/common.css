@@ -57,3 +57,69 @@ button {
 #editor {
     max-width: 1300px;
 }
+
+.file-name {
+    display: flex;
+    justify-content: start;
+    width: 100%;
+    padding: 9px;
+    font-size: 15px;
+    border: 1px solid #000;
+    align-items: center;
+}
+
+.form .upload-wrap {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 9fr 2fr;
+    height: 45px;
+    margin-bottom: 5px;
+}
+
+.upload-button {
+    display: flex;
+    width: 100%;
+    cursor: pointer;
+    box-sizing: border-box;
+    color: #fff;
+    background-color: #000;
+    justify-content: center;
+    align-items: center;
+}
+
+.upload-delete-button {
+    display: flex;
+    width: 100%;
+    cursor: pointer;
+    box-sizing: border-box;
+    color: white;
+    background-color: #6d6d6d;
+    justify-content: center;
+    align-items: center;
+}
+
+.upload-group {
+    width: 100%;
+}
+
+.upload-item {
+    display: grid;
+    grid-template-columns: 1fr 7fr;
+    justify-items: center;
+    align-items: center;
+}
+
+.upload-input {
+    display: none;
+}
+
+.download-wrap {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-left: auto;
+    color: #aaaaaa;
+}
+
+.download-wrap div{
+    cursor: pointer;
+}

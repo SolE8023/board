@@ -1,5 +1,6 @@
 package com.hansol.board.mock;
 
+import com.hansol.board.attachment.repository.AttachmentRepository;
 import com.hansol.board.boardInfo.repository.BoardInfoRepository;
 import com.hansol.board.comment.repository.CommentRepository;
 import com.hansol.board.member.repository.MemberRepository;
@@ -17,6 +18,7 @@ public class TestContainer {
     public final BoardInfoRepository boardInfoRepository;
     public final PostService postService;
     public final MemberService memberService;
+    public final AttachmentRepository attachmentRepository;
 
     @Builder
     public TestContainer() {
@@ -24,7 +26,8 @@ public class TestContainer {
         this.memberRepository = new FakeMemberRepository();
         this.commentRepository = new FakeCommentRepository();
         this.boardInfoRepository = new FakeBoardInfoRepository();
-        this.postService = new PostServiceImpl(postRepository);
+        this.attachmentRepository = new EmptyAttachmentRepository();
+        this.postService = new PostServiceImpl(postRepository, attachmentRepository);
         this.memberService = new MemberServiceImpl(memberRepository);
     }
     public static TestContainer create() {

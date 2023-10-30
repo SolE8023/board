@@ -1,5 +1,6 @@
 package com.hansol.board.post.domain;
 
+import com.hansol.board.attachment.domain.Attachment;
 import com.hansol.board.comment.domain.CommentEntity;
 import com.hansol.board.common.domain.BaseEntity;
 import com.hansol.board.post.form.EditPostForm;
@@ -10,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,14 +38,17 @@ public class PostEntity extends BaseEntity {
     @JoinColumn(name = "parent_id")
     @Setter private PostEntity parentPost;
 
-    @OneToMany(mappedBy = "parentPost", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parentPost", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<PostEntity> childPosts;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<CommentEntity> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Attachment> attachments = new ArrayList<>();
+
     @Builder
-    public PostEntity(Long id, String title, String writer, String content, Boolean secret, Boolean notice, String password, String code, PostEntity parentPost, List<PostEntity> childPosts, List<CommentEntity> comments) {
+    public PostEntity(Long id, String title, String writer, String content, Boolean secret, Boolean notice, String password, String code, PostEntity parentPost, List<PostEntity> childPosts, List<CommentEntity> comments, List<Attachment> attachments) {
         this.id = id;
         this.title = title;
         this.writer = writer;
@@ -57,6 +60,7 @@ public class PostEntity extends BaseEntity {
         this.parentPost = parentPost;
         this.childPosts = childPosts;
         this.comments = comments;
+        this.attachments = attachments;
     }
 
     public static PostEntity from(Post post) {

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -29,7 +30,7 @@ public class PostServiceTest {
                 .build();
 
         //when
-        PostEntity saved = testContainer.postService.savePost(post);
+        PostEntity saved = testContainer.postService.savePost(post, new ArrayList<>());
 
         //then
         assertThat(saved.getTitle()).isEqualTo("제목1");
@@ -44,7 +45,7 @@ public class PostServiceTest {
                 .content("내용1")
                 .password("qwer1234")
                 .build();
-        PostEntity saved = testContainer.postService.savePost(post);
+        PostEntity saved = testContainer.postService.savePost(post, new ArrayList<>());
 
         //when
         PostEntity findPost = testContainer.postService.findPostById(saved.getId());
@@ -76,8 +77,8 @@ public class PostServiceTest {
                 .notice(true)
                 .password("777")
                 .build();
-        PostEntity saved1 = testContainer.postService.savePost(post1);
-        PostEntity saved2 = testContainer.postService.savePost(post2);
+        PostEntity saved1 = testContainer.postService.savePost(post1, new ArrayList<>());
+        PostEntity saved2 = testContainer.postService.savePost(post2, new ArrayList<>());
 
         //when
         Page<PostEntity> posts = testContainer.postService.findListOrderby(0, "notice");
@@ -100,7 +101,7 @@ public class PostServiceTest {
                 .secret(true)
                 .password("qwer1234")
                 .build();
-        PostEntity saved = testContainer.postService.savePost(post);
+        PostEntity saved = testContainer.postService.savePost(post, new ArrayList<>());
 
         //when
         PostEntity findPost = testContainer.postService.findSecretPostById(saved.getId(), "qwer1234");
@@ -140,9 +141,9 @@ public class PostServiceTest {
                 .secret(false)
                 .password("qwer1234")
                 .build();
-        PostEntity saved1 = testContainer.postService.savePost(post1);
-        testContainer.postService.savePost(post2);
-        PostEntity saved3 = testContainer.postService.savePost(post3);
+        PostEntity saved1 = testContainer.postService.savePost(post1, new ArrayList<>());
+        testContainer.postService.savePost(post2, new ArrayList<>());
+        PostEntity saved3 = testContainer.postService.savePost(post3, new ArrayList<>());
 
         //when
         PostEntity prev = testContainer.postService.prevPost(saved3.getId());
@@ -181,9 +182,9 @@ public class PostServiceTest {
                 .secret(false)
                 .password("qwer1234")
                 .build();
-        PostEntity saved1 = testContainer.postService.savePost(post1);
-        testContainer.postService.savePost(post2);
-        PostEntity saved3 = testContainer.postService.savePost(post3);
+        PostEntity saved1 = testContainer.postService.savePost(post1, new ArrayList<>());
+        testContainer.postService.savePost(post2, new ArrayList<>());
+        PostEntity saved3 = testContainer.postService.savePost(post3, new ArrayList<>());
 
         //when
         PostEntity next = testContainer.postService.nextPost(saved1.getId());

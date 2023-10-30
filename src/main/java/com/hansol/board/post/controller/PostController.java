@@ -1,5 +1,6 @@
 package com.hansol.board.post.controller;
 
+import com.hansol.board.attachment.domain.Attachment;
 import com.hansol.board.boardInfo.domain.BoardInfo;
 import com.hansol.board.boardInfo.repository.BoardInfoRepository;
 import com.hansol.board.exception.NoPostException;
@@ -27,6 +28,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,7 +58,7 @@ public class PostController {
 
         setPageVariable(model, posts);
 
-        return "/board-skin/" + code + "/list";
+        return "board-skin/" + code + "/list";
     }
 
     @GetMapping("{code}/write")
@@ -67,7 +69,7 @@ public class PostController {
         form.setCode(code);
         model.addAttribute("form", form);
         model.addAttribute("boards", boardInfoRepository.findAll());
-        return "/board-skin/" + code + "/write";
+        return "board-skin/" + code + "/write";
     }
 
     @GetMapping("{code}/reply/{id}")
@@ -83,7 +85,7 @@ public class PostController {
 
         model.addAttribute("form", form);
         model.addAttribute("boards", boardInfoRepository.findAll());
-        return "/board-skin/" + code + "/write";
+        return "board-skin/" + code + "/write";
     }
 
     @PostMapping("{code}/write")
@@ -94,14 +96,15 @@ public class PostController {
                           Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("boards", boardInfoRepository.findAll());
-            return "/board-skin/" + code + "/write";
+            return "board-skin/" + code + "/write";
         }
         PostEntity entity = PostEntity.fromSaveForm(savePostForm);
         if (savePostForm.getParentId() != null && savePostForm.getParentId() != 0L) {
             PostEntity parentPost = postService.findPostById(savePostForm.getParentId());
             entity.setParentPost(parentPost);
         }
-        PostEntity saved = postService.savePost(entity);
+
+        PostEntity saved = postService.savePost(entity, savePostForm.getFiles());
 
         redirectAttributes.addAttribute("code", code);
         redirectAttributes.addAttribute("id", saved.getId());
@@ -114,10 +117,10 @@ public class PostController {
                        Model model,
                        HttpSession session,
                        RedirectAttributes redirectAttributes) {
-        PostEntity entity = postService.findPostById(id);
-        Post post = Post.fromEntity(entity);
+        PostEntity post = postService.findPostById(id);
 
         model.addAttribute("post", post);
+        model.addAttribute("files", post.getAttachments());
         model.addAttribute("boards", boardInfoRepository.findAll());
         model.addAttribute("boardInfo", boardInfoRepository.findByBoardCode(code));
 
@@ -126,13 +129,13 @@ public class PostController {
             Long sessionPostId = (Long) session.getAttribute("id");
             String sessionType = (String) session.getAttribute("type");
             if (auth != null && auth && sessionPostId.equals(id) && sessionType.equals("view")) {
-                return "/board-skin/" + code + "/view";
+                return "board-skin/" + code + "/view";
             } else {
                 redirectAttributes.addAttribute("code", code);
                 return "redirect:/post/{code}/list";
             }
         } else {
-            return "/board-skin/" + code + "/view";
+            return "board-skin/" + code + "/view";
         }
     }
 
@@ -145,7 +148,12 @@ public class PostController {
         PostEntity entity = postService.findPostById(id);
         EditPostForm form = EditPostForm.fromEntity(entity);
 
+        BoardInfo findInfo = boardInfoRepository.findByBoardCode(code);
+        form.setFileUpload(findInfo.getFileUpload());
+        form.setCode(code);
+
         model.addAttribute("form", form);
+        model.addAttribute("files", entity.getAttachments());
         model.addAttribute("boards", boardInfoRepository.findAll());
 
         Boolean auth = (Boolean) session.getAttribute("auth");
@@ -153,7 +161,7 @@ public class PostController {
         String sessionType = (String) session.getAttribute("type");
 
         if (auth != null && auth && sessionPostId.equals(id) && sessionType.equals("edit")) {
-            return "/board-skin/" + code + "/edit";
+            return "board-skin/" + code + "/edit";
         } else {
             redirectAttributes.addAttribute("code", code);
             redirectAttributes.addAttribute("id", id);
@@ -171,7 +179,7 @@ public class PostController {
                              HttpSession session) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("boards", boardInfoRepository.findAll());
-            return "/board-skin/" + code + "/edit";
+            return "board-skin/" + code + "/edit";
         }
 
         Boolean auth = (Boolean) session.getAttribute("auth");
