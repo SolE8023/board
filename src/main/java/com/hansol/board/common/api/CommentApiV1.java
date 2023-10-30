@@ -6,10 +6,9 @@ import com.hansol.board.comment.form.SaveCommentForm;
 import com.hansol.board.comment.repository.CommentRepository;
 import com.hansol.board.comment.request.CheckPassword;
 import com.hansol.board.comment.response.EditFormResponse;
+import com.hansol.board.comment.response.ViewResponse;
 import com.hansol.board.exception.NoAuthException;
 import com.hansol.board.exception.NoCommentException;
-import com.hansol.board.exception.NoPostException;
-import com.hansol.board.post.domain.Post;
 import com.hansol.board.post.domain.PostEntity;
 import com.hansol.board.post.repository.PostRepository;
 import jakarta.servlet.http.HttpSession;
@@ -20,8 +19,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -42,6 +39,20 @@ public class CommentApiV1 {
             return ResponseEntity.ok("success");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청 입니다.");
+        }
+    }
+
+    @GetMapping("{commentId}")
+    public Object view(@PathVariable Long commentId, HttpSession session) {
+        Boolean auth = (Boolean) session.getAttribute("commentAuth");
+        String type = (String) session.getAttribute("commentType");
+        Long id = (Long) session.getAttribute("commentId");
+        if (auth && type.equals("view") && id.equals(commentId)) {
+            Optional<CommentEntity> findComment = commentRepository.findById(commentId);
+            CommentEntity find = findComment.orElseThrow(NoCommentException::new);
+            return ViewResponse.fromEntity(find);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("권한이 없습니다");
         }
     }
 

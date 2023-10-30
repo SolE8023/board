@@ -1,6 +1,7 @@
 const commentWriterElem = document.querySelector("input[name=commentWriter]")
 const commentPasswordElem = document.querySelector("input[name=commentPassword]")
 const commentContentElem = document.querySelector("textarea[name=commentContent]")
+const commentSecretElem = document.querySelector("#commentSecret")
 const commentIdElem = document.querySelector("input[name=commentId]")
 const commentTypeElem = document.querySelector("input[name=commentType]")
 const commentPostId = document.querySelector("input[name=commentPostId]").value
@@ -12,6 +13,7 @@ async function addComment() {
     const writer = commentWriterElem.value
     const password = commentPasswordElem.value
     const content = commentContentElem.value
+    const secret = commentSecretElem.checked
 
     const url = `/api/v1/comment`
     const options = {
@@ -19,7 +21,7 @@ async function addComment() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({writer, content, password, postId: commentPostId})
+        body: JSON.stringify({writer, content, password, postId: commentPostId, secret})
     }
 
     const response = await fetch(url, options)
@@ -86,6 +88,13 @@ function init() {
     document.querySelector("input[name=commentPopupPassword]").value = ""
 }
 
+function viewComment(commentId) {
+    init()
+    setCommentType("view")
+    setCommentId(commentId)
+    openCommentPasswordPopup()
+}
+
 function modifyComment(commentId) {
     init()
     setCommentType("edit")
@@ -134,17 +143,42 @@ async function checkCommentPassword() {
 
     const response = await fetch(url, options)
     if (response.ok) {
-        if (type === "edit") {
-            setEditForm()
-            setButtonText("댓글 수정하기")
-            setButtonOnclick(editCommentRequest)
-            closeCommentPopup()
-        }else if (type === "delete") {
-            deleteCommentRequest()
+        if (type === "view") {
+            setViewContent()
+            closeCommentPopup();
+        } else if (type === "edit") {
+            setEditForm();
+            setButtonText("댓글 수정하기");
+            setButtonOnclick(editCommentRequest);
+            closeCommentPopup();
+        } else if (type === "delete") {
+            deleteCommentRequest();
         }
     } else {
         alert(await response.text())
         return false
+    }
+}
+
+async function setViewContent() {
+    const commentId = commentPopupId.value
+    const url = `/api/v1/comment/${commentId}`
+    const options = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+
+    const response = await fetch(url, options)
+    if (response.ok) {
+        const jsonData = await response.json()
+        document.querySelector(`#commentContent${jsonData.id}`).style.whiteSpace = "pre-line"
+        document.querySelector(`#commentContent${jsonData.id}`).innerText = jsonData.content
+        document.querySelector(`#viewButton${jsonData.id}`).style.display = "none"
+    } else {
+        alert('조회 실패. 페이지를 새로고침 합니다.')
+        location.reload()
     }
 }
 
@@ -160,6 +194,7 @@ async function setEditForm() {
         commentWriterElem.value = jsonData.writer
         commentPasswordElem.value = jsonData.password
         commentContentElem.value = jsonData.content
+        commentWriterElem.checked = jsonData.secret
     } else {
         alert("불러오기 실패. 페이지를 새로고침 합니다.")
         location.reload()
@@ -194,7 +229,8 @@ async function editCommentRequest() {
         alert("댓글이 수정되었습니다.");
         location.reload();
     } else {
-        alert(await response.text())
+        alert("수정 실패. 페이지를 새로고침 합니다.")
+        location.reload()
     }
 }
 

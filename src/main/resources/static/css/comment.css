@@ -56,3 +56,7 @@
 .comment-wrap .func-wrap span{
     cursor: pointer;
 }
+
+#commentSecret {
+    margin-left: 17px;
+}

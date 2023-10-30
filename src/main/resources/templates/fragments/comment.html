@@ -7,12 +7,17 @@
             <span class="writerName" th:text="${comment.writer}">관리자</span>
             <span class="createdDate" th:text="${#temporals.format(comment.lastModifiedDate, 'yyyy.MM.dd')}">2022-11-16 14:09</span>
             <span class="func-wrap">
+                <span th:id="|viewButton${comment.id}|" th:if="${comment.secret}" onclick="viewComment(this.dataset.id)" th:data-id="${comment.id}">보기</span>
                 <span class="modify" onclick="modifyComment(this.dataset.id)" th:data-id="${comment.id}">수정</span>
                 <span class="delete" onclick="deleteComment(this.dataset.id)" th:data-id="${comment.id}">삭제</span>
             </span>
         </span>
         <hr class="hr hr-little-gray"/>
-        <span class="content" style="white-space: pre-line" th:text="${comment.content}">댓글테스트</span>
+        <span th:id="|commentContent${comment.id}|" class="content" th:if="${comment.secret}">
+            <img class="secret-post" th:src="@{/images/lock-icon.png}" alt="비밀 댓글 입니다."/>
+            비밀글 입니다.
+        </span>
+        <span th:id="|commentContent${comment.id}|" class="content" style="white-space: pre-line" th:if="${!comment.secret}" th:text="${comment.content}">댓글테스트</span>
     </th:block>
 
     <hr class="hr"/>
@@ -24,6 +29,8 @@
             <input type="hidden" name="commentType">
             <input name="commentWriter" placeholder="작성자" type="text">
             <input name="commentPassword" placeholder="비밀번호" type="password">
+            <input id="commentSecret" name="commentSecret" type="checkbox">
+            <label for="commentSecret">비밀글</label>
         </div>
 
         <hr class="hr hr-little-gray"/>
