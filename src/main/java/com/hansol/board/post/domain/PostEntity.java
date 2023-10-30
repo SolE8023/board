@@ -39,7 +39,7 @@ public class PostEntity extends BaseEntity {
     @Setter private PostEntity parentPost;
 
     @OneToMany(mappedBy = "parentPost", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<PostEntity> childPosts;
+    private List<PostEntity> childPosts = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<CommentEntity> comments = new ArrayList<>();

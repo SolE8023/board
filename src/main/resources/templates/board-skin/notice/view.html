@@ -95,7 +95,8 @@
                 const contentDisposition = response.headers.get('content-disposition');
                 const fileNameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
                 const matches = fileNameRegex.exec(contentDisposition);
-                const fileName = matches != null && matches[1] ? matches[1].replace(/['"]/g, '') : 'downloaded_file';
+                let fileName = matches != null && matches[1] ? matches[1].replace(/['"]/g, '') : 'downloaded_file';
+                fileName = decodeURIComponent(fileName)
 
                 // 파일 형태 가져오기
                 const contentType = response.headers.get('content-type');

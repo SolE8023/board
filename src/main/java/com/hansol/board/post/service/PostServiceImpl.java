@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -25,6 +26,7 @@ import java.util.UUID;
 import static com.hansol.board.common.Constant.FILE_PATH;
 import static com.hansol.board.common.Constant.UPLOAD_FOLDER;
 import static com.hansol.board.common.Thumbnail.getExtension;
+import static com.hansol.board.common.Thumbnail.makeThumbnail;
 
 @Slf4j
 @Service
@@ -78,11 +80,13 @@ public class PostServiceImpl implements PostService {
                 String filePath = savePath + "/" + filename;
                 try {
                     file.transferTo(new File(filePath));
+                    String thumbnail = makeThumbnail(file, 300, 0, post.getCode(), filename);
                     Attachment attachment = Attachment.builder()
                             .post(post)
                             .originFileName(file.getOriginalFilename())
                             .savedFileName(filename)
                             .code(code)
+                            .thumbnail(thumbnail)
                             .build();
                     attachmentRepository.save(attachment);
                 } catch (IOException e) {
@@ -117,6 +121,19 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void remove(Long id, String password) {
+        PostEntity findPost = postRepository.findById(id);
+        List<Attachment> files = findPost.getAttachments();
+        for (Attachment file : files) {
+            String filePath = FILE_PATH + findPost.getCode() + "/" + file.getSavedFileName();
+            File saved = new File(filePath);
+            saved.delete();
+            String thumbnailPath = null;
+            if (StringUtils.hasText(file.getThumbnail())) {
+                thumbnailPath = FILE_PATH + findPost.getCode() + "/" + file.getThumbnail();
+                File thumbnail = new File(thumbnailPath);
+                thumbnail.delete();
+            }
+        }
         postRepository.remove(id, password);
     }
 

@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
+import static com.hansol.board.common.Constant.FILE_PATH;
+
 @Slf4j
 public class Thumbnail {
     public static String getExtension(String fileName) {
@@ -19,14 +21,14 @@ public class Thumbnail {
         return fileName.substring(0, fileName.lastIndexOf("."));
     }
 
-    public String makeThumbnail(MultipartFile file, MultipartHttpServletRequest request, int thumbnailWidth, int thumbnailHeight, String saveFolder, String savedFileName) {
+    public static String makeThumbnail(MultipartFile file, int thumbnailWidth, int thumbnailHeight, String code, String savedFileName) {
+
         String extension = getExtension(Objects.requireNonNull(file.getOriginalFilename()));
 
         if (!isImageFile(file.getContentType())) return null;
 
-        String boardCode = request.getParameter("boardCode");
-        String imagePath = request.getSession().getServletContext().getRealPath("/" + saveFolder + "/" + boardCode);
-        String thumbnailPath = request.getSession().getServletContext().getRealPath("/" + saveFolder + "/" + boardCode);
+        String thumbnailPath = FILE_PATH + code;
+        String savedPath = FILE_PATH + code + "/" + savedFileName;
 
         File folder = new File(thumbnailPath);
         if (!folder.exists()) {
@@ -36,22 +38,21 @@ public class Thumbnail {
             }
         }
 
-        imagePath = imagePath + "/" + savedFileName;
         String thumbnailFileName = removeExtension(savedFileName) + "_s." + extension;
         thumbnailPath = thumbnailPath + "/" + thumbnailFileName;
 
         try {
             if (thumbnailWidth != 0 && thumbnailHeight != 0) {
-                Thumbnails.of(imagePath)
+                Thumbnails.of(savedPath)
                         .width(thumbnailWidth)
                         .height(thumbnailHeight)
                         .toFile(thumbnailPath);
             } else if (thumbnailWidth != 0) {
-                Thumbnails.of(imagePath)
+                Thumbnails.of(savedPath)
                         .width(thumbnailWidth)
                         .toFile(thumbnailPath);
             } else if (thumbnailHeight != 0) {
-                Thumbnails.of(imagePath)
+                Thumbnails.of(savedPath)
                         .height(thumbnailHeight)
                         .toFile(thumbnailPath);
             }

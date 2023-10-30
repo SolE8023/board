@@ -9,16 +9,23 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.hansol.board.common.Constant.FILE_PATH;
@@ -30,28 +37,30 @@ import static com.hansol.board.common.Constant.FILE_PATH;
 public class AttachmentApiV1 {
     private final AttachmentRepository repository;
     @GetMapping("download/{id}")
-    public ResponseEntity<Resource> download(@PathVariable Long id) {
+    public Object download(@PathVariable Long id) {
         Optional<Attachment> findFile = repository.findById(id);
-        Attachment file = findFile.orElseThrow(NoFileException::new);
-        String filePath = FILE_PATH + file.getCode() + "/" + file.getSavedFileName();
-        Resource resource = new FileSystemResource(filePath);
+        if(findFile.isEmpty()) return ResponseEntity.badRequest().body("파일이 없습니다");
+        Attachment file = findFile.get();
 
-        // 파일의 MIME 타입 확인하여 ContentType 설정
-        String contentType = null;
+
+        String savedFileName = file.getSavedFileName();
+        String originFileName = file.getOriginFileName();
+
+        UrlResource resource;
 
         try {
-            contentType = Files.probeContentType(Paths.get(filePath));
-        } catch (IOException e) {
-            contentType = "application/octet-stream"; // 기본 바이너리 타입 설정
+            resource = new UrlResource("file:/" + FILE_PATH + file.getCode() + "/" + savedFileName);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body("파일이 없습니다");
         }
 
-        if (contentType == null) {
-            contentType = "application/octet-stream";
-        }
+
+        String encodedOriginalFileName = UriUtils.encode(originFileName, StandardCharsets.UTF_8);
+        String contentDisposition = "attachment; filename=\"" + encodedOriginalFileName + "\"";
 
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getOriginFileName() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
                 .body(resource);
     }
 
@@ -66,8 +75,17 @@ public class AttachmentApiV1 {
 
         if (auth && type.equals("edit") && id.equals(find.getPost().getId())) {
             String filePath = FILE_PATH + find.getCode() + "/" + find.getSavedFileName();
+            String thumbnailPath = null;
+
+            if(StringUtils.hasText(find.getThumbnail()))
+                thumbnailPath = FILE_PATH + find.getCode() + "/" + find.getThumbnail();
+
             File file = new File(filePath);
             if (file.delete()) {
+                if (thumbnailPath != null) {
+                    File thumbnail = new File(thumbnailPath);
+                    thumbnail.delete();
+                }
                 repository.deleteById(fileId);
                 return ResponseEntity.ok().body("success");
             } else {

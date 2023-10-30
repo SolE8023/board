@@ -21,13 +21,15 @@ public class Attachment extends BaseEntity {
     private String originFileName;
     private String savedFileName;
     private String code;
+    private String thumbnail;
 
     @Builder
-    public Attachment(Long id, PostEntity post, String originFileName, String savedFileName, String code) {
+    public Attachment(Long id, PostEntity post, String originFileName, String savedFileName, String code, String thumbnail) {
         this.id = id;
         this.post = post;
         this.originFileName = originFileName;
         this.savedFileName = savedFileName;
         this.code = code;
+        this.thumbnail = thumbnail;
     }
 }
