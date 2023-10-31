@@ -2,7 +2,6 @@
     <link rel="stylesheet" href="/css/comment.css" type="text/css">
 
     <th:block th:each="comment : ${comments}">
-        <hr class="hr"/>
         <span class="flex-wrap">
             <span class="writerName" th:text="${comment.writer}">관리자</span>
             <span class="createdDate" th:text="${#temporals.format(comment.lastModifiedDate, 'yyyy.MM.dd')}">2022-11-16 14:09</span>

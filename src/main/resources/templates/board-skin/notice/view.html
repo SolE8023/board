@@ -33,6 +33,8 @@
         </div>
     </div>
 
+    <hr class="hr">
+
     <th:block th:if="${boardInfo.comment == T(com.hansol.board.common.enums.UseStatus).enable}">
         <th:block th:replace="~{fragments/comment.html :: comment(${post.comments}, ${post.id})}"/>
         <th:block th:replace="~{fragments/comment-password-check.html :: comment-password-check}"/>

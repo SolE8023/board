@@ -5,55 +5,73 @@
 <body>
 <link href="/css/gallery.css" rel="stylesheet" type="text/css">
 
-<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${boardCode})}"></nav>
+<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${code})}"></nav>
 
 <div class="form-wrap">
     <div class="form">
-        <input name="boardCode" th:value="${boardCode}" type="hidden">
-        <div class="form-item">
-            <span>제목</span>
-            <input class="w-100" name="title" type="text">
-        </div>
-        <div class="form-item">
-            <span>이름</span>
-            <input class="w-100" name="writerName" th:value="${name}" type="text">
-        </div>
-        <div class="form-item">
-            <span class="editor-label">내용</span>
-            <div class="editor-wrap">
-                <div id="toolbar-container"></div>
-                <div id="editor"></div>
+        <form name="savePostForm" th:action th:object="${form}" method="post" enctype="multipart/form-data">
+            <input th:field="*{code}" type="hidden">
+            <input th:field="*{content}" type="hidden">
+            <input th:field="*{parentId}" type="hidden">
+            <div class="form-item">
+                <span>제목</span>
+                <input type="text" class="w-100" th:field="*{title}">
             </div>
-        </div>
-        <div class="upload-item" th:if="${uploadFileNumber != 0}">
-            <span>첨부파일</span>
-            <span class="upload-group">
-                <span class="upload-wrap" th:each="num : ${#numbers.sequence(1, uploadFileNumber)}">
-                    <input class="upload-input" multiple name="files"
+            <div class="form-item">
+                <span>이름</span>
+                <input type="text" class="w-100" th:field="*{writer}">
+            </div>
+            <div class="form-item">
+                <span>비밀번호</span>
+                <input type="password" class="w-100" th:field="*{password}" maxlength="8">
+            </div>
+            <div class="form-item">
+                <span>비밀글 여부</span>
+                <input class="secret-checkbox" type="checkbox" th:field="*{secret}">
+            </div>
+            <div class="form-item">
+                <span>공지사항 여부</span>
+                <input class="secret-checkbox" type="checkbox" th:field="*{notice}">
+            </div>
+            <div class="form-item">
+                <span class="editor-label">내용</span>
+                <div class="editor-wrap">
+                    <div id="toolbar-container"></div>
+                    <div id="editor" th:utext="${form.content}"></div>
+                </div>
+            </div>
+            <div class="upload-item" th:if="${form.fileUpload != 0}">
+                <span>첨부파일</span>
+                <span class="upload-group">
+                <span class="upload-wrap" th:each="num : ${#numbers.sequence(1, form.fileUpload)}">
+                    <input class="upload-input" multiple th:field="*{files}"
                            onchange="updateFileName(this)"
                            th:id="'upload-input' + ${num}" type="file"/>
                     <span class="file-name">파일을 선택하세요</span>
                     <label class="upload-button" th:for="'upload-input' + ${num}">파일 선택</label>
                 </span>
             </span>
-        </div>
-        <div class="form-button">
-            <button class="regist-btn" onclick="validateForm()">등록</button>
-            <button class="cancel-btn">취소</button>
-        </div>
+            </div>
+            <div class="form-button">
+                <button class="regist-btn" type="button" onclick="validateForm()"
+                        th:text="${form.parentId} ? '답글':'등록'">등록
+                </button>
+                <button class="cancel-btn" type="button" onclick="goToList()">취소</button>
+            </div>
+        </form>
     </div>
 </div>
 
 
-<script>
+<script th:inline="javascript">
     let theEditor;
-    const boardCode = document.querySelector("input[name=boardCode]").value
+    const code = document.querySelector("input[name=code]").value
 
     DecoupledEditor
         .create(document.querySelector('#editor'), {
             language: 'ko',
             ckfinder: {
-                uploadUrl: `/api/v1/board/files/upload?boardCode=${boardCode}`
+                uploadUrl: `/post/file/upload?code=${code}`
             },
         })
         .then(editor => {
@@ -67,7 +85,8 @@
 
     function validateForm() {
         const title = document.querySelector("input[name=title]")
-        const writerName = document.querySelector("input[name=writerName]")
+        const writer = document.querySelector("input[name=writer]")
+        const password = document.querySelector("input[name=password]")
         const content = theEditor.getData()
 
         if (title.value === '') {
@@ -76,61 +95,48 @@
             return
         }
 
-        if (writerName.value === '') {
+        if (writer.value === '') {
             alert("이름을 입력해주세요.")
-            writerName.focus()
+            writer.focus()
+            return
+        }
+
+        if (password.value === '') {
+            alert("비밀번호를 입력해주세요.")
+            password.focus()
+            return
+        }
+
+        if (password.value.length < 4 || password.value.length > 8) {
+            alert("비밀번호는 4자리 이상 8자리 이하로 입력해주세요.")
+            password.focus()
             return
         }
 
         if (content === '') {
-            alert("내용을 입력해주세요")
-            theEditor.focus()
-            return
+            alert("내용을 입력해주세요");
+            theEditor.focus();
+            return;
         }
 
-        createPost()
-    }
+        document.querySelector("input[name=content]").value = content
 
-    function createPost() {
-        const boardCode = document.querySelector("input[name=boardCode]").value
-        const title = document.querySelector("input[name=title]").value
-        const writerName = document.querySelector("input[name=writerName]").value
-        const content = theEditor.getData()
-        const files = document.querySelectorAll(".upload-input")
-
-        let formData = new FormData()
-        formData.append("boardCode", boardCode)
-        formData.append("title", title)
-        formData.append("writerName", writerName)
-        formData.append("content", content)
-
-        let cnt = 0
-        files.forEach(elem => {
-            if (elem.files[0] !== undefined) formData.append(`files[${cnt++}]`, elem.files[0])
-        })
-
-        const url = '/api/v1/board'
-        const options = {
-            method: 'POST',
-            body: formData
+        const parentId = document.querySelector("input[name=parentId]").value
+        if (parentId !== "") {
+            const code = document.querySelector("input[name=code]").value
+            document.forms.savePostForm.action = `/post/${code}/write`
         }
 
-        fetch(url, options)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`)
-                }
-                return response.json()
-            })
-            .then(data => {
-                alert("글 등록이 완료되었습니다.")
-                location.href = './list'
-            })
-            .catch(err => console.error('An error occurred:', err))
+        document.forms.savePostForm.submit();
     }
 
     function updateFileName(elem) {
         elem.nextElementSibling.innerText = elem.files[0].name
+    }
+
+    function goToList() {
+        const code = document.querySelector("input[name=code]").value
+        location.href=`/post/${code}/list`
     }
 </script>
 

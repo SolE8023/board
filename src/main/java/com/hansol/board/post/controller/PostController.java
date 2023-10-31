@@ -1,10 +1,7 @@
 package com.hansol.board.post.controller;
 
-import com.hansol.board.attachment.domain.Attachment;
 import com.hansol.board.boardInfo.domain.BoardInfo;
 import com.hansol.board.boardInfo.repository.BoardInfoRepository;
-import com.hansol.board.exception.NoPostException;
-import com.hansol.board.post.domain.Post;
 import com.hansol.board.post.domain.PostEntity;
 import com.hansol.board.post.form.EditPostForm;
 import com.hansol.board.post.form.SavePostForm;
@@ -28,9 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.hansol.board.common.Constant.FILE_PATH;
@@ -57,6 +52,10 @@ public class PostController {
         model.addAttribute("boardInfo", boardInfoRepository.findByBoardCode(code));
 
         setPageVariable(model, posts);
+
+        String currentDomain = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        String fileUrl = currentDomain + "/" + UPLOAD_FOLDER + "/" + code;
+        model.addAttribute("fileUrl", fileUrl);
 
         return "board-skin/" + code + "/list";
     }
@@ -123,6 +122,10 @@ public class PostController {
         model.addAttribute("files", post.getAttachments());
         model.addAttribute("boards", boardInfoRepository.findAll());
         model.addAttribute("boardInfo", boardInfoRepository.findByBoardCode(code));
+
+        String currentDomain = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        String fileUrl = currentDomain + "/" + UPLOAD_FOLDER + "/" + code;
+        model.addAttribute("fileUrl", fileUrl);
 
         if (post.getSecret()) {
             Boolean auth = (Boolean) session.getAttribute("auth");

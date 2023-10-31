@@ -53,11 +53,16 @@ button {
     cursor: pointer;
 }
 
-input[type="text"] {
+input[type="text"], input[type="password"] {
     justify-self: start;
     height: 45px;
     padding: 9px;
     font-size: 15px;
+}
+
+.secret-checkbox {
+    height: 45px;
+    margin-right: auto;
 }
 
 .file-name {
@@ -191,7 +196,7 @@ input {
 }
 
 .img-wrap img{
-    max-width: 100%;
+    max-width: 1024px;
 }
 
 .delete-button {

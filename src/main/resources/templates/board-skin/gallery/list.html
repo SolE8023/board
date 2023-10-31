@@ -5,19 +5,18 @@
 <body>
 <link href="/css/gallery.css" rel="stylesheet" type="text/css">
 
-<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${boardCode})}"></nav>
+<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${code})}"></nav>
 
-<div th:src="@{~/images/example.jpg}"></div>
 <div class="board-wrap">
     <h1 class="board-info-title" th:text="${boardName}">공지사항</h1>
 
     <div class="board-data">
         <div class="data-row" th:each="post : ${posts}">
-            <a th:href="@{/board/{code}/view/{id}(code=${boardCode}, id=${post.id})}">
-                <div class="img-area" th:if="${post.boardFiles.size() != 0}" th:with="file=${post.boardFiles[0]}">
-                    <img th:src="@{/{folder}/{code}/{thumbnail}(folder=${file.thumbnailFolderName}, code=${boardCode}, thumbnail=${file.thumbnailFileName})}">
+            <a th:href="@{/post/{code}/view/{id}(code=${code}, id=${post.id})}">
+                <div class="img-area" th:if="${post.attachments.size() != 0}" th:with="file=${post.attachments[0]}">
+                    <img th:src="@{{fileUrl}/{thumbnail}(fileUrl=${fileUrl}, thumbnail=${file.thumbnail})}">
                 </div>
-                <div class="img-area" th:if="${post.boardFiles.size() == 0}">
+                <div class="img-area" th:if="${post.attachments.size() == 0}">
                     <img src="/images/no-img.png"/>
                 </div>
 
@@ -31,26 +30,26 @@
     </div>
 
     <div class="btn-wrap">
-        <button class="white-btn" onclick="moveToWritePage(this.getAttribute('data-code'))" th:data-code="${boardCode}"
+        <button class="white-btn" onclick="moveToWritePage(this.getAttribute('data-code'))" th:data-code="${code}"
                 type="button">글쓰기
         </button>
     </div>
 
     <div class="page-wrap">
         <a href="./list?page=0"><span><<</span></a>
-        <a th:href="@{/board/{code}/list(code=${boardCode} ,page=${prevPage})}"><span><</span></a>
+        <a th:href="@{/post/{code}/list(code=${code} ,page=${prevPage})}"><span><</span></a>
         <a th:each="i : ${#numbers.sequence(startPage, endPage)}"
-           th:href="@{/board/{code}/list(code=${boardCode}, page=${i - 1})}">
-            <span th:class="${i == page + 1} ? 'active' : ''" th:text="${i}">1</span>
+           th:href="@{/post/{code}/list(code=${code}, page=${i})}">
+            <span th:class="${i == page} ? 'active' : ''" th:text="${i+1}">1</span>
         </a>
-        <a th:href="@{/board/{code}/list(code=${boardCode}, page=${nextPage})}"><span>></span></a>
-        <a th:href="@{/board/{code}/list(code=${boardCode}, page=${finalPage})}"><span>>></span></a>
+        <a th:href="@{/post/{code}/list(code=${code}, page=${nextPage})}"><span>></span></a>
+        <a th:href="@{/post/{code}/list(code=${code}, page=${finalPage})}"><span>>></span></a>
     </div>
 </div>
 
 <script>
     function moveToWritePage(code) {
-        location.href = `/board/${code}/write`
+        location.href = `/post/${code}/write`
     }
 </script>
 </body>
