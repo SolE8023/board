@@ -8,6 +8,7 @@ import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -30,7 +31,7 @@ public class SavePostForm {
     @NotEmpty
     private String code;
     private Integer fileUpload;
-    private List<MultipartFile> files;
+    private List<MultipartFile> files = new ArrayList<>();
     private Long parentId;
 
     @Builder

@@ -19,8 +19,6 @@
         <span th:id="|commentContent${comment.id}|" class="content" style="white-space: pre-line" th:if="${!comment.secret}" th:text="${comment.content}">댓글테스트</span>
     </th:block>
 
-    <hr class="hr"/>
-
     <div class="comment-form-wrap">
         <div class="input-form">
             <input type="hidden" name="commentPostId" th:value="${postId}">

@@ -53,6 +53,11 @@ input[type="text"], input[type="password"] {
     font-size: 15px;
 }
 
+.secret-checkbox {
+    height: 45px;
+    margin-right: auto;
+}
+
 input {
     padding: 0;
     box-sizing: border-box;

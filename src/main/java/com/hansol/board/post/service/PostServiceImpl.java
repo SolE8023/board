@@ -64,6 +64,7 @@ public class PostServiceImpl implements PostService {
 
     private void fileUpload(PostEntity post, List<MultipartFile> files) {
         String code = post.getCode();
+        if(files == null) return;
         for (MultipartFile file : files) {
             if (!file.isEmpty()) {
                 String extension = getExtension(Objects.requireNonNull(file.getOriginalFilename()));

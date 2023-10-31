@@ -11,6 +11,7 @@ import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -34,7 +35,7 @@ public class EditPostForm {
     @NotEmpty
     private String code;
     private Integer fileUpload;
-    private List<MultipartFile> files;
+    private List<MultipartFile> files = new ArrayList<>();
 
     @Builder
     public EditPostForm(Long id, String title, String writer, String content, LocalDateTime createdDate, LocalDateTime lastModifiedDate, Boolean secret, Boolean notice, String password, String code, Integer fileUpload, List<MultipartFile> files) {
