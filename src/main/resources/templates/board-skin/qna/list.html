@@ -5,7 +5,7 @@
 <body>
 <link href="/css/qna.css" rel="stylesheet" type="text/css">
 
-<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${boardCode})}"></nav>
+<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${code})}"></nav>
 
 <div class="board-wrap">
     <h1 class="board-info-title" th:text="${boardName}">공지사항</h1>
@@ -18,30 +18,37 @@
     </div>
 
     <th:block th:each="post, iterStat : ${posts}">
-        <th:block th:replace="~{fragments/qna-list.html :: qna-list(${post}, null, 0)}"></th:block>
+        <th:block th:if="${boardInfo.reply == T(com.hansol.board.common.enums.UseStatus).enable}">
+            <th:block th:replace="~{fragments/post-reply-list.html :: post-reply-list(${post}, null, 0)}"></th:block>
+        </th:block>
+    </th:block>
+    <th:block th:unless="${boardInfo.reply == T(com.hansol.board.common.enums.UseStatus).enable}">
+        <th:block th:replace="~{fragments/post-list.html :: post-list(${posts})}"></th:block>
     </th:block>
 
     <div class="btn-wrap">
-        <button class="white-btn" onclick="moveToWritePage(this.getAttribute('data-code'))" th:data-code="${boardCode}"
+        <button class="white-btn" th:data-code="${code}" onclick="moveToWritePage(this.getAttribute('data-code'))"
                 type="button">글쓰기
         </button>
     </div>
 
     <div class="page-wrap">
         <a href="./list?page=0"><span><<</span></a>
-        <a th:href="@{/board/{code}/list(code=${boardCode} ,page=${prevPage})}"><span><</span></a>
+        <a th:href="@{/post/{code}/list(code=${code} ,page=${prevPage})}"><span><</span></a>
         <a th:each="i : ${#numbers.sequence(startPage, endPage)}"
-           th:href="@{/board/{code}/list(code=${boardCode}, page=${i - 1})}">
-            <span th:class="${i == page + 1} ? 'active' : ''" th:text="${i}">1</span>
+           th:href="@{/post/{code}/list(code=${code}, page=${i})}">
+            <span th:class="${i == page} ? 'active' : ''" th:text="${i+1}">1</span>
         </a>
-        <a th:href="@{/board/{code}/list(code=${boardCode}, page=${nextPage})}"><span>></span></a>
-        <a th:href="@{/board/{code}/list(code=${boardCode}, page=${finalPage})}"><span>>></span></a>
+        <a th:href="@{/post/{code}/list(code=${code}, page=${nextPage})}"><span>></span></a>
+        <a th:href="@{/post/{code}/list(code=${code}, page=${finalPage})}"><span>>></span></a>
     </div>
 </div>
 
+<div th:replace="~{fragments/password-check.html :: password-check(null, ${code})}"></div>
+
 <script>
     function moveToWritePage(code) {
-        location.href = `/board/${code}/write`
+        location.href = `/post/${code}/write`
     }
 </script>
 </body>
