@@ -2,10 +2,13 @@ package com.hansol.board.boardInfo.controller;
 
 import com.hansol.board.boardInfo.domain.BoardInfo;
 import com.hansol.board.boardInfo.repository.BoardInfoRepository;
+import com.hansol.board.common.enums.BoardSkin;
 import com.hansol.board.common.enums.UseStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -27,7 +32,7 @@ public class BoardInfoController {
     public String list(Model model) {
         model.addAttribute("infos", repository.findAll());
         model.addAttribute("skins", getSkins());
-        return "/admin/manage-board";
+        return "admin/manage-board";
     }
 
     @GetMapping("/view/{id}")
@@ -36,21 +41,10 @@ public class BoardInfoController {
         model.addAttribute("info", info);
         model.addAttribute("skins", getSkins());
         model.addAttribute("useStatus", UseStatus.values());
-        return "/admin/edit-board-info";
+        return "admin/edit-board-info";
     }
 
     private List<String> getSkins() {
-        List<String> folderList = new ArrayList<>();
-        try {
-            ClassPathResource resource = new ClassPathResource("templates/board-skin");
-            File skinFolder = resource.getFile();
-            File[] folders = skinFolder.listFiles(File::isDirectory);
-            for (File folder : Objects.requireNonNull(folders)) {
-                folderList.add(folder.getName());
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-        return folderList;
+        return Arrays.stream(BoardSkin.values()).map(BoardSkin::toString).collect(Collectors.toList());
     }
 }

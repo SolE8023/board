@@ -46,10 +46,10 @@ public class AttachmentApiV1 {
         String savedFileName = file.getSavedFileName();
         String originFileName = file.getOriginFileName();
 
-        UrlResource resource;
+        FileSystemResource resource;
 
         try {
-            resource = new UrlResource("file:/" + FILE_PATH + file.getCode() + "/" + savedFileName);
+            resource = new FileSystemResource(FILE_PATH + file.getCode() + "/" + savedFileName);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.badRequest().body("파일이 없습니다");

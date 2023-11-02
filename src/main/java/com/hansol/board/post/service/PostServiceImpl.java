@@ -124,15 +124,17 @@ public class PostServiceImpl implements PostService {
     public void remove(Long id, String password) {
         PostEntity findPost = postRepository.findById(id);
         List<Attachment> files = findPost.getAttachments();
-        for (Attachment file : files) {
-            String filePath = FILE_PATH + findPost.getCode() + "/" + file.getSavedFileName();
-            File saved = new File(filePath);
-            saved.delete();
-            String thumbnailPath = null;
-            if (StringUtils.hasText(file.getThumbnail())) {
-                thumbnailPath = FILE_PATH + findPost.getCode() + "/" + file.getThumbnail();
-                File thumbnail = new File(thumbnailPath);
-                thumbnail.delete();
+        if(files != null){
+            for (Attachment file : files) {
+                String filePath = FILE_PATH + findPost.getCode() + "/" + file.getSavedFileName();
+                File saved = new File(filePath);
+                saved.delete();
+                String thumbnailPath = null;
+                if (StringUtils.hasText(file.getThumbnail())) {
+                    thumbnailPath = FILE_PATH + findPost.getCode() + "/" + file.getThumbnail();
+                    File thumbnail = new File(thumbnailPath);
+                    thumbnail.delete();
+                }
             }
         }
         postRepository.remove(id, password);

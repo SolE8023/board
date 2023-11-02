@@ -194,7 +194,7 @@ async function setEditForm() {
         commentWriterElem.value = jsonData.writer
         commentPasswordElem.value = jsonData.password
         commentContentElem.value = jsonData.content
-        commentWriterElem.checked = jsonData.secret
+        commentSecretElem.checked = jsonData.secret
     } else {
         alert("불러오기 실패. 페이지를 새로고침 합니다.")
         location.reload()
@@ -206,6 +206,7 @@ async function editCommentRequest() {
     const writer = commentWriterElem.value
     const password = commentPasswordElem.value
     const content = commentContentElem.value
+    const secret = commentSecretElem.checked
 
     if (id === "") {
         alert("commentId가 비었습니다. 페이지를 새로고침 합니다.")
@@ -221,7 +222,7 @@ async function editCommentRequest() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({id, writer, password, content})
+        body: JSON.stringify({id, writer, password, content, secret})
     }
 
     const response = await fetch(url, options)

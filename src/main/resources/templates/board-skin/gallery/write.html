@@ -40,7 +40,7 @@
                     <div id="editor" th:utext="${form.content}"></div>
                 </div>
             </div>
-            <div class="upload-item" th:if="${form.fileUpload != 0}">
+            <div class="upload-item" th:if="${form.fileUpload != 0 && form.fileUpload != null}">
                 <span>첨부파일</span>
                 <span class="upload-group">
                 <span class="upload-wrap" th:each="num : ${#numbers.sequence(1, form.fileUpload)}">

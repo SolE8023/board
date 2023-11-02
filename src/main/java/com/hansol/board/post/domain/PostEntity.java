@@ -38,13 +38,13 @@ public class PostEntity extends BaseEntity {
     @JoinColumn(name = "parent_id")
     @Setter private PostEntity parentPost;
 
-    @OneToMany(mappedBy = "parentPost", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "parentPost", fetch = FetchType.LAZY)
     private List<PostEntity> childPosts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<CommentEntity> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<Attachment> attachments = new ArrayList<>();
 
     @Builder

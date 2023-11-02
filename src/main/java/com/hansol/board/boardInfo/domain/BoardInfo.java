@@ -15,7 +15,7 @@ public class BoardInfo {
     private String boardSkin;
     private UseStatus comment;
     private String boardCode;
-    private int fileUpload;
+    private Integer fileUpload;
     private UseStatus reply;
 
     @Builder

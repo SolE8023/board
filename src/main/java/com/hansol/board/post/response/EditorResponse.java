@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class EditorResponse {
     private String filename;
-    private int uploaded;
+    private Integer uploaded;
     private String url;
 
     @Builder

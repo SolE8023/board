@@ -14,7 +14,7 @@ public class Member {
     private String memberId;
     private String name;
     private String password;
-    private int zipCode;
+    private Integer zipCode;
     private String address1;
     private String address2;
     private LocalDateTime lastLogin;
