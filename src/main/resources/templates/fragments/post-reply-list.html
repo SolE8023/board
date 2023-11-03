@@ -6,21 +6,26 @@
         </a>
 
         <a style="justify-self: start" th:href="${link}">
-            <div th:if="${iter == null}">
-                <img class="secret-post" th:if="${post.secret}" th:src="@{/images/lock-icon.png}" alt="비밀글 입니다."/>
-                <span th:if="${post.notice}">[공지] </span>
-                <span th:text="${post.title}">
-                    테스트 제목입니다.
-                </span>
-            </div>
-            <div th:if="${iter != null}">
-                <div th:style="'margin-left:' + (${indent} * 10) + 'px'">
-                    <th:block th:if="${post.parentPost != null}">
-                        <img height="14" src="/images/reply-icon.png" width="14"/>
-                    </th:block>
+            <div class="title-list" th:if="${iter == null}">
+                <div>
                     <img class="secret-post" th:if="${post.secret}" th:src="@{/images/lock-icon.png}" alt="비밀글 입니다."/>
                     <span th:if="${post.notice}">[공지] </span>
-                    <span th:text="${post.title}">테스트 제목입니다.</span>
+                    <span th:text="${post.title}">
+                    테스트 제목입니다.
+                </span>
+                </div>
+            </div>
+            <div class="title-list" th:if="${iter != null}">
+                <div>
+                    <div th:style="'margin-left:' + (${indent} * 10) + 'px'">
+                        <th:block th:if="${post.parentPost != null}">
+                            <img height="14" src="/images/reply-icon.png" width="14"/>
+                        </th:block>
+                        <img class="secret-post" th:if="${post.secret}" th:src="@{/images/lock-icon.png}"
+                             alt="비밀글 입니다."/>
+                        <span th:if="${post.notice}">[공지] </span>
+                        <span th:text="${post.title}">테스트 제목입니다.</span>
+                    </div>
                 </div>
             </div>
         </a>
