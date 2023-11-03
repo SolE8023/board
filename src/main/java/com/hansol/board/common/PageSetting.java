@@ -19,6 +19,14 @@ public class PageSetting {
         return PageRequest.of(page, POSTS_PER_PAGE, sort);
     }
 
+    public static Pageable getGalleryPageable(Integer page) {
+        Sort.Order orderByNotice = Sort.Order.desc("notice");
+        Sort.Order orderByCreatedDate = Sort.Order.desc("createdDate");
+
+        Sort sort = Sort.by(orderByNotice, orderByCreatedDate);
+        return PageRequest.of(page, 8, sort);
+    }
+
     public static Pageable getCommentPageable(Integer page) {
         Sort.Order orderByCreatedDate = Sort.Order.desc("createdDate");
         Sort.Order orderById = Sort.Order.desc("id");

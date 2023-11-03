@@ -54,6 +54,10 @@ public class PostRepositoryImpl implements PostRepository{
     @Override
     public Page<PostEntity> findListOrderby(int page, String code) {
         Pageable pageable = PageSetting.getPostPageable(page);
+        if (code.equals("gallery")) {
+            pageable = PageSetting.getGalleryPageable(page);
+        }
+
         return jpaRepository.findByCodeAndParentPostIsNull(code, pageable);
     }
 
