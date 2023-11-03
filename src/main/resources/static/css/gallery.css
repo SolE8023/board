@@ -238,6 +238,11 @@ body {
     font-size: 1.1rem;
     padding: 15px;
     justify-self: start;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .row-date {
