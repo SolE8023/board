@@ -25,6 +25,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.Calendar;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -266,5 +270,17 @@ public class PostController {
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 비밀번호입니다.");
         }
+    }
+
+    private int convertToSundayFirst(DayOfWeek dayOfWeek) {
+        return switch (dayOfWeek) {
+            case SUNDAY -> 0;
+            case MONDAY -> 1;
+            case TUESDAY -> 2;
+            case WEDNESDAY -> 3;
+            case THURSDAY -> 4;
+            case FRIDAY -> 5;
+            case SATURDAY -> 6;
+        };
     }
 }

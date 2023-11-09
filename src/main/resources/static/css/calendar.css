@@ -1,0 +1,57 @@
+body {
+    box-sizing: border-box;
+}
+.calendar-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 85vh;
+    justify-content: center;
+    flex-direction: column;
+}
+.calendar {
+    display: grid;
+    width: 90%;
+    align-content: center;
+    justify-content: center;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(50px, 0.1fr) repeat(auto-fit, minmax(100px, 1fr));
+    height: 100%;
+}
+.calendar .yoil {
+    width: 100%;
+    align-content: flex-end;
+    align-self: flex-end;
+}
+.yoil, .day {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, auto));
+    width: 100%;
+}
+.yoil span {
+    padding: 5px 10px;
+    text-align: center;
+    border: 1px black solid;
+}
+.day .day-wrap {
+    border: 1px black solid;
+    padding: 10px;
+}
+.year-month-wrap {
+    font-size: 50px;
+    margin-top: 100px;
+}
+.prev-month {
+    margin-right: 10px;
+    cursor: pointer;
+}
+.next-month {
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.btn-wrap {
+    margin-top: 20px;
+    width: 90%;
+    text-align: end;
+}

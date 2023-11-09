@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<meta charset="UTF-8">
+<head th:replace="~{fragments/header.html :: header}"></head>
+
+<body>
+<link href="/css/calendar.css" rel="stylesheet" type="text/css">
+<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${code})}"></nav>
+
+<div class="calendar-wrapper">
+    <div class="year-month-wrap">
+        <span class="prev-month" onclick="prevMonth()"><</span>
+        <span class="year-month">2023-11</span>
+        <span class="next-month" onclick="nextMonth()">></span>
+    </div>
+    <div class="calendar"></div>
+    <div class="btn-wrap">
+        <button class="white-btn" th:data-code="${code}" onclick="moveToWritePage(this.getAttribute('data-code'))"
+                type="button">글쓰기
+        </button>
+    </div>
+</div>
+<script src="/js/calendar.js"></script>
+</body>
+</html>
