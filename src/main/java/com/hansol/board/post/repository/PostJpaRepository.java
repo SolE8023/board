@@ -10,7 +10,6 @@ import java.util.Optional;
 
 public interface PostJpaRepository extends JpaRepository<PostEntity, Long> {
     Optional<PostEntity> findByIdAndPassword(Long id, String password);
-
     Page<PostEntity> findByCodeAndParentPostIsNull(String code, Pageable pageable);
 
     @Query(value = "select max(p.id) from PostEntity p where p.secret=false and p.id < :id")

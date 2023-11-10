@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class SavePostForm {
     private Long parentId;
 
     @Builder
-    public SavePostForm(String title, String writer, String content, LocalDateTime createdDate, LocalDateTime lastModifiedDate, Boolean secret, Boolean notice, String password, String code, Integer fileUpload, List<MultipartFile> files) {
+    public SavePostForm(String title, String writer, String content, LocalDateTime createdDate, LocalDateTime lastModifiedDate, Boolean secret, Boolean notice, String password, String code, Integer fileUpload, List<MultipartFile> files, Long parentId) {
         this.title = title;
         this.writer = writer;
         this.content = content;
@@ -47,5 +48,6 @@ public class SavePostForm {
         this.code = code;
         this.fileUpload = fileUpload;
         this.files = files;
+        this.parentId = parentId;
     }
 }

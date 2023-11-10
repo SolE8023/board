@@ -80,6 +80,7 @@ function appendDayElem() {
             daySpan.classList.add(`day-span`)
             if ((j === firstYoil || day > 0) && day < lastDay.getDate()) {
                 day++;
+                dayWrapSpan.classList.add(`day-${day}`)
                 daySpan.innerText = day;
                 dayWrapSpan.appendChild(daySpan);
                 weekDiv.appendChild(dayWrapSpan);

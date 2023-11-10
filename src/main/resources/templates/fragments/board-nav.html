@@ -2,4 +2,7 @@
     <a th:each="board : ${boards}" th:href="@{/post/{code}/list(code=${board.boardCode})}">
         <div th:text="${board.boardName}"></div>
     </a>
+    <a th:href="@{/calendar/list}">
+        <div>일정</div>
+    </a>
 </nav>
