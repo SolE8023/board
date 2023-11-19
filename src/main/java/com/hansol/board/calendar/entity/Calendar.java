@@ -1,6 +1,7 @@
 package com.hansol.board.calendar.entity;
 
 import com.hansol.board.attachment.domain.Attachment;
+import com.hansol.board.calendar.form.EditForm;
 import com.hansol.board.calendar.form.SaveForm;
 import com.hansol.board.comment.domain.CommentEntity;
 import com.hansol.board.common.domain.BaseEntity;
@@ -32,10 +33,10 @@ public class Calendar extends BaseEntity {
     @Setter private String password;
     @Setter private String code;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private String time;
-    private String place;
+    @Setter private LocalDate startDate;
+    @Setter private LocalDate endDate;
+    @Setter private String time;
+    @Setter private String place;
 
     @Builder
     public Calendar(Long id, String title, String writer, String content, String password, String code, LocalDate startDate, LocalDate endDate, String time, String place) {
@@ -53,6 +54,21 @@ public class Calendar extends BaseEntity {
 
     public static Calendar fromSaveForm(SaveForm form) {
         return Calendar.builder()
+                .title(form.getTitle())
+                .writer(form.getWriter())
+                .content(form.getContent())
+                .password(form.getPassword())
+                .code(form.getCode())
+                .startDate(form.getStartDate())
+                .endDate(form.getEndDate())
+                .time(form.getTime())
+                .place(form.getPlace())
+                .build();
+    }
+
+    public static Calendar fromEditForm(EditForm form) {
+        return Calendar.builder()
+                .id(form.getId())
                 .title(form.getTitle())
                 .writer(form.getWriter())
                 .content(form.getContent())

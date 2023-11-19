@@ -60,6 +60,15 @@ body {
     text-overflow: ellipsis;
 }
 
+.long-term {
+    border: 1px black solid;
+    background-color: black;
+}
+
+.long-term a {
+    color: white;
+}
+
 .list-btn-wrap {
     margin-top: 20px;
     width: 90%;

@@ -4,7 +4,6 @@
 
 <body>
 <link href="/css/calendar.css" rel="stylesheet" type="text/css">
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
         integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -13,20 +12,21 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css"/>
 
-<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${code})}"></nav>
+<nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${form.code})}"></nav>
 
 <div class="form-wrap">
-    <div class="form">
-        <form name="savePostForm" th:action th:object="${form}" method="post" enctype="multipart/form-data">
-            <input th:field="*{code}" type="hidden">
-            <input th:field="*{content}" type="hidden">
+    <form name="editPostForm" th:action th:object="${form}" method="post" enctype="multipart/form-data">
+        <div class="form">
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{code}">
+            <input type="hidden" th:field="*{content}">
             <div class="form-item">
                 <span>제목</span>
-                <input type="text" class="w-100" th:field="*{title}">
+                <input class="w-100" type="text" th:field="*{title}">
             </div>
             <div class="form-item">
                 <span>이름</span>
-                <input type="text" class="w-100" th:field="*{writer}">
+                <input class="w-100" type="text" th:field="*{writer}">
             </div>
             <div class="form-item">
                 <span>시작일</span>
@@ -56,13 +56,12 @@
                 </div>
             </div>
             <div class="form-button">
-                <button class="regist-btn" type="button" onclick="validateForm()">등록</button>
-                <button class="cancel-btn" type="button" onclick="goToList()">취소</button>
+                <button class="regist-btn" type="button" onclick="validateForm()">수정</button>
+                <button class="cancel-btn" type="button" onclick="moveToViewPage()">취소</button>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
-
 
 <script th:inline="javascript">
     $(document).ready(function () {
@@ -105,16 +104,23 @@
         });
 
     function validateForm() {
+        const id = document.querySelector("input[name=id]")
+        const code = document.querySelector("input[name=code]")
         const title = document.querySelector("input[name=title]")
         const writer = document.querySelector("input[name=writer]")
         const startDate = document.querySelector(`input[name=startDate]`)
         const password = document.querySelector("input[name=password]")
         const content = theEditor.getData()
 
+        if (id.value === "" || code.value === "") {
+            alert("게시글 고유값이 누락되었습니다. 게시글 선택을 다시 해주세요.")
+            location.reload()
+        }
+
         if (title.value === '') {
-            alert("제목을 입력해주세요.")
-            title.focus()
-            return
+            alert("제목을 입력해주세요.");
+            title.focus();
+            return;
         }
 
         if (writer.value === '') {
@@ -130,9 +136,7 @@
         }
 
         if (password.value === '') {
-            alert("비밀번호를 입력해주세요.");
-            password.focus();
-            return;
+            password.value = [[${form.password}]]
         }
 
         if (password.value.length < 4 || password.value.length > 8) {
@@ -142,18 +146,19 @@
         }
 
         if (content === '') {
-            alert("내용을 입력해주세요");
-            theEditor.focus();
-            return;
+            alert("내용을 입력해주세요")
+            theEditor.focus()
+            return
         }
 
         document.querySelector("input[name=content]").value = content
 
-        document.forms.savePostForm.submit();
+        document.forms.editPostForm.submit()
     }
 
-    function goToList() {
-        location.href = `/calendar/list`
+    function moveToViewPage() {
+        const id = document.querySelector("input[name=id]").value
+        location.href = `/calendar/view/${id}`
     }
 </script>
 

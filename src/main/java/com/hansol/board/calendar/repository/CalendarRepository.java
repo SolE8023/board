@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CalendarRepository extends JpaRepository<Calendar, Long> {
@@ -22,4 +23,6 @@ public interface CalendarRepository extends JpaRepository<Calendar, Long> {
             "(c.startDate <= :endRange and c.startDate >= :startRange) and " +
             "c.endDate = null or c.startDate = c.endDate")
     List<Calendar> getSingleDayEvents(@Param("startRange") LocalDate startRange, @Param("endRange") LocalDate endRange);
+
+    Optional<Calendar> findByIdAndPassword(Long id, String password);
 }

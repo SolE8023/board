@@ -9,26 +9,26 @@
 <nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${code})}"></nav>
 
 <div class="board-wrap">
-    <h1 class="board-info-title" th:text="${boardInfo.boardName}">공지사항</h1>
+    <h1 class="board-info-title" th:text="일정">공지사항</h1>
 
-    <input name="postId" th:value="${post.id}" type="hidden">
+    <input name="postId" th:value="${calendar.id}" type="hidden">
 
     <div class="board-info-wrap">
-        <div class="board-title" th:text="${post.title}">4호선(당고개-사당) 급행을 도입하면 안되는 이유 (자료 첨부)</div>
+        <div class="board-title" th:text="${calendar.title}">4호선(당고개-사당) 급행을 도입하면 안되는 이유 (자료 첨부)</div>
         <div class="board-info"
-             th:text="${post.writer + ' | ' + #temporals.format(post.createdDate, 'yyyy.MM.dd')}">
+             th:text="${calendar.writer + ' | ' + #temporals.format(calendar.createdDate, 'yyyy.MM.dd')}">
             용퉤 | 2023.02.22
         </div>
     </div>
     <hr class="hr">
 
     <div class="calendar-schedule">
-        시작일자: <span th:text="${post.startDate}">2023년 11월 9일</span><br/>
-        종료일자: <span th:text="${post.endDate}">2023년 11월 10일</span><br/>
-        시간: <span th:text="${post.calendarTime}">08:00</span><br/>
-        장소: <span th:text="${post.calendarPlace}">손바람 문화센터</span>
+        시작일자: <span th:text="${calendar.startDate}">2023년 11월 9일</span><br/>
+        종료일자: <span th:text="${calendar.endDate}">2023년 11월 10일</span><br/>
+        시간: <span th:text="${calendar.time}">08:00</span><br/>
+        장소: <span th:text="${calendar.place}">손바람 문화센터</span>
     </div>
-    <div class="board-content" th:utext="${post.content}">
+    <div class="board-content" th:utext="${calendar.content}">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur, exercitationem sequi. A aliquam animi
         aut
         autem commodi culpa dolorem ducimus ea earum in ipsam iusto labore laborum libero molestiae nam nihil nobis,
@@ -36,98 +36,30 @@
         doloremque explicabo labore reprehenderit vero.
     </div>
 
-    <div class="download-wrap">
-        <div class="file-download" th:data-file-id="${file.id}" th:each="file : ${post.attachments}"
-             th:text="${file.originFileName}">다운로드할 파일
-        </div>
-    </div>
-
     <hr class="hr">
-
-    <th:block th:if="${boardInfo.comment == T(com.hansol.board.common.enums.UseStatus).enable}">
-        <th:block th:replace="~{fragments/comment.html :: comment(${post.comments}, ${post.id})}"/>
-        <th:block th:replace="~{fragments/comment-password-check.html :: comment-password-check}"/>
-        <script src="/js/comment.js"></script>
-    </th:block>
 
     <div class="btn-wrap">
         <input type="hidden" name="code" th:value="${code}">
-        <input type="hidden" name="postId" th:value="${post.id}">
+        <input type="hidden" name="postId" th:value="${calendar.id}">
 
         <button class="white-btn" onclick="goToListPage()" type="button">목록으로</button>
-        <th:block th:if="${boardInfo.reply == T(com.hansol.board.common.enums.UseStatus).enable}">
-            <button class="white-btn" onclick="goToReplyPage(this.getAttribute('data-code'), this.getAttribute('data-id'))"
-                    th:data-id="${post.id}"
-                    th:data-code="${code}"
-                    type="button">답글
-            </button>
-        </th:block>
         <button class="white-btn" onclick="editPost()" type="button">수정</button>
         <button class="white-btn" onclick="deletePost()" type="button">삭제</button>
     </div>
 </div>
 
-<div th:replace="~{fragments/password-check.html :: password-check(${post.id}, ${code})}"></div>
+<div th:replace="~{fragments/calendar-password-check.html :: calendar-password-check(${calendar.id}, ${code})}"></div>
 
 <script>
     const code = document.querySelector("input[name=code]").value
     const postId = document.querySelector("input[name=postId]").value
 
     function goToListPage() {
-        location.href = `/post/${code}/list`
+        location.href = `/calendar/list`
     }
 
     function goToReplyPage(code, id) {
-        location.href = `/post/${code}/reply/${id}`
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const fileDownloadList = document.querySelectorAll('.file-download')
-        fileDownloadList.forEach(fileDownload => {
-            fileDownload.addEventListener('click', function () {
-                doFileDownload(fileDownload.dataset.fileId)
-            })
-        })
-    })
-
-    function doFileDownload(fileId) {
-        const url = `/api/v1/attachment/download/${fileId}`
-        const options = {
-            method: 'GET'
-        }
-
-        fetch(url, options)
-            .then(function (response) {
-                if (!response.ok) {
-                    throw new Error("파일을 다운로드할 수 없습니다.");
-                }
-
-                // 파일 이름 가져오기
-                const contentDisposition = response.headers.get('content-disposition');
-                const fileNameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-                const matches = fileNameRegex.exec(contentDisposition);
-                let fileName = matches != null && matches[1] ? matches[1].replace(/['"]/g, '') : 'downloaded_file';
-                fileName = decodeURIComponent(fileName)
-
-                // 파일 형태 가져오기
-                const contentType = response.headers.get('content-type');
-
-                return response.blob().then(function (blob) {
-                    let downloadLink = document.createElement("a");
-                    downloadLink.href = URL.createObjectURL(blob);
-
-                    // 파일 이름 설정
-                    downloadLink.download = fileName;
-
-                    // 파일 형태 설정
-                    downloadLink.type = contentType;
-
-                    downloadLink.click();                });
-            })
-            .catch(function (error) {
-                // 에러 처리
-                console.error(error);
-            });
+        location.href = `/calendar/reply/${id}`
     }
 </script>
 </body>

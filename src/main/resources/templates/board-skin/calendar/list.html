@@ -8,12 +8,73 @@
 <nav th:replace="~{fragments/board-nav.html :: boardNav(${boards}, ${code})}"></nav>
 
 <div class="calendar-wrapper">
+    <div class="calendar">
+        <div class="yoil">
+            <span>일</span>
+            <span>월</span>
+            <span>화</span>
+            <span>수</span>
+            <span>목</span>
+            <span>금</span>
+            <span>토</span>
+        </div>
+        <div class="day week1">
+            <span class="day-wrap"><span class="day-span"></span></span>
+            <span class="day-wrap"><span class="day-span"></span></span>
+            <span class="day-wrap"><span class="day-span"></span></span>
+            <span class="day-wrap">
+                <span class="day-span">1</span>
+                <div class="data long-term"><a href="#">test123</a></div>
+                <div class="data long-term"><a href="#">test321</a></div>
+            </span>
+            <span class="day-wrap"><span class="day-span">2</span><div class="data long-term"><a href="#">test123</a></div></span>
+            <span class="day-wrap"><span class="day-span">3</span><div class="data long-term"><a href="#">test123</a></div></span>
+            <span class="day-wrap"><span class="day-span">4</span><div class="data long-term"><a href="#">test123</a></div></span>
+        </div>
+        <div class="day">
+            <span class="day-wrap"><span class="day-span">5</span></span>
+            <span class="day-wrap"><span class="day-span">6</span></span>
+            <span class="day-wrap"><span class="day-span">7</span></span>
+            <span class="day-wrap"><span class="day-span">8</span></span>
+            <span class="day-wrap"><span class="day-span">9</span></span>
+            <span class="day-wrap"><span class="day-span">10</span></span>
+            <span class="day-wrap"><span class="day-span">11</span></span>
+        </div>
+        <div class="day">
+            <span class="day-wrap"><span class="day-span">12</span></span>
+            <span class="day-wrap"><span class="day-span">13</span></span>
+            <span class="day-wrap"><span class="day-span">14</span></span>
+            <span class="day-wrap"><span class="day-span">15</span></span>
+            <span class="day-wrap"><span class="day-span">16</span></span>
+            <span class="day-wrap"><span class="day-span">17</span></span>
+            <span class="day-wrap"><span class="day-span">18</span></span>
+        </div>
+        <div class="day">
+            <span class="day-wrap"><span class="day-span">19</span></span>
+            <span class="day-wrap"><span class="day-span">20</span></span>
+            <span class="day-wrap"><span class="day-span">21</span></span>
+            <span class="day-wrap"><span class="day-span">22</span></span>
+            <span class="day-wrap"><span class="day-span">23</span></span>
+            <span class="day-wrap"><span class="day-span">24</span></span>
+            <span class="day-wrap"><span class="day-span">25</span></span>
+        </div>
+        <div class="day">
+            <span class="day-wrap"><span class="day-span">26</span></span>
+            <span class="day-wrap"><span class="day-span">27</span></span>
+            <span class="day-wrap"><span class="day-span">28</span></span>
+            <span class="day-wrap"><span class="day-span">29</span></span>
+            <span class="day-wrap"><span class="day-span">30</span></span>
+            <span class="day-wrap"><span class="day-span"></span></span>
+            <span class="day-wrap"><span class="day-span"></span></span>
+        </div>
+    </div>
+
     <div class="year-month-wrap">
         <span class="prev-month" onclick="prevMonth()"><</span>
         <span class="year-month">2023-11</span>
         <span class="next-month" onclick="nextMonth()">></span>
     </div>
-    <div class="calendar"></div>
+<!--    <div class="calendar"></div>-->
     <div class="list-btn-wrap">
         <button class="white-btn" th:data-code="${code}" onclick="moveToWritePage(this.getAttribute('data-code'))"
                 type="button">글쓰기
@@ -21,43 +82,241 @@
     </div>
 </div>
 
-<!--<div class="data">일정 적기</div>-->
-
 <script src="/js/calendar.js"></script>
 <script th:inline="javascript">
-    drawSingleDayEvents()
+    window.onload = drawCalendar()
+    function drawCalendar() {
+        // clearCalendar()
+        // setYearMonthText()
+        // appendYoilElem()
+        // appendDayElem()
+    }
+
+    function clearCalendar() {
+        document.querySelector(`.calendar`).innerHTML = ``
+    }
+
+    function setYearMonthText() {
+        const queryString = window.location.search
+        const params = new URLSearchParams(queryString)
+        const today = new Date()
+        let year = params.get("year") ?? today.getFullYear()
+        let month = params.get("month") ?? today.getMonth() + 1
+        if(month < 10) month = `0` + month
+        document.querySelector(`.year-month`).innerText = year + `-` + month
+    }
+
+    function appendYoilElem() {
+        const calendar = document.querySelector(`.calendar`)
+        const yoilDiv = document.createElement(`div`)
+        yoilDiv.classList.add(`yoil`)
+
+        const span1 = document.createElement(`span`)
+        const span2 = document.createElement(`span`)
+        const span3 = document.createElement(`span`)
+        const span4 = document.createElement(`span`)
+        const span5 = document.createElement(`span`)
+        const span6 = document.createElement(`span`)
+        const span7 = document.createElement(`span`)
+
+        span1.innerText = `일`
+        span2.innerText = `월`
+        span3.innerText = `화`
+        span4.innerText = `수`
+        span5.innerText = `목`
+        span6.innerText = `금`
+        span7.innerText = `토`
+
+        yoilDiv.appendChild(span1)
+        yoilDiv.appendChild(span2)
+        yoilDiv.appendChild(span3)
+        yoilDiv.appendChild(span4)
+        yoilDiv.appendChild(span5)
+        yoilDiv.appendChild(span6)
+        yoilDiv.appendChild(span7)
+
+        calendar.appendChild(yoilDiv)
+    }
+
+    function appendDayElem() {
+        const queryString = window.location.search
+        const params = new URLSearchParams(queryString)
+        const today = new Date()
+        let year = params.get("year") ?? today.getFullYear()
+        let month = params.get("month") ?? today.getMonth() + 1
+
+        const weeks = getWeeks(year, month);
+        const firstDay = new Date(year, month-1, 1)
+        const firstYoil = firstDay.getDay()
+        const lastDay = new Date(year, month, 0)
+
+        let day = 0
+        let calendar = document.querySelector(`.calendar`)
+        for (let i = 1; i <= weeks; i++) {
+            let weekDiv = document.createElement('div')
+            weekDiv.classList.add(`day`)
+            for (let j = 0; j <= 6; j++) {
+                // drawLongTermEvents()
+                // drawSingleDayEvents()
+
+
+                let dayWrapSpan = document.createElement('span')
+                dayWrapSpan.classList.add(`day-wrap`)
+                let daySpan = document.createElement(`span`)
+                daySpan.classList.add(`day-span`)
+                if ((j === firstYoil || day > 0) && day < lastDay.getDate()) {
+                    day++;
+                    dayWrapSpan.classList.add(`day-${day}`)
+                    daySpan.innerText = day;
+                    dayWrapSpan.appendChild(daySpan);
+                    weekDiv.appendChild(dayWrapSpan);
+                } else {
+                    weekDiv.appendChild(dayWrapSpan);
+                }
+            }
+            calendar.appendChild(weekDiv)
+            if(day >= lastDay.getDate()) break;
+        }
+    }
+
     function moveToWritePage(code) {
-        location.href = `/post/${code}/write?year=${getSelectedYear()}&month=${getSelectedMonth()}`
+        location.href = `/calendar/write?year=${getSelectedYear()}&month=${getSelectedRealMonth()}`
     }
 
     function getFirstDayOfMonth(year, month) {
-        return new Date(getSelectedYear(), getSelectedMonth(), 1);
+        return new Date(getSelectedYear(), getSelectedRealMonth() - 1, 1);
     }
 
-    function drawLongTermEvents() {
+    async function drawLongTermEvents() {
         const events = [[${longTerm}]]
-        const year = getSelectedYear()
-        const month =  getSelectedMonth()
-        const weeks = getWeeks(year, month)
-        const firstDay = getFirstDayOfMonth(year, month)
-        const lastDate = getLastDayOfMonth()
-        const firstYoil = firstDay.getDay()
-        let day = 0
+        const year = getSelectedYear();
+        const month = getSelectedRealMonth();
+        const weeks = getWeeks(year, month);
+        const firstDay = getFirstDayOfMonth(year, month);
+        const lastDate = getLastDayOfMonth();
+        const firstYoil = firstDay.getDay();
+        let day = 0;
+
         for (let i = 1; i <= weeks; i++) {
-            let widthCount = 0
             for (let j = 0; j <= 6; j++) {
-                if(firstYoil === j) day++
-                if(day === 0) continue
-                if(day > lastDate) break
+                if (firstYoil === j && day === 0) day++;
+                if (day === 0) continue;
+                if (day > lastDate) break;
+
+                const filtered = events.filter(e => {
+                    const date = new Date(e.startDate);
+                    const startDate = date.getDate();
+                    return startDate === day;
+                });
+
+                const continueBar = events.filter(e => {
+                    const startDate = new Date(e.startDate);
+                    const endDate = new Date(e.endDate);
+                    return (j === 0 || day === 1) && endDate.getDate() >= day && startDate.getDate() < day && day !== startDate.getDate();
+                });
+
+                const newContinueBar = continueBar.map(e => {
+                    if (j === 0 || day === 1) {
+                        let weekLastDay;
+                        if (day === 1) weekLastDay = findFirstSaturday().getDate();
+                        else if (6 + day > lastDate) weekLastDay = lastDate;
+                        else weekLastDay = 6 + day;
+                        e.weekLastDay = weekLastDay;
+                        e.weekFirstDay = findFirstDayOfWeek(day).getDate();
+                        return e;
+                    }
+                });
+
+                // Draw continued bars
+                newContinueBar.forEach(e => {
+                    drawLongTermEventBar(e, day, true);
+                });
+
+                // Draw single-day bars
+                filtered.forEach((e, index) => {
+                    drawLongTermEventBar(e, day, false, index === 0 && newContinueBar.length === 0);
+                });
+
+                const ended = events.filter(e => {
+                    const endDate = new Date(e.endDate);
+                    const date = new Date(getSelectedYear(), getSelectedRealMonth() - 1, day);
+                    return endDate >= findFirstDayOfWeek(day) && endDate < date;
+                });
+
+                // Draw bars that ended on this day
+                ended.forEach(e => {
+                    drawLongTermEventBar(e, day, false, false, true);
+                });
+
+                day++;
             }
-            if(day > lastDate) break
+
+            if (day > lastDate) break;
+
         }
     }
+
+
+
+
+
+    function drawLongTermEventBar(event, currentDay, isContinued, skipTopMargin, isEnded) {
+        const startDate = new Date(event.startDate);
+        const endDate = new Date(event.endDate);
+        const timeDiff = endDate.getTime() - startDate.getTime();
+        const weekDiff = 6 - startDate.getDay();
+        let daysDiff = Math.floor(timeDiff / (24 * 60 * 60 * 1000));
+
+        if (weekDiff < daysDiff) daysDiff = weekDiff;
+
+        const eventElem = document.createElement(`div`);
+        eventElem.classList.add(`data`);
+        eventElem.classList.add(`long-term`);
+        eventElem.style.width = `calc(${100 * (daysDiff + 1)}% + ${10 * daysDiff}px)`;
+
+        if (!isContinued && isFirstInStack) {
+            eventElem.style.marginTop = `${24}px`; // Add margin only for the first in the stack
+        }
+
+        if (isContinued) {
+            // If continued, adjust margin based on the stack count
+            const stack = calculateStack(event.weekFirstDay, event.weekLastDay, day);
+            eventElem.style.marginTop = `${24 * stack}px`;
+        }
+
+        if (isEnded) {
+            // Adjust margin bottom for the bar that ended
+            eventElem.style.marginBottom = `${24}px`;
+        }
+
+        const aElem = document.createElement(`a`);
+        aElem.innerText = event.title;
+        aElem.href = `/calendar/view/${event.id}`;
+        eventElem.appendChild(aElem);
+
+        const parentElem = document.querySelector(`.day-${day}`);
+        parentElem.appendChild(eventElem);
+    }
+
+    function calculateStack(weekFirstDay, weekLastDay, currentDay) {
+        let stack = 0;
+        for (let day = weekFirstDay; day <= weekLastDay; day++) {
+            if (day < currentDay) {
+                stack++;
+            }
+        }
+        return stack;
+    }
+
+
+
+
+
 
     function drawSingleDayEvents() {
         const events = [[${singleDay}]]
         const year = getSelectedYear()
-        const month =  getSelectedMonth()
+        const month = getSelectedRealMonth()
         const weeks = getWeeks(year, month)
         const firstDay = getFirstDayOfMonth(year, month)
         const lastDate = getLastDayOfMonth()
@@ -65,9 +324,9 @@
         let day = 0
         for (let i = 1; i <= weeks; i++) {
             for (let j = 0; j <= 6; j++) {
-                if(firstYoil === j && day === 0) day++
-                if(day === 0) continue
-                if(day > lastDate) break
+                if (firstYoil === j && day === 0) day++
+                if (day === 0) continue
+                if (day > lastDate) break
                 const filtered = events.filter(e => {
                     const date = new Date(e.startDate)
                     const startDate = date.getDate()
@@ -76,18 +335,44 @@
                 filtered.forEach(e => {
                     const eventElem = document.createElement(`div`)
                     eventElem.classList.add(`data`)
-                    eventElem.innerText = e.title
+                    const aElem = document.createElement(`a`)
+                    aElem.href = `/calendar/view/${e.id}`
+                    aElem.innerText = e.title
+                    eventElem.appendChild(aElem)
                     const parentElem = document.querySelector(`.day-${day}`)
                     parentElem.appendChild(eventElem)
                 });
                 day++
             }
-            if(day > lastDate) break
+            if (day > lastDate) break
         }
     }
 
+    function findFirstSaturday() {
+        const firstDay = new Date(getSelectedYear(), getSelectedRealMonth() - 1, 1);
+        const firstDayOfWeek = firstDay.getDay();
+        const daysUntilSaturday = (6 - firstDayOfWeek + 7) % 7;
+        const firstSaturday = new Date(firstDay);
+        firstSaturday.setDate(firstDay.getDate() + daysUntilSaturday);
+        return firstSaturday;
+    }
+
+    function findFirstDayOfWeek(day) {
+        const currentDate = new Date(getSelectedYear(), getSelectedRealMonth() - 1, day);
+        const currentDayOfWeek = currentDate.getDay();
+
+        const date = currentDate.getDate() - currentDayOfWeek
+        const firstDay = new Date(getSelectedYear(), getSelectedRealMonth() - 1, 1);
+        if(date < 1) return firstDay
+
+        const sunday = new Date(currentDate);
+        sunday.setDate(date);
+
+        return sunday;
+    }
+
     function getLastDayOfMonth() {
-        const nextMonth = new Date(getSelectedYear(), getSelectedMonth() + 1, 0)
+        const nextMonth = new Date(getSelectedYear(), getSelectedRealMonth(), 0)
         return nextMonth.getDate()
     }
 
@@ -98,7 +383,7 @@
         return params.get("year") ?? today.getFullYear()
     }
 
-    function getSelectedMonth() {
+    function getSelectedRealMonth() {
         const queryString = window.location.search
         const params = new URLSearchParams(queryString)
         const today = new Date()
